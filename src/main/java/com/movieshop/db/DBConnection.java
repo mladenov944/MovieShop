@@ -13,23 +13,23 @@ public class DBConnection {
 	private static final String DB_PASS = "Senegal944!";
 	private static final String DB_PORT = "3306";
 	private static final String DB_SCHEMA = "movieshoptest";
-	
+
 	private static volatile DBConnection instance = null;
 
 	private DBConnection() throws SQLException, ClassNotFoundException {
 		Class.forName("com.mysql.jdbc.Driver");
-		this.connection = DriverManager.getConnection(
-				"jdbc:mysql://" + DB_HOST + ":" + DB_PORT + "/" + DB_SCHEMA,
+		this.connection = DriverManager.getConnection("jdbc:mysql://" + DB_HOST + ":" + DB_PORT + "/" + DB_SCHEMA,
 				DB_USER, DB_PASS);
 	}
-	
+
 	public static DBConnection getInstance() throws SQLException, ClassNotFoundException {
-		synchronized (DBConnection.class) {
-			if (instance == null) {
-				instance = new DBConnection();
+		if (instance == null) {
+			synchronized (DBConnection.class) {
+				if (instance == null) {
+					instance = new DBConnection();
+				}
 			}
 		}
-		
 		return instance;
 	}
 
