@@ -30,6 +30,7 @@ public class LoginServlet extends HttpServlet {
 		try {
 				int id = dao.login(username, password);
 				
+				// trqbva da proverim login kak da se sluchva
 				response.setHeader("Location", "./home");
 				response.setStatus(302); 
 				// ahahaahahah
