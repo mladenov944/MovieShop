@@ -10,38 +10,36 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.movieshop.model.User;
 import com.movieshop.model.UserDAO;
 import com.movieshop.model.UserException;
 
-
-/**
- * Servlet implementation class LoginServlet
- */
 @WebServlet("/logins")
 public class LoginServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L; 
        
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String username = request.getParameter("username");
-		String password = request.getParameter("password");
+		String email = request.getParameter("email");
+		String password = request.getParameter("pass");
 		
 		UserDAO dao = new UserDAO();
 		try {
-				int id = dao.login(username, password);
+				int id = dao.login(email, password);
 				
 				// trqbva da proverim login kak da se sluchva
+				// proverka dali go ima v DB
 				response.setHeader("Location", "./home");
 				response.setStatus(302); 
-				// ahahaahahah
-				Cookie c = new Cookie("username", username);
-				c.setMaxAge(5);
+//				Cookie c = new Cookie("email", email);
+//				c.setMaxAge(5);
 				
-				response.addCookie(c);
+//				response.addCookie(c);
 				
 				HttpSession session = request.getSession();
-				session.setAttribute("username", username);
-				session.setMaxInactiveInterval(5);
+				session.setAttribute("email", email);
+				session.setMaxInactiveInterval(500);
 				
 				response.sendRedirect("./home");
 			

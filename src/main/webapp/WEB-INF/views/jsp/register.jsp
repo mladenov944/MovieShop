@@ -28,22 +28,27 @@ function hideURLbar(){ window.scrollTo(0,1); }
 	<div class="main-agileits">
 		<h2 class="sub-head">Register</h2>
 		<div class="sub-main">
-			<form action="#" method="post">
-				<input placeholder="First Name" name="Name" class="name" type="text"
+			<form action="./reg" method="post">
+				<input placeholder="First Name" name="name" class="name" type="text"
 					required=""> <span class="icon1"><i
 					class="fa fa-user" aria-hidden="true"></i></span><br> <input
-					placeholder="Last Name" name="Name" class="name2" type="text"
+					
+					placeholder="Last Name" name="lastname" class="name2" type="text"
 					required=""> <span class="icon2"><i
 					class="fa fa-user" aria-hidden="true"></i></span><br> <input
+					
 					placeholder="Email" name="mail" class="mail" type="text"
 					required=""> <span class="icon3"><i
 					class="fa fa-envelope" aria-hidden="true"></i></span><br> <input
-					placeholder="Password" name="Password" class="pass" type="password"
+					
+					placeholder="Password" name="password" class="pass" type="password"
 					required=""> <span class="icon4"><i
 					class="fa fa-unlock" aria-hidden="true"></i></span><br> <input
-					placeholder="Confirm Password" name="Password" class="pass"
+					
+					placeholder="Confirm Password" name="confirmPassword" class="pass"
 					type="password" required=""> <span class="icon5"><i
 					class="fa fa-unlock" aria-hidden="true"></i></span><br> <input
+					
 					type="submit" value="sign up">
 			</form>
 		</div>

@@ -5,19 +5,22 @@ public class User {
 	private int id;
 	private String name;
 	private String lastName;
-	private String username;
 	private String password;
 	private String email;
 	private boolean isAdmin;
 	private float money;
 	
 	
-	public String getUsername() {
-		return username;
+	
+	public User(String name, String lastName, String email, String password) {
+		this.name = name;
+		this.lastName = lastName;
+		this.email = email;
+		this.password = password;
+		this.isAdmin = false;
+		this.money =(int) ((Math.random()*50) +20);
 	}
-	public void setUsername(String username) {
-		this.username = username;
-	}
+	
 	public int getId() {
 		return id;
 	}
@@ -60,9 +63,5 @@ public class User {
 	public void setMoney(float money) {
 		this.money = money;
 	}
-	
-	public User() {
-	}
-	
 	
 }
