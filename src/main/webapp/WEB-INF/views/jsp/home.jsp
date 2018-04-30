@@ -21,7 +21,7 @@
     <div id="navigation">
       <ul>
         <li><a class="active" href="/FinalProject/home">HOME</a></li>
-        <li><a href="#">NEWS</a></li>
+        <li><a href="/FinalProject/register">REGISTER</a></li>
         <li><a href="/FinalProject/login">LOGIN</a></li>
       </ul>
     </div>

@@ -23,5 +23,14 @@ public class HelloController {
 	public String register(Model model) {
 		return "register"; 
 	}
+	@RequestMapping(method = RequestMethod.GET, value = "/loggedInHome")
+	public String loggedIn(Model model) {
+		return "loggedInHome"; // vij che ti se povtarq request mappinga.. kak da raboti :D
+	}
+	@RequestMapping(method = RequestMethod.GET, value = "/logout")
+	public String logout(Model model) {
+		return "home"; // vij che ti se povtarq request mappinga.. kak da raboti :D
+	}
+
 
 }
