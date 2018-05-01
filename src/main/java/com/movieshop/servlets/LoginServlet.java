@@ -27,22 +27,25 @@ public class LoginServlet extends HttpServlet {
 
 		UserDAO dao = new UserDAO();
 		try {
-			int id = dao.login(email, password);
+			User user = dao.login(email, password);
 
-			if (id != 0) {
+			if (user.getId() != 0) {
 
 				HttpSession session = request.getSession();
-				session.setAttribute("id", id);
+				session.setAttribute("cash", user.getMoney());
+				session.setAttribute("id", user.getId());
+				session.setAttribute("name", user.getName());
+				session.setAttribute("lastName", user.getLastName());
 				session.setMaxInactiveInterval(600);
+				Float money = user.getMoney();
 
 				// trqbva da proverim login kak da se sluchva
 				// proverka dali go ima v DB
-				
 				response.sendRedirect("./loggedIn");
 			}
 
 		} catch (UserException e) {
-			response.getWriter().println("<h1> Ti ne se logna, syjalqvam! </h1>");
+			response.getWriter().println("<h1> You did not log in ! </h1>");
 			response.sendRedirect("./login");
 			e.printStackTrace();
 		}

@@ -1,9 +1,13 @@
 package com.movieshop.model;
 
+import java.util.List;
+
 public interface IUserDAO {
 
-	int login(String username, String password) throws UserException;
+	User login(String username, String password) throws UserException;
 
 	int register(User user) throws UserException;
+	
+	List<User> getSubscribedUsers();
 
 }

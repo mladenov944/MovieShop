@@ -1,19 +1,27 @@
 package com.movieshop.model;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
 
 import com.movieshop.db.DBConnection;
 
+@Service
 public class UserDAO implements IUserDAO {
 
+	private static final String SELECT_SUBSCRIBED_USERS = "SELECT * FROM users WHERE isSubscribed = 1";
 	private static final int RESULT_SET_RETURN = 1;
 	private static final String LOGIN_USER_SQL = "SELECT * FROM users WHERE email=? and password = sha1(?)";
 	private static final String ADD_USER_SQL = "INSERT INTO users VALUES (null, ?,?, sha1(?), ?,0,?)";
 
 	@Override
-	public int login(String email, String password) throws UserException {
+	public User login(String email, String password) throws UserException {
 		PreparedStatement pstmt;
 		try {
 			pstmt = DBConnection.getInstance().getConnection().prepareStatement(LOGIN_USER_SQL);
@@ -21,11 +29,16 @@ public class UserDAO implements IUserDAO {
 			pstmt.setString(2, password);
 
 			ResultSet resultSet = pstmt.executeQuery();
+			User user = new User();
 
-			if (resultSet.next()) {
-				return resultSet.getInt(RESULT_SET_RETURN);
-			} 
-			
+			while (resultSet.next()) {
+				user.setId(resultSet.getInt("id"));
+				user.setName(resultSet.getString("name"));
+				user.setLastName(resultSet.getString("last_name"));
+				user.setMoney(resultSet.getFloat("money"));
+				return user;
+			}
+
 			throw new UserException("Wrong email or password");
 		} catch (Exception e) {
 			throw new UserException("Something went wrong with the server! " + e.getMessage());
@@ -56,5 +69,28 @@ public class UserDAO implements IUserDAO {
 			e.printStackTrace();
 			throw new UserException("This user is already a member!", e);
 		}
+	}
+
+	@Override
+	public List<User> getSubscribedUsers() {
+		List<User> users = new ArrayList<>();
+		PreparedStatement pstmt;
+		try (Connection conn = DBConnection.getInstance().getConnection()) {
+			pstmt = DBConnection.getInstance().getConnection().prepareStatement(SELECT_SUBSCRIBED_USERS);
+			ResultSet resultSet = pstmt.executeQuery();
+
+			while (resultSet.next()) {
+				User user = new User();
+
+				user.setName(resultSet.getString("name"));
+				user.setLastName(resultSet.getString("last_name"));
+				user.setEmail(resultSet.getString("email"));
+				users.add(user);
+			}
+		} catch (ClassNotFoundException | SQLException e) {
+			// tuka ipshi nekvi laina
+			e.printStackTrace();
+		}
+		return users;
 	}
 }

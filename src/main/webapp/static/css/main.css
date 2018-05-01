@@ -22,6 +22,7 @@
 }
 
 body, html {
+	background:url('images/bg.jpg') no-repeat 0% 87% fixed;
 	height: 100%;
 	font-family: OpenSans-Regular, sans-serif;
 }
@@ -147,12 +148,12 @@ iframe {
   justify-content: center;
   align-items: center;
   padding: 15px;
-  background: #e9faff;
+  background:url('images/bg.jpg');
 }
 
 .wrap-login100 {
   width: 500px;
-  background: #fff;
+  background: rgba(125, 63, 152, 0.15);
   border-radius: 10px;
   overflow: hidden;
 

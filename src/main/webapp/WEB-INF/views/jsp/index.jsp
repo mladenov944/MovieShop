@@ -7,14 +7,12 @@
 <link rel="stylesheet" href="css/style.css" type="text/css" media="all" />
 <script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
 <script type="text/javascript" src="js/jquery-func.js"></script>
+<!--[if IE 6]><link rel="stylesheet" href="css/ie6.css" type="text/css" media="all" /><![endif]-->
 </head>
-<%-- <jsp:include page="header.jsp"></jsp:include> --%>
+
 <body>
 	<div id="shell">
   <div id="header">
-  <h4>Welcome, <%= session.getAttribute("name") %> <%= session.getAttribute("lastName") %> </h4>
-  <h4>Your balance is: <%= session.getAttribute("cash") %></h4>
-<%-- <td><input type="text" value="<%= session.getAttribute("name") %>" /></td> --%>
     <div class="social"> <span>FOLLOW US ON:</span>
       <ul>
         <li><a class="facebook" href="https://www.facebook.com">facebook</a></li>
@@ -22,9 +20,9 @@
     </div>
     <div id="navigation">
       <ul>
-        <li><a class="active" href="/FinalProject/loggedIn">HOME</a></li>
-        <li><a href="/FinalProject/register">MY ACCOUNT</a></li>
-        <li><a href="/FinalProject/logoutuser">LOGOUT</a></li>
+        <li><a class="active" href="/FinalProject/home">HOME</a></li>
+        <li><a href="/FinalProject/register">REGISTER</a></li>
+        <li><a href="/FinalProject/login">LOGIN</a></li>
       </ul>
     </div>
     <div id="sub-navigation">

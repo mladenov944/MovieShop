@@ -9,8 +9,7 @@ public class User {
 	private String email;
 	private boolean isAdmin;
 	private float money;
-	
-	
+	private boolean isSubscribed;
 	
 	public User(String name, String lastName, String email, String password) {
 		this.name = name;
@@ -19,6 +18,11 @@ public class User {
 		this.password = password;
 		this.isAdmin = false;
 		this.money =(int) ((Math.random()*50) +20);
+		this.isSubscribed = false;
+	}
+	
+	public User() {
+		
 	}
 	
 	public int getId() {
@@ -62,6 +66,14 @@ public class User {
 	}
 	public void setMoney(float money) {
 		this.money = money;
+	}
+
+	public boolean isSubscribed() {
+		return isSubscribed;
+	}
+
+	public void setSubscribed(boolean isSubscribed) {
+		this.isSubscribed = isSubscribed;
 	}
 	
 }

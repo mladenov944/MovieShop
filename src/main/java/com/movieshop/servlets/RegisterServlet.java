@@ -38,12 +38,7 @@ public class RegisterServlet extends HttpServlet {
 				dao.register(u);
 			}
 			 else {
-				System.out.println(name);
-				System.out.println(lastName);
-				System.out.println(email);
-				System.out.println(password);
-				System.out.println(confirmPassword);
-				response.sendRedirect("./");
+				response.sendRedirect("./register");
 				throw new UserException("Please enter a valid parameters!");
 				
 			}
