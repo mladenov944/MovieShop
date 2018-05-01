@@ -4,15 +4,14 @@ public class Trolley {
 
 	private int id;
 	private boolean isPaid;
-	private User user;
-	
-	
-	public User getUser() {
-		return user;
+	private Order order;
+
+	public Order getOrder() {
+		return order;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+	public void setOrder(Order order) {
+		this.order = order;
 	}
 
 	public Trolley() {
@@ -33,6 +32,5 @@ public class Trolley {
 	public void setPaid(boolean isPaid) {
 		this.isPaid = isPaid;
 	}
-	
-	
+
 }

@@ -12,33 +12,18 @@
 <body>
 	<div id="shell">
   <div id="header">
-  <h4>Welcome, <%= session.getAttribute("name") %> <%= session.getAttribute("lastName") %> </h4>
-  <h4>Your balance is: <%= session.getAttribute("cash") %></h4>
+  <h4>Welcome, Admin ! </h4>
 <%-- <td><input type="text" value="<%= session.getAttribute("name") %>" /></td> --%>
     <div class="social"> <span>FOLLOW US ON:</span>
-      <ul>
-        <li><a class="facebook" href="https://www.facebook.com">facebook</a></li>
-      </ul>
     </div>
     <div id="navigation">
       <ul>
         <li><a class="active" href="/FinalProject/loggedIn">HOME</a></li>
-        <li><a href="/FinalProject/register">MY ACCOUNT</a></li>
+        <li><a href="/FinalProject/addmovie">ADD MOVIE</a></li>
         <li><a href="/FinalProject/logoutuser">LOGOUT</a></li>
       </ul>
     </div>
     <div id="sub-navigation">
-      <ul>
-        <li><a href="#">SHOW ALL</a></li>
-        <li><a href="#">TOP RATED</a></li>
-      </ul>
-      <div id="search">
-        <form action="#" method="get" accept-charset="utf-8">
-          <label for="search-field">SEARCH</label>
-          <input type="text" name="search field" value="Enter search here" id="search-field" class="blink search-field"  />
-          <input type="submit" value="GO!" class="search-button" />
-        </form>
-      </div>
     </div>
   </div>
   <div id="main">
@@ -51,10 +36,11 @@
         <div class="movie">
           <div class="movie-image"> <span class="play"><span class="name">X-MAN</span></span> <a href="./movieDetails"><img src="css/images/movie1.jpg" alt="" /></a> </div>
           <div class="rating">
-            <a href="./movieDetails"> <p>ADD TO CART </p> </a> </div>
+            <a href="./movieDetails"> <p>EDIT MOVIE </p> </a>
+            <a href="./movieDetails"> <p>&emsp;&emsp;&emsp;&emsp;&ensp;REMOVE </p></a> </div>
         </div>
         <div class="movie">
-          <div class="movie-image"> <span class="play"><span class="name">SPIDER MAN 2</span></span> <a href="#"><img src="css/images/movie2.jpg" alt="" /></a> </div>
+          <div class="movie-image"> <span class="play"><span class="name">SPIDER MAN 2</span></span> <a href="./adminPage"><img src="css/images/movie2.jpg" alt="" /></a> </div>
           <div class="rating">
             <p>RATING</p>
             <div class="stars">

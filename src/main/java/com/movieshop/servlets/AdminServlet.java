@@ -9,21 +9,23 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/loggedIn")
-
-public class LoggedInHome extends HttpServlet {
+@WebServlet("/admin")
+public class AdminServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-		if ((request.getSession(false) == null) || (request.getSession().getAttribute("id") == null)) {
+		System.out.println(request.getSession().getAttribute("name"));
+
+		if (!(request.getSession().getAttribute("email").equals("admin@admin.bg") || (request.getSession(false) == null)
+				|| (request.getSession().getAttribute("id") == null))) {
 			response.sendRedirect("./home");
 			return;
 		}
 
-		String nextJSP = "./loggedInHome";
-		RequestDispatcher dispatcher = request.getRequestDispatcher(nextJSP);
+		String nextJSP2 = "./adminPage";
+		RequestDispatcher dispatcher = request.getRequestDispatcher(nextJSP2);
 		dispatcher.forward(request, response);
 		return;
 	}

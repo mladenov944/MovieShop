@@ -24,8 +24,6 @@ import com.movieshop.model.UserDAO;
 @EnableScheduling
 public class EmailService {
 
-	private static final String SUBJECT = "Promotion";
-
 	JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
 
 	@Autowired

@@ -17,7 +17,7 @@
   <link href="css/print.css" rel="stylesheet" media="print"> 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>Movie Details</title>
 </head>
  <body> 
   <script type="text/javascript">

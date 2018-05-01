@@ -36,6 +36,8 @@ public class UserDAO implements IUserDAO {
 				user.setName(resultSet.getString("name"));
 				user.setLastName(resultSet.getString("last_name"));
 				user.setMoney(resultSet.getFloat("money"));
+				user.setAdmin(resultSet.getBoolean("isAdmin"));
+				user.setEmail(resultSet.getString("email"));
 				return user;
 			}
 
