@@ -1,0 +1,23 @@
+var timezone = -60;
+var sitesReady = false;
+$(document).on('sitesReady', function() {
+    sitesReady = true;
+});
+$(document).ready(function() {
+    window.setTimeout(function() {
+        $('.dropdown-menu #whatsOn a').mouseenter(function() {
+            if (!$(this).data('poster')) return;
+            var $div = $('#whatsOn #altPoster').empty();
+            $div.append($('<img>').attr('src', _msg.show('postersFolder') + $(this).data('poster')).attr('alt', _msg.show('alt.postersSearchList')));
+            $div.append('<p><strong>' + $(this).html() + '</strong></p>');
+            $('#whatsOn #leadPoster').hide();
+            $div.show();
+        }).mouseleave(function() {
+            $('#whatsOn #altPoster').empty();
+            $('#whatsOn #leadPoster').show();
+        });
+        $('#whatsOn #leadPoster').click(function() {
+            window.location = $(this).find('p').data('url');
+        });
+    }, loadTimeout);
+});

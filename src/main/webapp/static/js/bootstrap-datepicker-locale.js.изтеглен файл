@@ -1,0 +1,119 @@
+!function (a) {
+    a.fn.datepicker.dates["en-gb"] = {
+        days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+        daysShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+        daysMin: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
+        months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+        monthsShort: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        today: "Today",
+        monthsTitle: "Months",
+        clear: "Clear",
+        weekStart: 1,
+        format: "dd/mm/yyyy"
+    }
+}(jQuery);
+!function (a) {
+    a.fn.datepicker.dates["en-ie"] = {
+        days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+        daysShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+        daysMin: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
+        months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+        monthsShort: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        today: "Today",
+        monthsTitle: "Months",
+        clear: "Clear",
+        weekStart: 1,
+        format: "dd/mm/yyyy"
+    }
+}(jQuery);
+!function (a) {
+    a.fn.datepicker.dates["he-il"] = {
+        days: ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת", "ראשון"],
+        daysShort: ["א", "ב", "ג", "ד", "ה", "ו", "ש", "א"],
+        daysMin: ["א", "ב", "ג", "ד", "ה", "ו", "ש", "א"],
+        months: ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"],
+        monthsShort: ["ינו", "פבר", "מרץ", "אפר", "מאי", "יונ", "יול", "אוג", "ספט", "אוק", "נוב", "דצמ"],
+        today: "היום",
+        rtl: !0
+    }
+}(jQuery);
+!function (a) {
+    a.fn.datepicker.dates["pl"] = {
+        days: ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"],
+        daysShort: ["Niedz.", "Pon.", "Wt.", "Śr.", "Czw.", "Piąt.", "Sob."],
+        daysMin: ["Nd.", "Pn.", "Wt.", "Śr.", "Cz.", "Pt.", "Sb."],
+        months: ["Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec", "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"],
+        monthsShort: ["Sty.", "Lut.", "Mar.", "Kwi.", "Maj", "Cze.", "Lip.", "Sie.", "Wrz.", "Paź.", "Lis.", "Gru."],
+        today: "Dzisiaj",
+        weekStart: 1,
+        clear: "Wyczyść",
+        format: "dd.mm.yyyy"
+    }
+}(jQuery);
+!function (a) {
+    a.fn.datepicker.dates["hu"] = {
+        days: ["vasárnap", "hétfő", "kedd", "szerda", "csütörtök", "péntek", "szombat"],
+        daysShort: ["vas", "hét", "ked", "sze", "csü", "pén", "szo"],
+        daysMin: ["V", "H", "K", "Sze", "Cs", "P", "Szo"],
+        months: ["január", "február", "március", "április", "május", "június", "július", "augusztus", "szeptember", "október", "november", "december"],
+        monthsShort: ["jan", "feb", "már", "ápr", "máj", "jún", "júl", "aug", "sze", "okt", "nov", "dec"],
+        today: "ma",
+        weekStart: 1,
+        clear: "töröl",
+        titleFormat: "yyyy. MM",
+        format: "yyyy.mm.dd"
+    }
+}(jQuery);
+!function (a) {
+    a.fn.datepicker.dates["ro"] = {
+        days: ["Duminică", "Luni", "Marţi", "Miercuri", "Joi", "Vineri", "Sâmbătă"],
+        daysShort: ["Dum", "Lun", "Mar", "Mie", "Joi", "Vin", "Sâm"],
+        daysMin: ["Du", "Lu", "Ma", "Mi", "Jo", "Vi", "Sâ"],
+        months: ["Ianuarie", "Februarie", "Martie", "Aprilie", "Mai", "Iunie", "Iulie", "August", "Septembrie", "Octombrie", "Noiembrie", "Decembrie"],
+        monthsShort: ["Ian", "Feb", "Mar", "Apr", "Mai", "Iun", "Iul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        today: "Astăzi",
+        clear: "Șterge",
+        weekStart: 1,
+        format: "dd/mm/yyyy"
+    }
+}(jQuery);
+!function (a) {
+    a.fn.datepicker.dates["bg"] = {
+        days: ["Неделя", "Понеделник", "Вторник", "Сряда", "Четвъртък", "Петък", "Събота"],
+        daysShort: ["Нед", "Пон", "Вто", "Сря", "Чет", "Пет", "Съб"],
+        daysMin: ["Н", "П", "В", "С", "Ч", "П", "С"],
+        months: ["Януари", "Февруари", "Март", "Април", "Май", "Юни", "Юли", "Август", "Септември", "Октомври", "Ноември", "Декември"],
+        monthsShort: ["Ян", "Фев", "Мар", "Апр", "Май", "Юни", "Юли", "Авг", "Сеп", "Окт", "Ное", "Дек"],
+        today: "днес",
+        clear: "Очистить",
+        weekStart: 1,
+        format: "dd/mm/yyyy"
+    }
+}(jQuery);
+!function (a) {
+    a.fn.datepicker.dates["cs"] = {
+        days: ["Neděle", "Pondělí", "Úterý", "Středa", "Čtvrtek", "Pátek", "Sobota"],
+        daysShort: ["Ned", "Pon", "Úte", "Stř", "Čtv", "Pát", "Sob"],
+        daysMin: ["Ne", "Po", "Út", "St", "Čt", "Pá", "So"],
+        months: ["Leden", "Únor", "Březen", "Duben", "Květen", "Červen", "Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec"],
+        monthsShort: ["Led", "Úno", "Bře", "Dub", "Kvě", "Čer", "Čnc", "Srp", "Zář", "Říj", "Lis", "Pro"],
+        today: "Dnes",
+        clear: "Vymazat",
+        monthsTitle: "Měsíc",
+        weekStart: 1,
+        format: "dd.mm.yyyy"
+    }
+}(jQuery);
+!function (a) {
+    a.fn.datepicker.dates["sk"] = {
+        days: ["Nedeľa", "Pondelok", "Utorok", "Streda", "Štvrtok", "Piatok", "Sobota"],
+        daysShort: ["Ned", "Pon", "Uto", "Str", "Štv", "Pia", "Sob"],
+        daysMin: ["Ne", "Po", "Ut", "St", "Št", "Pia", "So"],
+        months: ["Január", "Február", "Marec", "Apríl", "Máj", "Jún", "Júl", "August", "September", "Október", "November", "December"],
+        monthsShort: ["Jan", "Feb", "Mar", "Apr", "Máj", "Jún", "Júl", "Aug", "Sep", "Okt", "Nov", "Dec"],
+        today: "Dnes",
+        clear: "Vymazať",
+        weekStart: 1,
+        format: "d.m.yyyy"
+    }
+}(jQuery);

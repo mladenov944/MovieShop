@@ -1,0 +1,285 @@
+/**
+ * Created by K.Gusz on 2017-04-18.
+ */
+
+/*
+ TODO: add logging after merging to development
+ further refactoring of whatson.js
+ */
+
+var locationService = (function () {
+
+    var googleApiKey = geolocationGoogleApiKey;
+    var bingApiKey = geolocationBingApiKey;
+    var queryTimeout = parseInt(geolocationTimeout);
+
+    var distanceUnitsMapping = {
+        10100: {
+            'unit': 'km',
+            'unitFormat': 'metric',
+            'word': 'km'
+        },
+        10101: {
+            'unit': 'km',
+            'unitFormat': 'metric',
+            'word': 'km'
+        },
+        10102: {
+            'unit': 'km',
+            'unitFormat': 'metric',
+            'word': 'km'
+        },
+        10103: {
+            'unit': 'km',
+            'unitFormat': 'metric',
+            'word': 'km'
+        },
+        10104: {
+            'unit': 'km',
+            'unitFormat': 'metric',
+            'word': 'km'
+        },
+        10105: {
+            'unit': 'km',
+            'unitFormat': 'metric',
+            'word': 'km'
+        },
+        10106: {
+            'unit': 'km',
+            'unitFormat': 'metric',
+            'word': 'km'
+        },
+        10107: {
+            'unit': 'km',
+            'unitFormat': 'metric',
+            'word': 'km'
+        },
+        10108: {
+            'unit': 'mil',
+            'unitFormat': 'imperial',
+            'word': 'miles'
+        },
+        10109: {
+            'unit': 'mil',
+            'unitFormat': 'imperial',
+            'word': 'miles'
+        }
+    };
+
+    var distanceUnits = function () {
+        return distanceUnitsMapping[tenantId];
+    };
+
+    var SortByDist = function (a, b) {
+        var aName = a.dist;
+        var bName = b.dist;
+        return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+    };
+
+    var geoCodeAddressOSM = function (queryString) {
+        if (typeof queryString !== 'undefined' && queryString !== '') {
+            var queryUrl = '//nominatim.openstreetmap.org/search?q=' + queryString + '&format=json&polygon=0&addressdetails=0&limit=1&accept-language=en_gb';
+            return $.when(
+                $.ajax({
+                    type: "get",
+                    url: queryUrl,
+                    contentType: "application/json; charset=utf-8",
+                    timeout: queryTimeout,
+                    dataType: "json"
+                })
+            );
+        }
+    };
+
+    var geoCodeAddressOSMSuccess = function (data) {
+        var response = {};
+        if (typeof data !== 'undefined' && data.length !== 0 && typeof data[0].lat !== 'undefined' && typeof data[0].lon !== 'undefined') {
+            response.status = 'OK';
+            response.lat = data[0].lat;
+            response.long = data[0].lon;
+        } else {
+            response.status = 'ERROR';
+        }
+        //console.log('geoCodeAddressOSM success callback fired:', response.status);
+        return response;
+    };
+
+    var geoCodeAddressOSMError = function () {
+        var response = {};
+        response.status = 'ERROR';
+        //console.log('geoCodeAddressOSM error callback fired:', response.status);
+        return response;
+    };
+
+    var geoCodeAddressGoogle = function (queryString) {
+        if (typeof queryString !== 'undefined' && queryString !== '') {
+            var country = _msg.show('countrycode').toLowerCase();
+            var countryParam = '';
+            if(country !== '') {
+                countryParam = '&address=' + country;
+            }
+            var queryUrl = '//maps.googleapis.com/maps/api/geocode/json?address=' + queryString + countryParam + '&key=' + googleApiKey;
+            return $.when(
+                $.ajax({
+                    type: "get",
+                    url: queryUrl,
+                    timeout: queryTimeout,
+                    dataType: "json"
+                })
+            );
+        }
+    };
+
+    var geoCodeAddressGoogleSuccess = function (data) {
+        var response = {};
+        if (typeof data !== 'undefined' && typeof data.status !== 'undefined' && data.status === 'OK') {
+            if (typeof data.results !== 'undefined' && data.results.length !== 0) {
+                var result = data.results[0];
+                if (typeof result.geometry !== 'undefined' && typeof result.geometry.location !== 'undefined') {
+                    var location = result.geometry.location;
+                    if (typeof location.lat !== 'undefined' && typeof location.lng !== 'undefined') {
+                        response.status = 'OK';
+                        response.lat = data.results[0].geometry.location.lat;
+                        response.long = data.results[0].geometry.location.lng;
+                    } else {
+                        response.status = 'ERROR';
+                    }
+                } else {
+                    response.status = 'ERROR';
+                }
+            } else {
+                response.status = 'ERROR';
+            }
+        } else {
+            response.status = data.status;
+        }
+        //console.log('geoCodeAddressGoogle success callback fired:', response.status);
+        return response;
+    };
+
+    var geoCodeAddressGoogleError = function (data) {
+        var response = {};
+        response.status = 'ERROR';
+        //console.log('geoCodeAddressGoogle error callback fired:', response.status);
+        return response;
+    };
+
+    var geoCodeAddressBing = function (queryString) {
+        var country = _msg.show('countrycode').toUpperCase();
+        var countryParam = '';
+        if(country !== '') {
+            countryParam = '/' + country + '/';
+        }
+        if (typeof queryString !== 'undefined' && queryString !== '') {
+            var queryUrl = 'https://dev.virtualearth.net/REST/v1/Locations' + countryParam + queryString + '?key=' + bingApiKey + '&s=1&o=json&maxResults=1';
+            return $.when(
+                $.ajax({
+                    dataType: "jsonp",
+                    jsonp: "jsonp",
+                    timeout: queryTimeout,
+                    url: queryUrl
+                })
+            );
+        }
+    };
+
+    var geoCodeAddressBingSuccess = function (data) {
+        var response = {};
+        if (typeof data !== 'undefined' && typeof data.statusCode !== 'undefined' && data.statusCode === 200) {
+            if (typeof data.resourceSets !== 'undefined' && data.resourceSets.length !== 0) {
+                if (typeof data.resourceSets[0].resources !== 'undefined' && data.resourceSets[0].resources.length !== 0) {
+                    var resource = data.resourceSets[0].resources[0];
+                    if (typeof resource.point !== 'undefined') {
+                        if (typeof resource.point.coordinates !== 'undefined' && resource.point.coordinates.length !== 0) {
+                            response.status = 'OK';
+                            response.lat = resource.point.coordinates[0];
+                            response.long = resource.point.coordinates[1];
+                        } else {
+                            response.status = 'ERROR';
+                        }
+                    } else {
+                        response.status = 'ERROR';
+                    }
+                } else {
+                    response.status = 'ERROR';
+                }
+            } else {
+                response.status = 'ERROR';
+            }
+        } else {
+            response.status = 'ERROR';
+        }
+        //console.log('geoCodeAddressBing success callback fired:', response.status);
+        return response;
+    };
+
+    var geoCodeAddressBingError = function (data) {
+        var response = {};
+        response.status = 'ERROR';
+        //console.log('geoCodeAddressBing error callback fired:', response.status);
+        return response;
+    };
+
+    var calculateDistance = function (lat1, lon1, lat2, lon2) {
+        var p = 0.017453292519943295;    // Math.PI / 180
+        var c = Math.cos;
+        var a = 0.5 - c((lat2 - lat1) * p) / 2 +
+            c(lat1 * p) * c(lat2 * p) *
+            (1 - c((lon2 - lon1) * p)) / 2;
+
+        return 12742 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
+    };
+
+    var preciseRound = function (value, decPlaces) {
+        var val = value * Math.pow(10, decPlaces);
+        var fraction = (Math.round((val - parseInt(val)) * 10) / 10);
+        if (fraction === -0.5) fraction = -0.6;
+        val = Math.round(parseInt(val) + fraction) / Math.pow(10, decPlaces);
+        return val;
+    };
+
+    var populateDistances = function (lat, long, locations) {
+        var results = [];
+        if (Object.prototype.toString.call(locations) === '[object Array]' && locations.length !== 0 && typeof parseFloat(lat) === 'number' && typeof parseFloat(long) === 'number') {
+
+            $.each(locations, function (idx, res) {
+                var distance = calculateDistance(lat, long, locations[idx].latitude, locations[idx].longitude);
+                if (distanceUnitsMapping[tenantId].unit === 'mil') {
+                    distance = k2m(distance);
+                }
+                locations[idx].dist = preciseRound(distance, 2);
+                results.push(locations[idx]);
+            });
+            results.sort(SortByDist);
+            results = results.slice(0, 15);
+        } else {
+            //console.log('error, no locations provided');
+        }
+        return results;
+    };
+
+    var k2m = function (kilometers) {
+        var km = parseFloat(kilometers);
+        var mi = 0;
+        if (!isNaN(km)) mi = km * 0.621371192;
+        return (mi);
+    };
+
+    return {
+        calculateDistance: calculateDistance,
+        preciseRound: preciseRound,
+        k2m: k2m,
+        populateDistances: populateDistances,
+        geoCodeAddressOSM: geoCodeAddressOSM,
+        geoCodeAddressOSMSuccess: geoCodeAddressOSMSuccess,
+        geoCodeAddressOSMError: geoCodeAddressOSMError,
+        geoCodeAddressGoogle: geoCodeAddressGoogle,
+        geoCodeAddressGoogleSuccess: geoCodeAddressGoogleSuccess,
+        geoCodeAddressGoogleError: geoCodeAddressGoogleError,
+        geoCodeAddressBing: geoCodeAddressBing,
+        geoCodeAddressBingSuccess: geoCodeAddressBingSuccess,
+        geoCodeAddressBingError: geoCodeAddressBingError,
+        distanceUnits: distanceUnits()
+    }
+})();
+

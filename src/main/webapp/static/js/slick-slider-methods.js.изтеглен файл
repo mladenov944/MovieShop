@@ -1,0 +1,500 @@
+/**
+ * Created by K.Gusz on 2017-06-28.
+ */
+
+var sliders = (function () {
+
+    var arrowLeftImageLink = '/xmedia/img/' + tenantId + '/slider-arrow-left.svg';
+    var arrowRightImageLink = '/xmedia/img/' + tenantId + '/slider-arrow-right.svg';
+    var missingVideoPlaceholderImage = '/xmedia/img/' + tenantId + '/missing-trailer.png';
+    var missingVideoPlaceholder = $('<img alt="' + _msg.show("alert.missingVideoPlaceholderImage") + '" src="' + missingVideoPlaceholderImage + '" class="img-responsive"/>');
+    var config = {
+        heroSliderSelector: '[data-slick="slick-hero"]',
+        videoSliderSelector: '[data-slick="slick-video"]',
+        heroThumbSliderSelector: '[data-slick="slick-thumb"]',
+        videoThumbSliderSelector: '[data-slick="slick-video-thumb"]',
+        relatedElementAttributeSelector: 'data-nav-for',
+        closeVideoButtonCaption: 'Close video',
+        tooltipsForVideoThumbsEnabled: true,
+        autoplaySpeed: 5000,
+        autoplayVideoInSlider: true,
+        arrowLeftUrl: arrowLeftImageLink,
+        arrowRightUrl: arrowRightImageLink,
+        isRtl: false
+    };
+
+    var getCloseButtonCaption = function () {
+        var buttonCaption = _msg.show('closeVideo');
+        if (buttonCaption !== '') {
+            config.closeVideoButtonCaption = buttonCaption;
+        }
+    };
+
+    var detectRtl = function () {
+        var dir = document.documentElement.getAttribute('dir');
+        if (dir !== null && dir.toLowerCase() === 'rtl') {
+            config.isRtl = true;
+            config.arrowLeftUrl = arrowRightImageLink;
+            config.arrowRightUrl = arrowLeftImageLink;
+            $.log.info('sliders switched to RTL mode');
+        }
+    };
+
+    var isElementInViewport = function (el) {
+        //special bonus for those using jQuery
+        if (typeof jQuery === 'function' && el instanceof jQuery) {
+            el = el[0];
+        }
+
+        if (typeof el !== 'undefined') {
+            var rect = el.getBoundingClientRect();
+
+            return (
+                /* top and bottom is enough since hero banners have full window width */
+                rect.top >= 0 &&
+                rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) /*or $(window).height() */
+            );
+        }
+    };
+
+    var getNavSelectorForSlider = function (element) {
+        if (typeof element !== 'undefined') {
+            var attr = element.attr(config.relatedElementAttributeSelector);
+            if (typeof attr !== 'undefined' && attr !== '') {
+                return '[' + config.relatedElementAttributeSelector + '="' + attr + '"]';
+            }
+        }
+    };
+
+    var appendClickListenersToSlides = function (slider, type) {
+        $('.slick-slide', slider).on('click', function (e) {
+            var $this = $(this);
+            utagBannerOnClick($this, $this.data('slick-index'), type);
+        });
+    };
+
+    var appendAutoplayToEmbedCode = function (embedCode) {
+        if (typeof embedCode !== 'undefined' && embedCode !== '' && config.autoplayVideoInSlider) {
+            var stringParam = '?';
+            if (embedCode.indexOf('?') > -1) {
+                stringParam = '&';
+            }
+            embedCode = embedCode + stringParam + 'autoplay=1';
+            return embedCode;
+        } else {
+            return '';
+        }
+    };
+
+    var buildPlayer = function (embedCode, code, target) {
+        if (embedCode !== '' && code !== '' && typeof target !== 'undefined') {
+            var videoSelectorId = 'video_' + code;
+            $('<iframe>', {
+                src: embedCode,
+                frameborder: 0,
+                allowfullscreen: 'true',
+                style: 'width: 100%; height: 100%; opacity: 1; display: block'
+            }).appendTo(target);
+
+            var $closeButton = $('<div>', {
+                class: 'video-close-button'
+            });
+            $closeButton.append($('<i class="fa fa-close"></i>'));
+            $closeButton.append(' ' + config.closeVideoButtonCaption);
+            $closeButton.on('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                removeVideoPlayer(videoSelectorId);
+                utagVideoClosed(target);
+            });
+            $closeButton.appendTo(target);
+            target.attr('id', videoSelectorId);
+            target.addClass('active');
+            $.log.info('buildPlayer called for: ' + code);
+        }
+    };
+
+    var appendVideoPlayerToSlide = function (slider, container) {
+        var embedCode = appendAutoplayToEmbedCode(container.attr('href'));
+        var code = container.attr('data-code');
+        var $target = $('.video-holder', container);
+        buildPlayer(embedCode, code, $target);
+        $.log.info('removeVideoPlayer: ' + slider.attr('id'));
+    };
+
+    var removeVideoPlayer = function (id) {
+        var $holder = $('#' + id);
+        $holder.empty();
+        $holder.removeClass('active');
+        $holder.removeAttr('id');
+        $.log.info('removeVideoPlayer: ' + id);
+    };
+
+    var appendVideoClickListenersToSlides = function (slider) {
+        $('.slick-slide a[data-type="video"]', slider).on('click', function (e) {
+            e.preventDefault();
+            var $this = $(this);
+            var currentBreakpoint = Unison.fetch.now();
+            if (currentBreakpoint && parseInt(currentBreakpoint.width) < 768) {
+                if ($('html.safari.ipad').length === 1 || $('html.safari.iphone').length === 1) {
+                    appendVideoPlayerToSlide(slider, $this);
+                } else {
+                    window.location = $this.attr('href');
+                }
+            } else {
+                appendVideoPlayerToSlide(slider, $this);
+            }
+            utagVideoPlay($this.parent(), $this.parent().data('slick-index'));
+        });
+        $.log.info('appendVideoClickListenersToSlides: ' + slider.attr('id'));
+    };
+
+    var prepareTrailerPlayerData = function (data) {
+        var results = [];
+        if(typeof data !== 'undefined' && typeof data.body !== 'undefined') {
+            var films = data.body;
+            $.each(films, function(idx, movie) {
+                if(movie.videoLink !== null && typeof movie.videoLink !== 'undefined' && movie.videoLink !== '') {
+                    var obj = {};
+                    obj.code = movie.filmId;
+                    obj.urlSlug = movie.filmLink;
+                    obj.name = movie.filmName;
+                    obj.trailerLink = movie.videoLink;
+                    obj.youtubeVideoId = obj.trailerLink.split('?v=')[1];
+                    obj.youtubeThumbnailUrl = '//img.youtube.com/vi/' + obj.youtubeVideoId + '/hqdefault.jpg';
+                    obj.youtubeEmbedCode = '//www.youtube.com/embed/' + obj.youtubeVideoId + '?hd=1&wmode=opaque&controls=1&showinfo=0';
+                    results.push(obj);
+                }
+            });
+        }
+        $.log.info('prepareTrailerPlayerData called');
+        return results;
+    };
+
+    var prepareUtagDataForBanner = function (banner) {
+        var eventData = {
+            'name': '',
+            'id': '',
+            'heroName': ''
+        };
+        if (typeof banner !== 'undefined') {
+            var bannerTitle = $(banner).attr('title'),
+                hasTitle = typeof bannerTitle !== 'undefined' && bannerTitle !== '';
+            if (hasTitle) {
+                if (bannerTitle.indexOf('_') > -1) {
+                    var altSplit = bannerTitle.split('_');
+                    eventData.name = altSplit[0];
+                    eventData.id = altSplit[1];
+                } else {
+                    eventData.name = bannerTitle;
+                    eventData.id = bannerTitle;
+                }
+            } else {
+                var link, startPos;
+                if (typeof $(banner).attr('href') !== 'undefined') {
+                    link = $(banner).attr('href');
+                } else if ($('[data-type="video"]', banner).length !== 0) {
+                    link = $('[data-type="video"]', banner).attr('href');
+                } else {
+                    link = '';
+                }
+                startPos = link.indexOf('/') === 0 ? 1 : 0;
+                eventData.name = link.substring(startPos, link.length);
+                eventData.id = link.substring(startPos, link.length);
+            }
+            eventData.heroName = $(banner).parents('[data-slider-component]').attr('data-slider-name');
+        }
+        $.log.info('prepareUtagDataForBanner: ' + JSON.stringify(eventData));
+        return eventData;
+    };
+
+    var getEventConfigForHero = function () {
+        var heroType = {
+            'id': 'HomepageHero-_',
+            'listName': 'hero_banners'
+        }
+        return heroType
+    };
+
+    var getEventConfigForVideo = function () {
+        var videoType = {
+            'id': 'FilmPageTrailer-_',
+            'listName': 'filmpage_trailer'
+        }
+        return videoType
+    };
+
+    var getEventConfigByType = function (type) {
+        if (typeof type !== 'undefined' && type !== '') {
+            if (type === 'hero') {
+                return getEventConfigForHero()
+            } else if (type === 'video') {
+                return getEventConfigForVideo()
+            } else {
+                var defaultValue = {
+                    'id': '',
+                    'listName': ''
+                }
+                return defaultValue
+            }
+        }
+    };
+
+    var utagBannerImpression = function (banner, index, type) {
+        if (utagDefined() && isElementInViewport(banner)) {
+            var eventData = prepareUtagDataForBanner(banner);
+            var eventConfig = getEventConfigByType(type);
+            utag.link({
+                'impression_id': eventConfig.id + [eventData.id],
+                'impression_name': eventConfig.id + [eventData.name],
+                'impression_brand': _msg.show('brandName'),
+                'impression_cat': 'ad_banner',
+                'impression_list': eventConfig.listName,
+                'impression_pos': [index + 1]
+            });
+            $.log.info('utagBannerImpression: ', JSON.stringify(eventData));
+        }
+    };
+
+    var utagBannerOnClick = function (banner, index, type) {
+        if (utagDefined()) {
+            var eventData = prepareUtagDataForBanner(banner);
+            var eventConfig = getEventConfigByType(type);
+            utag.link({
+                'impression_id': eventConfig.id + [eventData.id],
+                'impression_name': eventConfig.id + [eventData.name],
+                'impression_brand': _msg.show('brandName'),
+                'impression_cat': 'ad_banner',
+                'impression_list': eventConfig.listName,
+                'impression_pos': [index + 1],
+                'event_name': 'promo_click'
+            });
+            $.log.info('utagBannerOnClick: ', JSON.stringify(eventData));
+        }
+    };
+
+    var utagVideoPlay = function (banner) {
+        if (utagDefined()) {
+            var eventData = prepareUtagDataForBanner(banner);
+            utag.link({
+                'trailer_play': 'Play',
+                'event_name': [eventData.name],
+                'event_type': 'Trailer'
+            });
+            $.log.info('utagVideoPlay: ', JSON.stringify(eventData));
+        }
+    };
+
+    var utagVideoClosed = function (videoHolder) {
+        if (utagDefined()) {
+            var eventData = prepareUtagDataForBanner(videoHolder.parents('.slick-slide'));
+            utag.link({
+                'event_name': [eventData.name],
+                'event_label': [eventData.heroName],
+                'event_type': 'video_closed',
+                'impression_id': [eventData.id],
+                'impression_name': [eventData.name]
+            });
+            $.log.info('utagVideoClosed: ', JSON.stringify(eventData));
+        }
+    };
+
+    var initHeroSlider = function (heroSlider, thumbsSlider) {
+        var navForSelector = '';
+        if (typeof thumbsSlider !== 'undefined') {
+            navForSelector = getNavSelectorForSlider(thumbsSlider);
+        }
+        heroSlider
+            .on('init', function () {
+                appendClickListenersToSlides(heroSlider, 'hero');
+                utagBannerImpression($('.slick-slide', heroSlider)[0], 0, 'hero');
+                $.log.info(heroSlider.attr('id') + ' initialized');
+            })
+            .slick({
+                asNavFor: navForSelector,
+                autoplay: true,
+                autoplaySpeed: config.autoplaySpeed,
+                dots: true,
+                fade: true,
+                lazyLoad: 'ondemand',
+                pauseOnDotsHover: true,
+                nextArrow: '<button type="button" class="slick-next"><img alt="' + _msg.show("alt.right.arrow") + '" src="' + config.arrowRightUrl + '" /></button>',
+                prevArrow: '<button type="button" class="slick-prev"><img alt="' + _msg.show("alt.left.arrow") + '" src="' + config.arrowLeftUrl + '" /></button>',
+                rtl: config.isRtl,
+                responsive: [
+                    {
+                        breakpoint: 768,
+                        settings: {
+                            dots: false,
+                            fade: false
+                        }
+                    }
+                ]
+            })
+            .on('afterChange', function (event, slick, currentSlide) {
+                utagBannerImpression($('.slick-slide', heroSlider)[currentSlide], currentSlide, 'hero');
+            });
+    };
+
+    var initVideoSlider = function (videoSlider, thumbsSlider) {
+        if ($('.slick-slide', videoSlider).length !== 0) {
+            var navForSelector = '';
+            if (typeof thumbsSlider !== 'undefined') {
+                navForSelector = getNavSelectorForSlider(thumbsSlider);
+            }
+            videoSlider
+                .on('init', function () {
+                    appendVideoClickListenersToSlides(videoSlider);
+                    $.log.info(videoSlider.attr('id') + ' initialized');
+                })
+                .on('beforeChange', function (event, slick, currentSlide) {
+                    var $slide = $('.slick-slide', videoSlider)[currentSlide];
+                    var $videoHolder = $('.video-holder.active', $slide);
+                    if ($videoHolder.length !== 0) {
+                        removeVideoPlayer($videoHolder.attr('id'));
+                    }
+                })
+                .slick({
+                    asNavFor: navForSelector,
+                    autoplay: false,
+                    dots: false,
+                    fade: true,
+                    lazyLoad: 'ondemand',
+                    pauseOnDotsHover: true,
+                    arrows: false,
+                    swipeToSlide: true,
+                    rtl: config.isRtl
+                });
+        } else {
+            var $parent = videoSlider.parent();
+            videoSlider.remove();
+            thumbsSlider.remove();
+            $parent.append(missingVideoPlaceholder);
+        }
+
+    };
+
+    var initThumbSlider = function (thumbsSlider, parentSlider) {
+        var navForSelector = '';
+        if (typeof parentSlider !== 'undefined') {
+            navForSelector = getNavSelectorForSlider(parentSlider);
+        }
+        var numberOfThumbs = parentSlider.find('.slick-slide').length;
+
+        thumbsSlider.slick({
+            asNavFor: navForSelector,
+            respondTo: 'min',
+            slidesToShow: numberOfThumbs,
+            slidesToScroll: numberOfThumbs,
+            lazyLoad: 'ondemand',
+            dots: false,
+            centerMode: false,
+            infinite: false,
+            focusOnSelect: true,
+            rtl: config.isRtl
+        });
+        $.log.info(thumbsSlider.attr('id') + ' initialized');
+    };
+
+    var initVideoThumbSlider = function (thumbsSlider, parentSlider) {
+        var navForSelector = '';
+        if (typeof parentSlider !== 'undefined') {
+            navForSelector = getNavSelectorForSlider(parentSlider);
+        }
+        thumbsSlider
+            .on('init', function () {
+                if (config.tooltipsForVideoThumbsEnabled) {
+                    $('[data-toggle="popover"]').popover();
+                }
+            })
+            .slick({
+                asNavFor: navForSelector,
+                respondTo: 'window',
+                slidesToShow: 5,
+                slidesToScroll: 1,
+                nextArrow: '<button type="button" class="slick-next"><img alt="' + _msg.show("alt.right.arrow") + '" src="' + config.arrowRightUrl + '" /></button>',
+                prevArrow: '<button type="button" class="slick-prev"><img alt="' + _msg.show("alt.left.arrow") + '" src="' + config.arrowLeftUrl + '" /></button>',
+                dots: false,
+                centerMode: true,
+                infinite: true,
+                focusOnSelect: true,
+                rtl: config.isRtl,
+                responsive: [
+                    {
+                        breakpoint: 960,
+                        settings: {
+                            slidesToShow: 4
+                        }
+                    },
+                    {
+                        breakpoint: 768,
+                        settings: {
+                            slidesToShow: 4
+                        }
+                    },
+                    {
+                        breakpoint: 640,
+                        settings: {
+                            slidesToShow: 3
+                        }
+                    },
+                    {
+                        breakpoint: 480,
+                        settings: {
+                            slidesToShow: 2
+                        }
+                    }
+                ]
+            });
+        $.log.info(thumbsSlider.attr('id') + ' initialized');
+    };
+
+    var initAllSliders = function () {
+        $('[data-slider-component]').each(function (index) {
+            var $this = $(this),
+                $heroSlider = $this.find(config.heroSliderSelector),
+                $videoSlider = $this.find(config.videoSliderSelector),
+                $heroThumbSlider = $this.find(config.heroThumbSliderSelector),
+                $videoThumbSlider = $this.find(config.videoThumbSliderSelector);
+
+            $heroSlider.attr(config.relatedElementAttributeSelector, 'slickSliderHero_' + index);
+            $videoSlider.attr(config.relatedElementAttributeSelector, 'slickSliderVideo_' + index);
+            $heroThumbSlider.attr(config.relatedElementAttributeSelector, 'slickHeroThumbs_' + index);
+            $videoThumbSlider.attr(config.relatedElementAttributeSelector, 'slickVideoThumbs_' + index);
+
+            if ($heroSlider.length !== 0) {
+                $.log.info($heroSlider.attr('id') + ' init called');
+                initHeroSlider($heroSlider, $heroThumbSlider);
+                if ($heroThumbSlider.length !== 0) {
+                    $.log.info($heroThumbSlider.attr('id') + ' init called');
+                    initThumbSlider($heroThumbSlider, $heroSlider);
+                }
+
+            }
+            if ($videoSlider.length !== 0) {
+                $.log.info($videoSlider.attr('id') + ' init called');
+                initVideoSlider($videoSlider, $videoThumbSlider);
+                if ($videoThumbSlider.length !== 0) {
+                    $.log.info($videoThumbSlider.attr('id') + ' init called');
+                    initVideoThumbSlider($videoThumbSlider, $videoSlider);
+                }
+            }
+
+            $this.css('opacity', 1);
+            $this.removeAttr('data-slider-component data-slider-name').remove;
+        });
+    };
+
+    getCloseButtonCaption();
+
+    detectRtl();
+
+    return {
+        initAllSliders: initAllSliders,
+        prepareTrailerPlayerData: prepareTrailerPlayerData,
+        initVideoSlider: initVideoSlider,
+        config: config
+    }
+
+})
+();

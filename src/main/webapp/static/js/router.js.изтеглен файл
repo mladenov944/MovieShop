@@ -1,0 +1,52 @@
+/**
+ * Created by Krzysztof Smolicz on 2017-03-31.
+ */
+
+(function ( $ ) {
+    "use strict";
+
+    $.fn.route = function( url, callback, resource ) {
+
+        var storageSupported = typeof(Storage) !== 'undefined';
+        var putResource = function(url, resource) {
+            if(typeof url !== 'undefined') {
+                if (typeof resource === 'undefined') {
+                    resource = '';
+                }
+                return url.replace(/\{.*?\}/g, resource);
+            }
+        };
+
+        if (storageSupported) {
+            var storedRoutes = sessionStorage.getItem("routes");
+            if( storedRoutes !== null && storedRoutes !== '') {
+                return callback(putResource(JSON.parse(storedRoutes)[url], resource));
+            }
+        }
+        $.ajax({
+            url: $.fn.handleWebmatrixHost('/system/routes'),
+            type: 'get',
+            success: function (data) {
+                if(typeof data !== 'undefined' && typeof data[url] !== 'undefined'){
+                    if (storageSupported){
+                        sessionStorage.setItem("routes", JSON.stringify(data));
+                    }
+                    return callback(putResource(data[url], resource));
+                }
+            },
+            error: function(jqXHR, status){
+                $.log.error('Request failed with status: ' + status);
+                return callback('/404');
+            }
+        });
+    };
+
+    $.fn.handleWebmatrixHost = function(url) {
+        if(typeof xmediaHost !== 'undefined' && xmediaHost !== '') {
+            return xmediaHost + url;
+        } else {
+            return url;
+        }
+    }
+
+}( jQuery ));

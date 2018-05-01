@@ -1,0 +1,21 @@
+/**
+ * Created by t.stulka on 2017-02-02.
+ */
+var _msg = {
+    show: function(str){
+        var string = 'js.message.' + str;
+        if (typeof window.jsMessages === 'undefined') {
+            console.log('jsMessages undefined');
+            return false;
+        } else {
+            if (str !== '' && typeof window.jsMessages[string] !== 'undefined') {
+                var msg = window.jsMessages[string];
+                return msg;
+
+            } else {
+                console.log('Missing translation string for: "' + str + '".');
+                return '';
+            }
+        }
+    }
+};

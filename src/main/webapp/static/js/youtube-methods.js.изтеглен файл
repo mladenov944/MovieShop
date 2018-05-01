@@ -1,0 +1,15 @@
+/**
+ * Created by t.stulka on 2017-02-03.
+ */
+var youTube = {
+    getId: function (name, movie) {
+        //movie is a global variable served by thymeleaf
+        if(typeof movie !== 'undefined' && typeof name !== 'undefined') {
+            var match = RegExp('[?&]' + name + '=([^&]*)').exec(movie);
+            return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+        } else {
+            console.log('error: movie variable is not defined');
+            return null;
+        }
+    }
+};

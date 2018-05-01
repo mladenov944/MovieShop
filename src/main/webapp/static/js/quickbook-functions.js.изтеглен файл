@@ -1,0 +1,166 @@
+var weekStart = 1;
+var cutoffTime = 20;
+if (tenantId === '10100' || tenantId === '10104') {
+    weekStart = 0;
+}
+if (tenantId === '10103') {
+    cutoffTime = 30;
+}
+var translationLocation = '/xmedia/js/vendor/quickbook/locale/' + tenantId + '/locale.' + tenantId + '.' + selectedLocale + '.json?v=' + appVersion;
+var translationObject;
+
+$.fn.quickbook.defaults = {};
+$.fn.quickbook.defaults['api-host'] = qbApiUrl;
+$.fn.quickbook.defaults['datepicker-week-start'] = weekStart;
+$.fn.quickbook.defaults['event-cutoff-time'] = cutoffTime;
+$.fn.quickbook.defaults['tenant-id'] = tenantId;
+$.fn.quickbook.defaults['locale'] = pluginLocale;
+$.fn.quickbook.defaults['langCode'] = selectedLocale;
+$.fn.quickbook.defaults['language-display-mode'] = languageDisplayMode;
+$.fn.quickbook.defaults['display-no-subtitles-info'] = displayNoSubtitlesInfo;
+$.fn.quickbook.defaults['debug-info-visible'] = false;
+
+
+var createQbUtagDataForEventClick = function (name, data) {
+    if (typeof name !== 'undefined' && name !== '' && typeof data !== 'undefined') {
+        var result = {};
+        var event = data.event;
+        var movie = data.movie;
+        result['event_name'] = name;
+        if (typeof event !== 'undefined' && typeof movie !== 'undefined') {
+            var cinema = apiSitesList.filter(function (a) {
+                return a.externalCode == event['cinemaId'];
+            })[0];
+            var eventDate = moment(event['eventDateTime']);
+            result['cinema_name'] = cinema['name'];
+            result['cinema_id'] = event['cinemaId'];
+            result['film_title'] = movie['name'];
+            result['film_id'] = movie['id'];
+            result['booking_year'] = eventDate.format('YYYY');
+            result['booking_month'] = eventDate.format('MM');
+            result['booking_day'] = eventDate.format('DD');
+            result['booking_day_of_the_week'] = eventDate.format('d');
+            result['booking_days_in_advance'] = Math.ceil(eventDate.diff(moment(), 'hours') / 24).toString();
+            result['performance_format'] = event['calculatedType'];
+            result['performance_play'] = eventDate.format('dddd');
+            result['film_category'] = event['attributeIds'].join(',');
+        }
+        return result
+    }
+};
+
+var hasQbCinemaOptionsInUrl = function () {
+    var hasByCinemaParam = (window.location.href.indexOf('/buy-tickets-by-cinema?in-cinema=') !== -1);
+    var hasByFilmParam = (window.location.href.indexOf('/buy-tickets-by-film?in-cinema=') !== -1);
+    return hasByCinemaParam || hasByFilmParam
+};
+
+var createQbUtagDataForChangeView = function (name, data) {
+    if (typeof name !== 'undefined' && name !== '' && typeof data !== 'undefined') {
+        var result = {};
+        var cinemaFromQuery = data.query['in-cinema'];
+        var dateFromQuery = data.query['at'];
+        var movieFromQuery = data.query['for-movie'];
+        var filterFromQuery = data.query['filtered'];
+        var viewTypeFromQuery = data.query['view-mode'];
+
+        result['event_name'] = name;
+
+        if (typeof viewTypeFromQuery !== 'undefined' && viewTypeFromQuery !== '') {
+            result['page_section'] = viewTypeFromQuery;
+        }
+
+        if (typeof cinemaFromQuery !== 'undefined' && cinemaFromQuery !== '') {
+            var cinema = apiSitesList.filter(function (a) {
+                return a.externalCode == cinemaFromQuery;
+            })[0]
+            if (typeof cinema !== 'undefined') {
+                result['cinema_name'] = cinema['name'];
+                result['cinema_id'] = cinema['externalCode'];
+            } else {
+                result['group_name'] = cinema;
+            }
+        }
+
+        if (typeof dateFromQuery !== 'undefined' && dateFromQuery !== '') {
+            var date = moment(dateFromQuery);
+            result['booking_year'] = date.format('YYYY');
+            result['booking_month'] = date.format('MM');
+            result['booking_day'] = date.format('DD');
+            result['booking_day_of_the_week'] = date.format('d');
+            result['booking_days_in_advance'] = Math.ceil(date.diff(moment(), 'hours') / 24).toString();
+            result['performance_play'] = date.format('dddd');
+        }
+
+        if (typeof  movieFromQuery !== 'undefined' && movieFromQuery !== '') {
+            result['film_id'] = movieFromQuery;
+            var filmTitleGuessed = $('[data-automation-id="selectMovie"] button').attr('title');
+            if (typeof filmTitleGuessed !== 'undefined' && filmTitleGuessed !== '') {
+                result['film_title'] = filmTitleGuessed;
+            } else if (typeof featureName !== 'undefined' && featureName !== '') {
+                result['film_title'] = featureName;
+            }
+        }
+
+        if (typeof filterFromQuery !== 'undefined' && filterFromQuery !== '') {
+            result['performance_format'] = filterFromQuery;
+        }
+        return result
+
+    }
+};
+
+var initializeQuickbook = function () {
+    $.ajax({
+        type: 'GET',
+        dataType: 'text',
+        contentType: 'application/json; charset=utf-8',
+        url: translationLocation,
+        success: function (data) {
+            translationObject = JSON.parse(data);
+            $.fn.quickbook.defaults['translation'] = translationObject;
+        },
+        complete: function () {
+            var defaultCinema = $.fn.quickbook.defaults['defaultCinema'];
+            var sessionCinema = $.cookie('sessionCinema');
+
+            if (typeof defaultCinema === 'undefined') { // we're not on cinema page
+                if (!hasQbCinemaOptionsInUrl()) {
+                    // only set default cinema when url has no qb parameters for cinema id
+                    $.fn.quickbook.defaults['defaultCinema'] = sessionCinema;
+                }
+            }
+
+            $(document).trigger('quickbookInitComplete');
+            $.data(document, 'quickbookInitComplete', true);
+        }
+    });
+};
+
+var startQuickbook = function () {
+    initializeQuickbook();
+    var status = $.data(document, 'quickbookInitComplete');
+    var isInitialized = typeof status !== 'undefined' && status === true;
+    if (isInitialized) {
+        $.fn.quickbook()
+    } else {
+        $(document).on('quickbookInitComplete', function () {
+            $.fn.quickbook()
+        });
+    }
+
+}
+
+$(document).on('qb-change-view', function (e) {
+    var dataObject = createQbUtagDataForChangeView('quickbook_impression', e.originalEvent.detail);
+    if (typeof dataObject !== 'undefined' && utagDefined()) {
+        utag.link(dataObject);
+    }
+});
+
+$(document).on('qb-event-click', function (e) {
+    var dataObject = createQbUtagDataForEventClick('quickbook_booking', e.originalEvent.detail);
+    if (typeof dataObject !== 'undefined' && utagDefined()) {
+        utag.link(dataObject);
+    }
+});

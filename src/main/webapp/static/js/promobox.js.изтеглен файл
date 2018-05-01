@@ -1,0 +1,96 @@
+/**
+ * Created by K.Gusz on 2016-12-01.
+ */
+function generatePromoboxTag(bannerName) {
+    return {
+        "impression_brand": window.location.href,
+        "impression_cat": "Promo Box",
+        "impression_id": bannerName,
+        "impression_list": tealium_category,
+        "impression_name": bannerName,
+        "event_name": "promo_click"
+    };
+}
+
+function generatePromoboxImpressonTag(bannerName) {
+    return {
+        "impression_brand": window.location.href,
+        "impression_cat": "Promo Box",
+        "impression_id": bannerName,
+        "impression_list": tealium_category,
+        "impression_name": bannerName
+    }
+}
+
+$(document).ready(function () {
+
+    var experienceTabsWaypoint = new Waypoint({
+        element: $('#experiencesTabs'),
+        handler: function (direction) {
+            if(direction === 'down'){
+                var tag = generatePromoboxImpressonTag('Promobox TABS');
+                if (utagDefined()) {
+                    utag.link(tag);
+                }
+            }
+        },
+        offset: '100px'
+    });
+
+    //any DOM manipulation requires waypoints to be refreshed, here are current:
+    $('.show-more-films').on('click', function(){
+        Waypoint.refreshAll();
+    });
+    $(document).on('click', 'button#today, button#tomorrow, button#week',function () {
+        Waypoint.refreshAll();
+    });
+
+
+    $('.promobox-carousel')
+        .on('swiperight', function () {
+            $(this).carousel('prev');
+        })
+        .on('swipeleft', function () {
+            $(this).carousel('next');
+        })
+        .on('slid.bs.carousel', function (e) {
+            var el = $(e.relatedTarget);
+            el.parent().css('height', el.height()); //for smooth container height animation
+        });
+
+
+    $('#mobile-experiences a[data-toggle="tab"]').on('shown.bs.tab', function () {
+        $('[data-target="#mobile-experiences"][aria-expanded="true"]').dropdown('toggle');
+        $("body").animate({
+            scrollTop: Math.round($('#experiencesTabs').offset().top) - 20
+        }, "300");
+    });
+
+    $('ul#experiencesTabs li a[data-toggle="tab"]').on('mouseup', function () {
+        var bannerName = $(this).text() + " TAB";
+        var tag = generatePromoboxTag(bannerName);
+        if (utagDefined()) {
+            utag.link(tag);
+        }
+    });
+
+    $('a.promobox-card').on('click', function () {
+        var bannerName = $(this).find('img.card-img-top').prop('alt');
+        var tag = generatePromoboxTag(bannerName);
+        if (utagDefined()) {
+            utag.link(tag, function () {
+                window.location = $(this).prop('href')
+            });
+        }
+    });
+
+    $('a.promobox-link').on('click', function () {
+        var bannerName = $(this).find('p.promobox-title').text();
+        var tag = generatePromoboxTag(bannerName);
+        if (utagDefined()) {
+            utag.link(tag, function () {
+                window.location = $(this).prop('href')
+            });
+        }
+    });
+});

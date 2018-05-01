@@ -1,0 +1,84 @@
+$(document).ready(function () {
+    var $popoverContent = $('#cinemasPopover').html();
+    $('#cinemasPopver').remove();
+    $('.header [data-toggle="popover"]').popover({
+        html: true,
+        container: 'body',
+        viewport: {
+            selector: 'body',
+            padding: 10
+        },
+        template: '<div class="popover header-cinema-popover light"><div class="arrow"></div><div class="popover-inner"><div class="popover-content"></div></div></div>',
+        content: function () {
+            return $popoverContent = $('#cinemasPopover').html();
+        }
+    });
+
+    $('.header [data-toggle="popover"]')
+        .on('inserted.bs.popover', function () {
+            $('html').addClass('header-cinema-popover');
+            $('body').append('<div class="popover-overlay in"></div>');
+        })
+        .on('shown.bs.popover', function () {
+            var arrowOffset = parseFloat($('.header .map-marker:visible > img').offset().left) - parseFloat($('.header').offset().left) + 10;
+            var popoverWidth = parseInt($('.popover.header-cinema-popover.in').width());
+            if (arrowOffset > 0 && popoverWidth > 0) {
+                $('.popover.header-cinema-popover.in .arrow').css('left', ((arrowOffset / popoverWidth) * 100).toFixed(2) + '%');
+            }
+
+            var sessionCheckbox = Cookies.get('sessionCheckbox');
+
+            if (sessionCheckbox === 'checked') {
+                $('.show-nearby').prop('checked', true);
+            } else {
+                $('.show-nearby').prop('checked', false);
+            }
+            $('.show-nearby').first().trigger('change');
+
+            $('.header-cinema-popover select.whatsonCinemaSelect').selectpicker('refresh');
+            $('#cinemasPopover .whatsonCinemaSelect').selectpicker('destroy');
+            userActions.cinemaSearchFromHeaderExpanded();
+        })
+        .on('hide.bs.popover', function () {
+            $('.popover-overlay').hide();
+        })
+        .on('hidden.bs.popover', function () {
+            $('html').removeClass('header-cinema-popover');
+            $('.popover-overlay').remove();
+        });
+});
+$(document).on('click', function (e) {
+    $('[data-toggle="popover"][aria-describedby]').each(function () {
+        if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+            $(this).popover('hide');
+        }
+    });
+});
+$(document).on('inserted.bs.popover', function () {
+    $(document).on('touchend', function (e) {
+        if (!$(e.target).is('.popover') && !$(e.target).parents().is('.popover') && $('div.popover.in').length > 0) {
+            $('div.popover.in').prev().popover('hide');
+        }
+    });
+});
+$(document).on('hidden.bs.popover', function (e) {
+    //fixes need to double click after closing popover
+    $(e.target).data('bs.popover').inState = {click: false, hover: false, focus: false};
+});
+
+$(document).on('changed.bs.select', '.whatsonCinemaSelect', function () {
+
+    if (utagDefined()) {
+        utag.link({
+            'event_name': 'booking tickets change to by cinema',
+            'book_tickets_widget': 'By Cinema',
+            'cinema_id': $(this).val()
+        });
+        setTimeout(function () {
+        }, 500);
+    }
+    if (!$(this).find(':selected') || !$(this).find(':selected').length) return;
+    var url = $(this).find(':selected').data('url');
+    userActions.cinemaSearchDropdownUsed();
+    window.location = selectCinema(url);
+});

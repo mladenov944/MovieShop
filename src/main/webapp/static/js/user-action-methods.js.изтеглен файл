@@ -1,0 +1,143 @@
+var utagDefined = function(){
+    return (typeof utag !== 'undefined');
+};
+
+var userActions = (function () {
+
+    /////////// Login/registration functionality
+
+    var validateCorrectString = function (str) {
+        /*
+            check if variable is a non-empty string
+        */
+        return (typeof str === 'string' || str instanceof String) && str !== ''
+    }
+
+    var buildEventObject = function (category, label) {
+        /*
+            Private method to build event object sent to tealium/GA
+            Will sent incomplete event object if category or label are missing
+        */
+        var obj = {
+            'event_type': 'click'
+        };
+        if(validateCorrectString(category)) {
+            obj['ga_event_category'] = category;
+        }
+        if(validateCorrectString(category)) {
+            obj['ga_event_action'] = label;
+        }
+        return obj
+    };
+
+    var sendUserAction = function(category, label) {
+        if(validateCorrectString(category) && validateCorrectString(label)) {
+            if (utagDefined()) {
+                utag.view(buildEventObject(category, label));
+                utag.link(buildEventObject(category, label));
+            }
+            $.log.info(category + ' - ' + label);
+        }
+    };
+
+    var userLoginSuccess = function () {
+        sendUserAction('User login', 'Login successful')
+    };
+
+    var userLoginError = function () {
+        sendUserAction('User login', 'Login error')
+    };
+
+    var userFacebookLoginSuccess = function () {
+        sendUserAction('User login', 'Facebook login successful')
+    };
+
+    var userFacebookLoginError = function () {
+        sendUserAction('User login', 'Facebook login successful')
+    };
+
+    var userRegistrationSuccess = function () {
+        sendUserAction('User registration', 'Registration successful')
+    };
+
+    var userRegistrationError = function () {
+        sendUserAction('User registration', 'Registration error')
+    };
+
+    /////////// END- Login/registration functionality
+
+    /////////// Cinema search functionality placed in popover/modal in header section of the website
+
+    var cinemaSearchFromHeaderExpanded = function () {
+        sendUserAction('Cinema search', 'Form popup displayed')
+    };
+
+    var cinemaSearchQueryUsed = function () {
+        sendUserAction('Cinema search', 'Search field used')
+    };
+
+    var cinemaSearchNearbyUsed = function () {
+        sendUserAction('Cinema search', 'Nearby used')
+    };
+
+    var cinemaSearchNearbyFromCache = function () {
+        sendUserAction('Cinema search', 'Nearby cinemas retrieved from cache')
+    };
+    var cinemaSearchDropdownUsed = function () {
+        sendUserAction('Cinema search', 'Cinema selected from dropdown')
+    };
+    var cinemaSearchNearbyCinemaSelected = function () {
+        sendUserAction('Cinema search', 'Cinema selected from nearby results')
+    };
+    var cinemaSearchQueryCinemaSelected = function () {
+        sendUserAction('Cinema search', 'Cinema selected from search results')
+    };
+
+    /////////// END - Cinema search functionality placed in popover/modal in header section of the website
+
+    /////////// Wishlist functionality
+
+    var wishlistAddMovieSuccessful = function () {
+        sendUserAction('Wishlist', 'Add movie to wishlist - Success')
+    };
+
+    var wishlistAddMovieError = function () {
+        sendUserAction('Wishlist', 'Add movie to wishlist - Error')
+    };
+
+    var wishlistRemoveMovieSuccessful = function () {
+        sendUserAction('Wishlist', 'Remove movie from wishlist - Success')
+    };
+
+    var wishlistRemoveMovieError = function () {
+        sendUserAction('Wishlist', 'Remove movie from wishlist - Error')
+    };
+
+    var wishlistLoggedoutButtonClicked = function () {
+        sendUserAction('Wishlist', 'User not logged in')
+    };
+
+    /////////// END - Wishlist functionality
+
+    return {
+        userLoginSuccess:                   userLoginSuccess,
+        userLoginError:                     userLoginError,
+        userFacebookLoginSuccess:           userFacebookLoginSuccess,
+        userFacebookLoginError:             userFacebookLoginError,
+        userRegistrationSuccess:            userRegistrationSuccess,
+        userRegistrationError:              userRegistrationError,
+        cinemaSearchFromHeaderExpanded:     cinemaSearchFromHeaderExpanded,
+        cinemaSearchQueryUsed:              cinemaSearchQueryUsed,
+        cinemaSearchNearbyUsed:             cinemaSearchNearbyUsed,
+        cinemaSearchNearbyFromCache:        cinemaSearchNearbyFromCache,
+        cinemaSearchDropdownUsed:           cinemaSearchDropdownUsed,
+        cinemaSearchNearbyCinemaSelected:   cinemaSearchNearbyCinemaSelected,
+        cinemaSearchQueryCinemaSelected:    cinemaSearchQueryCinemaSelected,
+        wishlistAddMovieSuccessful:         wishlistAddMovieSuccessful,
+        wishlistAddMovieError:              wishlistAddMovieError,
+        wishlistRemoveMovieSuccessful:      wishlistRemoveMovieSuccessful,
+        wishlistRemoveMovieError:           wishlistRemoveMovieError,
+        wishlistLoggedoutButtonClicked:     wishlistLoggedoutButtonClicked
+    }
+
+}());

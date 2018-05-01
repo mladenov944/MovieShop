@@ -1,0 +1,279 @@
+/**
+ * Created by Krzysztof Smolicz on 2016-08-30.
+ */
+
+/***
+ *      options:
+ *      isSelectWeekPresent:      true/false (bool, optional, defaults to false)
+ *      isSelectWeekActive:      true/false (bool, optional, defaults to false)
+ *      closeOnResize:              true/false (bool, optional, defaults to false)
+ *      dates:                      ["YYYY/MM/DD"]  (array, required)
+ *      activeDate:                 "YYYY/MM/DD"    (string, optional)
+ *      pressedButton:              $(this)         (object, optional, defaults to clicked element)
+ *
+ *      example:
+ $('#test').on('click', function (e) {
+            $(this).showtimeDatepicker({
+                isSelectWeekPresent: false,
+                closeOnResize: true,
+                dates: dates,
+                pressedButton: $(this),
+                activeDate: active,
+                onSelectDate: function (e) {
+                    console.log(e);
+                }
+            })
+        })
+ *
+ ***/
+
+(function ( $ ) {
+    "use strict";
+
+    $.fn.showtimeDatepicker = function( configuration ) {
+        if(typeof configuration.pressedButton === 'undefined') {
+            configuration.pressedButton = $(this);
+        }
+        if(typeof configuration.isSelectWeekActive === 'undefined' && configuration.isSelectWeekActive !== true){
+            configuration.isSelectWeekActive = false;
+        }
+
+        var template =
+            '<div id="datepicker-holder">' +
+            '<div class="showtime-title visible-xs"> ' +
+            _msg.show('pickadate') +
+            '<i class="fa fa-times pull-right datepicker-close" aria-hidden="true"></i></div>' +
+            '<div class="showtime-datepicker"> ' +
+            '<p class="hidden-xs datepicker-title">' + _msg.show('pickadate') + '</p> ' +
+            '<button id="today">' + _msg.show('today') + '</button> ' +
+            '<button id="tomorrow">' + _msg.show('tomorrow') + '</button> ' +
+            '<button id="week">' + _msg.show('next7days') + '</button> ' +
+            '<div class="s-datepicker"> ' +
+            '</div> ' +
+            '</div>'+
+            '</div>';
+
+        $('body').append(template);
+
+        var datepickerHolder = $('#datepicker-holder');
+        var showtimeDatepicker = $('#datepicker-holder .showtime-datepicker');
+        var today = moment().format('YYYY/MM/DD');
+        var tomorrow = moment().add(1, 'd').format('YYYY/MM/DD');
+        var mobileThreshold = 768;
+        var datepickerHeight = 218;
+
+        //add mobile styles
+        if($( window ).width() < mobileThreshold){
+            showtimeDatepicker.addClass('mobile');
+        }
+
+        //set today and tomorrow buttons
+        if(configuration.dates.length > 0 && configuration.dates.indexOf(today) === -1){
+            $('#today').prop('disabled', true).addClass('disabled');
+        } else {
+            $('#today').on("click", function(){
+                removeDatepicker();
+                configuration.onSelectDate({
+                    code: 'OK',
+                    date: today
+                });
+            });
+        }
+        if(configuration.dates.length > 0 && configuration.dates.indexOf(tomorrow) === -1){
+            $('#tomorrow').prop('disabled', true).addClass('disabled');
+        } else {
+            $('#tomorrow').on("click", function(){
+                removeDatepicker();
+                configuration.onSelectDate({
+                    code: 'OK',
+                    date: tomorrow
+                });
+            });
+        }
+
+        if(configuration.isSelectWeekPresent !== true){
+            //hide 7 days button based on parameter
+            $('#week').hide();
+        } else {
+            //set available dates for next week
+            var availableDates = [];
+
+            for (var i = 0; i < 7; i++) {
+                if (configuration.dates.indexOf(moment().add(i, 'd').format('YYYY/MM/DD')) !== -1) {
+                    availableDates.push(moment().add(i, 'd').format('YYYY/MM/DD'));
+                }
+            }
+
+            //if there is less than 2 days available hide button else set event listener
+            if(availableDates.length < 2){
+                $('#week').hide();
+            } else {
+                $('#week').on('click', function () {
+                    removeDatepicker();
+                    configuration.onSelectDate({
+                        code: 'NEXT_WEEK',
+                        date: availableDates
+                    });
+                });
+            }
+        }
+
+        var offset = calculatePosition(configuration.pressedButton.offset());
+        var initObject = {
+            position: "absolute",
+            top: offset.top + "px"
+        };
+        if(typeof offset.left !== 'undefined') {
+            initObject.left = offset.left + "px";
+        }
+        //set position of datepicker based on pressed button
+        showtimeDatepicker.css(initObject).show(50, function(){
+
+            datepickerHolder.find('.s-datepicker').datepicker({
+                maxViewMode: 0,
+                defaultViewDate: {
+                    "year": typeof configuration.activeDate !== 'undefined' ? moment(configuration.activeDate, 'YYYY/MM/DD').format('YYYY') : moment().format('YYYY') ,
+                    "month": typeof configuration.activeDate !== 'undefined' ? moment(configuration.activeDate, 'YYYY/MM/DD').month() : moment().month(),
+                    "day": typeof configuration.activeDate !== 'undefined' ? moment(configuration.activeDate, 'YYYY/MM/DD').day() : moment().day()
+                },
+                startDate: new Date(),
+                beforeShowDay: function (date) {
+                    // If activeDate parameter is not present set nearest date as active
+                    if((typeof configuration.activeDate !== 'undefined' && moment(date).format('YYYY/MM/DD') === configuration.activeDate ||
+                        typeof configuration.activeDate === 'undefined' && moment(date).format('YYYY/MM/DD') === configuration.dates[0]) &&
+                        configuration.isSelectWeekActive === false){
+                        //set active class on today and tomorrow buttons
+                        if(moment(date).format('YYYY/MM/DD') === today){
+                            $('#today').addClass('active');
+                        } else if(moment(date).format('YYYY/MM/DD') === tomorrow){
+                            $('#tomorrow').addClass('active');
+                        }
+                        return {
+                            classes: 'avail active ' + moment(date).format('YYYY-MM-DD')
+                        };
+                    } else if(configuration.isSelectWeekActive === true){
+                        $('#week').addClass('active');
+                    }
+                    //set available dates
+                    if(configuration.dates.indexOf(moment(date).format('YYYY/MM/DD')) !== -1){
+                        return {
+                            classes: 'avail ' + moment(date).format('YYYY-MM-DD')
+                        };
+                    }
+
+                    return {
+                        classes: moment(date).format('YYYY-MM-DD')
+                    }
+                }
+            }).on('changeDate', function (e) {
+                var selectedDate = moment(e.date).format('YYYY/MM/DD');
+                datepickerHolder.remove();
+                if(configuration.dates.indexOf(selectedDate) !== -1){
+                    configuration.onSelectDate({
+                        code: 'OK',
+                        date: selectedDate
+                    });
+                } else {
+                    configuration.onSelectDate({
+                        code: 'NO_EVENT',
+                        date: selectedDate
+                    });
+                }
+            });
+        });
+
+        $(window).resize(function(){
+            if(configuration.closeOnResize === true){
+                removeDatepicker();
+            } else {
+                showtimeDatepicker.css({
+                    top: recalculatePosition(configuration.pressedButton.offset()).top + "px",
+                    left: recalculatePosition(configuration.pressedButton.offset()).left + "px"
+                });
+                //change style for mobile view
+                if($( window ).width() < mobileThreshold){
+                    showtimeDatepicker.addClass('mobile');
+                } else {
+                    showtimeDatepicker.removeClass('mobile');
+                }
+            }
+        });
+
+        //hide datepicker if clicked outside
+        $(document).mouseup(function (e) {
+            if (!$(e.target).is('.showtime-datepicker *, .showtime-datepicker')) {
+                removeDatepicker();
+            }
+        });
+
+        //fix for iPhone not closing properly
+        $(document).on('click, touchend', '.datepicker-close', function(e) {
+            e.preventDefault();
+            removeDatepicker();
+        });
+
+        //remove from DOM and destroy datepicker instance
+        function removeDatepicker(){
+            datepickerHolder.find('.s-datepicker').datepicker('destroy');
+            datepickerHolder.remove();
+        }
+
+        //recalculate position of datepicker after resize
+        function recalculatePosition(position){
+            if($( window ).width() > mobileThreshold){
+                if((position.left + showtimeDatepicker.outerWidth()) > $(window).width()){
+                    position.left -= ((position.left + showtimeDatepicker.outerWidth()) - $(window).width() + 20);
+                }
+                if((position.top + showtimeDatepicker.outerHeight()) > ($(window).scrollTop() + $(window).height())){
+                    position.top -= ((position.top + showtimeDatepicker.outerHeight()) - ($(window).scrollTop() + $(window).height()) + 20);
+                }
+            }
+            return position;
+        }
+
+        //calculate position on a first open
+        function calculatePosition(position){
+            if(typeof position !== 'undefined' && $( window ).width() > mobileThreshold){
+                //adding datepicker height as variable as datepicker is not initialized at the time of open
+                if((position.top + showtimeDatepicker.outerHeight() + datepickerHeight) > ($(window).scrollTop() + $(window).height())){
+                    position.top -= ((position.top + showtimeDatepicker.outerHeight() + datepickerHeight) - ($(window).scrollTop() + $(window).height()) + 20);
+                }
+                return position;
+            } else {
+                return false;
+            }
+
+        }
+    };
+
+    $.fn.displayDate = function( date ) {
+        /*
+         * Accepts date in 'YYYY/MM/DD' format
+         */
+
+        var text = '';
+
+        if(moment(date,'YYYY/MM/DD',true).isValid()) {  // Check if date format is correct
+            var today = moment().format('YYYY/MM/DD');
+            var tomorrow = moment().add(1, 'd').format('YYYY/MM/DD');
+            var passedDate = moment(date, 'YYYY/MM/DD').format('DD/MM/YYYY');
+
+            if(date === today) {
+                text = _msg.show('today') + ' - ' + passedDate;
+            } else if (date === tomorrow) {
+                text = _msg.show('tomorrow') + ' - ' + passedDate;
+            } else if (date === 'next7dates') {
+                text = _msg.show('next7days');
+            } else {
+                text = passedDate;
+            }
+            $(this).text(text);
+        } else if (date === 'next7dates') {
+            text = _msg.show('next7days');
+            $(this).text(text);
+        } else {
+            console.log('Incorrect date format provided');
+        }
+
+    };
+}( jQuery ));

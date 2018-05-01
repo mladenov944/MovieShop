@@ -31,6 +31,9 @@ public class HelloController {
 	public String logout(Model model) {
 		return "home"; // vij che ti se povtarq request mappinga.. kak da raboti :D
 	}
-
+	@RequestMapping(method = RequestMethod.GET, value = "/movieDetails")
+	public String movieDetails(Model model) {
+		return "movieDetails";
+	}
 
 }

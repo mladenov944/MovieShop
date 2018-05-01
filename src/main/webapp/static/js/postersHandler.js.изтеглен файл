@@ -1,0 +1,120 @@
+/**
+ * Created by t.stulka on 2016-10-28.
+ */
+
+function isRetina() {
+    return ((window.matchMedia && (window.matchMedia('only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx), only screen and (min-resolution: 75.6dpcm)').matches || window.matchMedia('only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (min--moz-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2)').matches)) || (window.devicePixelRatio && window.devicePixelRatio >= 2)) && /(iPad|iPhone|iPod)/g.test(navigator.userAgent);
+}
+
+var posters = {
+    config: {'showingType': 'SHOWING','orderingCode': 'desc', 'attr':''},
+    get: function(params, posterCont, element) {
+        var that = this,
+            attrPart = '',
+            orderingPart = '',
+            langCode = '',
+            cookieLang = $.cookie('lang'),
+            apiHost = qbApiUrl,
+            apiVersion = 'v1',
+            posterQueryPath = apiHost + '/' + apiVersion + '/poster/' + tenantId + '/by-showing-type/';
+
+        if(typeof cookieLang !== 'undefined' && cookieLang !== '') {
+            langCode = cookieLang;
+        }
+        if(typeof params['showingType'] !== 'undefined' && params['showingType'] !== '') {
+            this.config['showingType'] = params['showingType']
+        }
+        if(typeof params['orderingCode'] !== 'undefined' && params['orderingCode'] !== '') {
+            this.config['orderingCode'] = params['orderingCode']
+            orderingPart = '&ordering=' + this.config['orderingCode']
+        }
+        if(typeof params['attr'] !== 'undefined' && params['attr'] !== '') {
+            this.config['attr'] = params['attr'];
+            attrPart = '&attr=' + this.config['attr']
+        }
+
+        $.ajax({
+            url:  posterQueryPath + this.config.showingType + '?lang=' + langCode + attrPart + orderingPart,
+            type: 'GET',
+            data: {},
+            success: function (json) {
+                that.render(json, posterCont, element);
+            },
+            error: function(jqXHR, status, errorThrown){
+                var err = status + ", " + errorThrown;
+                console.log( "Request Failed: " + err );
+            }
+        });
+    },
+    posterPrefix: function() {
+        var screenWidth = window.innerWidth || document.body.clientWidth;
+        var suffix = '';
+        if(typeof isRetina !== 'undefined') {
+            if (!isRetina()) {
+                //not Retina display
+                if (screenWidth < 375) {
+                    suffix = 'sm';
+                }
+                if (screenWidth >= 375 && screenWidth < 518) {
+                    suffix = 'md';
+                }
+                if (screenWidth >= 518 && screenWidth < 1024) {
+                    suffix = 'lg';
+                }
+                if (screenWidth >= 1024) {
+                    suffix = 'md';
+                }
+            } else {
+                //Retina display
+                if (screenWidth < 375) {
+                    suffix = 'sm2x';
+                }
+                if (screenWidth >= 375 && screenWidth < 518) {
+                    suffix = 'md2x';
+                }
+                if (screenWidth >= 518 && screenWidth < 1024) {
+                    suffix = 'lg2x';
+                }
+                if (screenWidth >= 1024) {
+                    suffix = 'md2x';
+                }
+            }
+        }
+        return suffix;
+    },
+    render: function(json, posters, element) {
+        var source   = $("#posters-template").html();
+        var template = Handlebars.compile(source);
+        var html = template(json.body);
+        var $mixContainer = $(posters);
+        $mixContainer.html(html);
+        var posterPrefix = this.posterPrefix();
+        $mixContainer.addClass('active');
+        //element is needed to handle home page
+        if(typeof element !== 'undefined') {
+            $.each($('.mix img'), function(idx, mix) {
+                var src = $(mix).data('src');
+                if (!$(mix).data('code')) {
+                    return false
+                }
+                var arr = $(mix).data('src').split('-md.');
+                var endSrc = arr[0] + '-' + posterPrefix + '.jpg';
+                $(mix).attr('data-src', endSrc);
+            });
+            $mixContainer.mixItUp(mixConfig);
+        } else {
+            $.each($('.mix img'), function(idx, mix) {
+                var src = $(mix).data('src');
+                $(mix).attr("data-postermodal","");
+                if (!$(mix).data('code')) {
+                    return false
+                }
+                var arr = $(mix).data('src').split('-md.');
+                var endSrc = arr[0] + '-' + posterPrefix + '.jpg';
+                $(mix).attr('data-src', endSrc);
+            });
+            $mixContainer.mixItUp(mixConfig);
+        }
+    }
+
+};

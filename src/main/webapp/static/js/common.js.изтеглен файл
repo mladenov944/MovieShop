@@ -1,0 +1,596 @@
+var loadTimeout = 50; //timeout for fired load/resize events
+var ar = new Array(13, 33, 34, 35, 36, 37, 38, 39, 40);
+var breakPoint = 768;
+var isHome = false;
+var sessionCinema = 0;
+var activeFilter = '';
+var loginTokenEmailPattern = new RegExp('/(login|token|change-email)/gi');
+var selectpickerDropdownSelector = '[data-container=".selectpicker-dropdown-container"]';
+var $selectpickerContainer = $('.selectpicker-dropdown-container');
+var requestUrl = JSON.parse(JSON.stringify(window.location));
+
+moment.locale(pluginLocale);
+$.fn.datepicker.defaults.language = pluginLocale;
+if ($('body').find('#homepage-flag').size()) {
+    isHome = true;
+}
+
+var allBreakpoints = {};
+// BING MAPS KEYS
+var cwuatKey = 'AmHWcFQZoYsHdg2615Eh02rgGuoid8cbTDbAw93bbRywMBh24T3OF4u14ZTrzzog'; //http://cwuat.cinema-city.net/
+var bingMapsKey = cwuatKey;
+
+var tecs = {
+    venueTypeId: 0,
+    customer: null,
+    ovrFilter: null,
+    shownAttrs: shownAttrs[_msg.show('countryCode')],
+    activeDays: []
+};
+var longDateFormat = {
+    '10100': 'dddd, DD MMMM YYYY',
+    '10101': 'dddd, DD MMMM YYYY',
+    '10102': 'dddd, DD MMMM YYYY',
+    '10103': 'dddd, DD MMMM YYYY',
+    '10104': 'dddd, DD MMMM YYYY',
+    '10105': 'dddd, DD MMMM YYYY',
+    '10106': 'dddd, DD MMMM YYYY',
+    '10107': 'dddd, DD MMMM YYYY',
+    '10108': 'dddd, Do MMMM YYYY',
+    '10109': 'dddd, Do MMMM YYYY'
+};
+// intTelLang[tenantId]
+var intTelLang = {
+    '10100': ['il'],
+    '10101': ['cz'],
+    '10102': ['hu'],
+    '10103': ['pl'],
+    '10104': ['rh'],
+    '10105': ['sk'],
+    '10106': ['bg'],
+    '10107': ['ro'],
+    '10108': ['gb', 'ie'],
+    '10109': ['ie', 'gb']
+};
+
+
+var today;
+var $errorWrapper = '<div role="alert" class="alert alert-danger"> </div>';
+var $infoWrapper = '<div role="alert" class="alert alert-info"> </div>';
+
+Array.prototype.containsArray = function (array) {
+
+    if (arguments[1]) {
+        var index = arguments[1], last = arguments[2];
+    } else {
+        var index = 0, last = 0;
+        this.sort();
+        array.sort();
+    }
+    ;
+
+    return index == array.length
+        || ( last = this.indexOf(array[index], last) ) > -1
+        && this.containsArray(array, ++index, ++last);
+
+};
+
+function redirect(uri) {
+    if (navigator.userAgent.match(/Android/i))
+        document.location = uri;
+    else
+        window.location.replace(uri);
+}
+
+function populateRatingDescriptions() {
+    $.each($('img.rating-icon:not(.populated)'), function (idx, item) {
+        var src = $(item).attr('src');
+        var ratingSrc = src.split('/').pop().replace('.png', '');
+        var ratingId = $(item).parent().data('rating-id');
+        var temp = objectHelper.getObjectsByKey(_ratings, 'id', ratingId);
+        var desc = objectHelper.getValuesByKey(temp, 'desc');
+        var name = objectHelper.getValuesByKey(temp, 'n');
+        $(item).attr('data-toggle', 'popover');
+        $(item).attr('data-trigger', 'hover');
+
+        if (src.split('/').length === 1) {
+            $(item).attr('src', resourceFolder + '/rating/' + src);
+            $(item).attr('data-content', '<p class=\'rating-name\'><img alt=\'' + name + '\' width=\'30\' src=\'' + resourceFolder + '/rating/' + src + '\'> ' + name + '</p>' + desc);
+        } else {
+            $(item).attr('data-content', '<p class=\'rating-name\'><img alt=\'' + name + '\' width=\'30\' src=\'' + src + '\'> ' + name + '</p>' + desc);
+        }
+
+        if (ratingSrc !== undefined) {
+            $(item).popover({
+                placement: 'bottom',
+                html: true,
+                trigger: 'hover'
+            });
+        }
+        $(item).addClass('populated');
+        if (ratingSrc === '') {
+            $(item).remove();
+        }
+    });
+}
+
+function getUrlParameter(queryParamName) {
+    var sPageURL = window.location.search.substring(1);
+    var sURLVariables = sPageURL.split('&');
+    for (var i = 0; i < sURLVariables.length; i++) {
+        var sParameterName = sURLVariables[i].split('=');
+        if (sParameterName[0] == queryParamName) {
+            // Spaces in query param may be encoded as well as '+' and '%20'.
+            // Because decodeURIComponent function handles only '%20', plus signs need to be replaced by '%20'.
+            var valueWithSpacesEncodedWithPercent = sParameterName[1].replace(/\+/g, '%20');
+            return decodeURIComponent(valueWithSpacesEncodedWithPercent);
+        }
+    }
+}
+
+$(document).on('shown.bs.select', '.selectpicker', function (elem) {
+    $('.selectpicker-dropdown-container > .title').on('click, touchstart', function (e) {
+        $(elem.target).selectpicker('toggle');
+    });
+});
+
+$(document).on('hidden.bs.select', '.selectpicker', function (elem) {
+    $('.selectpicker-dropdown-container > .title').off('click');
+});
+
+// always hide datepicker if clicked outside.
+$(document).on('mouseup', function (e) {
+    if ($(e.target).find('.showtime-datepicker.active') && !$('.showtime-datepicker.active').find(e.target).length) {
+        $('.showtime-datepicker.active').find('.s-datepicker').datepicker('destroy');
+        $('.showtime-datepicker.active').hide(200, function () {
+
+            $('.showtime-datepicker.active .s-datepicker').trigger('changeDate');
+            $('.showtime-datepicker.active').removeClass('active');
+        });
+    }
+
+    var $selectpickerContainer = $('.selectpicker-dropdown-container');
+    if ($selectpickerContainer.find(e.target).length === 0) {
+        if ($selectpickerContainer.find('.open.qb-').length !== 0) {
+            $('.bootstrap-select.open.qb- select').selectpicker('toggle');
+        }
+    }
+});
+
+$(window).on('resize', $.debounce(true, 200,
+    function () {
+        if ($(window).width() < breakPoint) {
+            $('.session-cinema [data-toggle="popover"][aria-describedby]').popover('hide');
+        }
+    }));
+$(document).ready(function () {
+    $.log.info('document ready fired in common.js (example)');
+    svg.convert();
+
+    $.fn.route('GENERAL_MOVIE', function (url) {
+        $(document).on('click', '#search-results [href^="' + url + '"]', function () {
+            if (utagDefined()) {
+                utag.link({
+                    'search_result_film': $(this).contents().text()
+                });
+            }
+        });
+    });
+    $.fn.route('GENERAL_CINEMA', function (url) {
+        $(document).on('click', '#search-results [href^="' + url + '"]', function () {
+            if (utagDefined()) {
+                utag.link({
+                    'event_name': 'search result ( cinema ) clicked',
+                    'search_result_cinema': $(this).contents().text()
+                });
+            }
+        });
+    });
+    $(document).on('click', '#logout-header', function () {
+        if (utagDefined()) {
+            utag.link({
+                'event_name': 'customer clicked logout'
+            });
+        }
+    });
+    window.setTimeout(function () {
+
+        allBreakpoints = Unison.fetch.all();
+        if (pageVisited == 'true') {
+            $('section.cookies').remove();
+        } else {
+            $('section.cookies').css({
+                'display': 'block'
+            });
+            $('.countdown').countdown(closeCookies, 10, ' ' + _msg.show('seconds'));
+        }
+
+        // Function to be called after 10 seconds
+
+        function isLocalStorageSupported() {
+            var testKey = 'test', storage = window.localStorage;
+            try {
+                storage.setItem(testKey, '1');
+                storage.removeItem(testKey);
+                return true;
+            } catch (error) {
+                return false;
+            }
+        }
+
+        function closeCookies() {
+            $('section.cookies').remove();
+            if (isLocalStorageSupported()) {
+                localStorage.setItem('pageVisited', 'true');
+            }
+
+        }
+
+        $('.dismiss-countdown').on('click', function () {
+            closeCookies();
+        });
+
+        $(document)
+            .on('show.bs.select', selectpickerDropdownSelector, function () {
+                var title = ($(this).prop('title'));
+                $('.title', $selectpickerContainer).empty().text(title);
+                $('.title', $selectpickerContainer).append('<i class="fa fa-close pull-right mt-sm dropdown-close" aria-hidden="true"></i>');
+                if (parseInt(Unison.fetch.now().width) < parseInt(objectHelper.getValuesByKey(allBreakpoints, 'usn-small-medium'))) {
+                    $('body').addClass('modal-open');
+                    $('body').addClass('dynamic-select-open');
+                }
+            })
+            .on('shown.bs.select', selectpickerDropdownSelector, function (e) {
+                $selectpickerContainer.show();
+            })
+            .on('hidden.bs.select', selectpickerDropdownSelector, function () {
+                $selectpickerContainer.hide();
+                $selectpickerContainer.find('.bs-container').remove();
+            })
+            .on('hide.bs.select', selectpickerDropdownSelector, function () {
+                if ($('.modal:visible').length === 0) {
+                    $('body').removeClass('modal-open');
+                }
+                $('body').removeClass('dynamic-select-open');
+            });
+
+        try {
+            populateRatingDescriptions();
+        } catch (err) {
+        }
+
+        if ($('html').hasClass('iphone')) {
+            $('.selectpicker-dropdown-container > .title').on('click touchstart', function () {
+                $selectpickerContainer.hide();
+            });
+        }
+
+        if (parseInt(Unison.fetch.now().width) < parseInt(objectHelper.getValuesByKey(allBreakpoints, 'usn-small-medium'))) {
+            $('.dropdown-toggle.selectpicker').attr('data-toggle', 'modal');
+            $('.bootstrap-select').on('click', function (e) {
+                $('.dropdown-menu', $(this)).attr('role', 'dialog').addClass('modal').modal('show');
+            });
+            $('select[data-mobile]').attr('data-mobile', 'true').selectpicker('render');
+        } else {
+            $('select[data-mobile]').data('mobile', 'false').selectpicker('refresh');
+        }
+
+
+        $('input.star-rating').rating();
+
+
+        $('#share-login-register').on('show.bs.modal', function (event) {
+            var modal = $(this);
+            $('.modal-body .btn-social-share.fb', modal).off().unbind();
+            $('.modal-body .btn-social-share.tw', modal).off().unbind();
+            $('.modal-body .btn-social-share.gplus', modal).off().unbind();
+            $('.modal-body .btn-link', modal).off().unbind();
+            var button = $(event.relatedTarget);
+            var title = $(event.relatedTarget).attr('data-title');
+            var type = $(event.relatedTarget).data('type');
+            var video = $(event.relatedTarget).data('video-container');
+            switch (type) {
+                case 'share-page':
+                    var url = window.location.href;
+                    var shareTitle = _msg.show('social.share.articletitle');
+                    var hashtag = _msg.show('brandName');
+                    $('.modal-body .btn-social-share.fb', modal).removeAttr('href').attr('onClick', 'window.open("http://www.facebook.com/sharer.php?u=' + url + '", "targetwindow", "toolbar=no, location=0, status=0,menubar=0,scrollbars=0,resizebale=yes,width=500,height=300"); return false;');
+                    $('.modal-body .btn-social-share.gplus', modal).removeAttr('href').attr('onClick', 'window.open("https://plus.google.com/share?url=' + url + '", "targetwindow", "toolbar=no, location=0, status=0,menubar=0,scrollbars=0,resizebale=yes,width=500,height=300"); return false;');
+                    $('.modal-body .btn-social-share.tw', modal).removeAttr('href').attr('onClick', 'window.open("http://twitter.com/share?url=' + url + '&text=' + shareTitle + '&hashtags=' + hashtag + '", "targetwindow", "toolbar=no, location=0, status=0,menubar=0,scrollbars=0,resizebale=yes,width=500,height=300"); return false;');
+                    $('.modal-body .btn-link', modal).attr('href', 'mailto:' + _msg.show('social.share.friendEmail') + '?Subject=' + shareTitle + '&body=' + url);
+                    break;
+                case 'share-trailer':
+                    shareTitle = _msg.show('social.share.trailerTitle');
+                    hashtag = _msg.show('brandName');
+                    slider_obj = $('#' + video);
+                    currentSlide = slider_obj.view.currentSlide;
+                    ytLink = currentSlide.video.replace('embed/', 'watch?v=');
+                    ytBackground = currentSlide.bg_src;
+                    $('.modal-body .btn-social-share.fb', modal).attr('href', '#');
+                    $('.modal-body .btn-social-share.fb', modal).on('click', function () {
+                        FB.ui({
+                                method: 'share_open_graph',
+                                action_type: 'og.likes',
+                                action_properties: JSON.stringify({
+                                    object: ytLink,
+                                    image: ytBackground
+                                })
+                            },
+                            function (response) {
+                                if (response && !response.error_code) {
+                                } else {
+                                }
+                            }
+                        );
+                    });
+                    $('.modal-body .btn-social-share.tw', modal).removeAttr('href').attr('onClick', 'window.open("http://twitter.com/share?url=' + ytLink + '&text=' + shareTitle + '&hashtags=' + hashtag + '", "targetwindow", "toolbar=no, location=0, status=0,menubar=0,scrollbars=0,resizebale=yes,width=500,height=300"); return false;');
+                    $('.modal-body .btn-social-share.gplus', modal).removeAttr('href').attr('onClick', 'window.open("https://plus.google.com/share?url=' + ytLink + '", "targetwindow", "toolbar=no, location=0, status=0,menubar=0,scrollbars=0,resizebale=yes,width=500,height=300"); return false;');
+                    $('.modal-body .btn-link', modal).attr('href', 'mailto:' + _msg.show('social.share.friendEmail') + '?Subject=' + shareTitle + '&body=' + ytLink);
+                    //return false;
+                    break;
+                case 'share-trailer-movie-page':
+                    shareTitle = _msg.show('social.share.trailerTitle');
+                    hashtag = _msg.show('brandName');
+                    if (movie !== '') {
+                        video = $('.video-responsive object').attr('data').split('?')[0].replace('youtube.com/v/', 'youtube.com/watch?v=');
+                    }
+                    $('.modal-body .btn-social-share.fb', modal).attr('href', '#');
+                    $('.modal-body .btn-social-share.fb', modal).on('click', function () {
+                        FB.ui({
+                                method: 'share_open_graph',
+                                action_type: 'og.likes',
+                                action_properties: JSON.stringify({
+                                    object: video
+                                })
+                            },
+                            function (response) {
+                                if (response && !response.error_code) {
+                                } else {
+                                }
+                            }
+                        );
+                    });
+                    $('.modal-body .btn-social-share.tw', modal).removeAttr('href').attr('onClick', 'window.open("http://twitter.com/share?url=' + video + '&text=' + shareTitle + '&hashtags=' + hashtag + '", "targetwindow", "toolbar=no, location=0, status=0,menubar=0,scrollbars=0,resizebale=yes,width=500,height=300"); return false;');
+                    $('.modal-body .btn-social-share.gplus', modal).removeAttr('href').attr('onClick', 'window.open("https://plus.google.com/share?url=' + video + '", "targetwindow", "toolbar=no, location=0, status=0,menubar=0,scrollbars=0,resizebale=yes,width=500,height=300"); return false;');
+                    $('.modal-body .btn-link', modal).attr('href', 'mailto:' + _msg.show('social.share.friendEmail') + '?Subject=' + shareTitle + '&body=' + video);
+                    //return false;
+                    break;
+                case 'share-code':
+                    shareTitle = _msg.show('social.share.unlimitedCodeTitle');
+                    hashtag = _msg.show('brandName');
+                    $('.modal-body .btn-social-share.fb', modal).on('click', function () {
+                        FB.ui({
+                            method: 'feed',
+                            name: 'Cineworld Unlimited code: ' + $('.ref-code').text(),
+                            link: window.location.origin + '/unlimited',
+                            picture: window.location.origin + cfg.repoFolder + '/articles/thumbs/unlimited_1exp.jpg',
+                            caption: shareTitle,
+                            description: shareTitle
+                        });
+                    });
+                    $('.modal-body .btn-social-share.tw', modal).removeAttr('href').attr('onClick', 'window.open("http://twitter.com/share?url=' + window.location.origin + '/unlimited' + '&text=' + shareTitle + '. ' + _msg.show('enterthiscode') + ' ' + $('.ref-code').text() + '&hashtags=' + hashtag + ', "targetwindow", "toolbar=no, location=0, status=0,menubar=0,scrollbars=0,resizebale=yes,width=500,height=300"); return false;');
+                    $('.modal-body .btn-social-share.gplus', modal).remove(); //.removeAttr('href').attr('onClick', 'window.open("https://plus.google.com/share?url=' + url + '", "target window", "toolbar=no, location=0, status=0,menubar=0,scrollbars=0,resizebale=yes,width=500,height=300"); return false;');
+                    $('.modal-body .btn-link', modal).attr('href', 'mailto:' + _msg.show('social.share.friendEmail') + '?Subject=' + shareTitle + '&body=' + _msg.show('social.share.unlimitedCodeTitle') + ' ' + _msg.show('social.share.enterthiscode') + ' ' + $('.ref-code').text());
+                    break;
+                case 'share-unlimited-confirm':
+                    shareTitle = _msg.show('social.share.unlimitedCodeTitle');
+                    hashtag = _msg.show('brandName');
+                    $('.modal-body .btn-social-share.fb', modal).on('click', function () {
+                        FB.ui({
+                            method: 'feed',
+                            name: 'Cineworld Unlimited code: ' + $('.ref-code').text(),
+                            link: window.location.origin + '/unlimited',
+                            picture: window.location.origin + cfg.repoFolder + '/articles/thumbs/unlimited_1exp.jpg',
+                            caption: shareTitle,
+                            description: shareTitle
+                        });
+                    });
+                    $('.modal-body .btn-social-share.tw', modal).removeAttr('href').attr('onClick', 'window.open("http://twitter.com/share?url=' + window.location.origin + '/unlimited' + '&text=' + shareTitle + '. ' + _msg.show('enterthiscode') + ' ' + $('.ref-code').text() + '&hashtags=' + hashtag + '", "targetwindow", "toolbar=no, location=0, status=0,menubar=0,scrollbars=0,resizebale=yes,width=500,height=300"); return false;');
+                    $('.modal-body .btn-social-share.gplus', modal).remove(); //.removeAttr('href').attr('onClick', 'window.open("https://plus.google.com/share?url=' + url + '", "target window", "toolbar=no, location=0, status=0,menubar=0,scrollbars=0,resizebale=yes,width=500,height=300"); return false;');
+                    $('.modal-body .btn-link', modal).attr('href', 'mailto:' + _msg.show('social.share.friendEmail') + '?Subject=' + shareTitle + '&body=' + _msg.show('social.share.unlimitedCodeTitle') + ' ' + _msg.show('social.share.enterthiscode') + ' ' + $('.ref-code').text());
+                    break;
+                case 'share-booking-confirmation':
+                    shareTitle = _msg.show('social.share.unlimitedCodeTitle');
+                    hashtag = _msg.show('brandName');
+                    $('.modal-body .btn-social-share.fb', modal).on('click', function () {
+                        FB.ui({
+                            method: 'feed',
+                            name: _msg.show('social.share.imgoingtosee') + ' ' + moviePageLink,
+                            link: window.location.origin + '/films/' + moviePageLink.toLowerCase(),
+                            picture: window.location.origin + showPoster,
+                            caption: showDate + ' in ' + showCinema,
+                            description: showDate + ' in ' + showCinema
+                        });
+                    });
+                    $('.modal-body .btn-social-share.gplus', modal).remove();
+                    $('.modal-body .btn-social-share.tw', modal).attr('onClick', 'window.open("http://twitter.com/share?url=' + window.location.origin + '/films/' + moviePageLink.toLowerCase() + '&text=' + _msg.show('social.share.imgoingtosee') + ' ' + moviePageLink + '. ' + showDate + ' in ' + showCinema + '&hashtags=' + hashtag + '", "targetwindow", "toolbar=no, location=0, status=0,menubar=0,scrollbars=0,resizebale=yes,width=500,height=300"); return false;');
+                    $('.modal-body  .btn-link', modal).attr('href', 'mailto:\' + _msg.show(\'social.share.friendEmail\') + \'?Subject=' + _msg.show('social.share.imgoingtosee') + ' ' + moviePageLink + '&body=' + _msg.show('social.share.imgoingtosee') + ' ' + moviePageLink + '. ' + showDate + ' in ' + showCinema);
+                    break;
+            }
+            modal.find('.modal-title').text(title);
+        });
+        var wishlistTarget;
+        $('#road-block').on('shown.bs.modal', function (event) {
+            var modal = $(this);
+            var target = (wishlistTarget !== null && wishlistTarget !== '') ? wishlistTarget : $(event.relatedTarget);
+            if (target) {
+                var titleOut = target.attr('data-title-loggedout');
+                var title;
+                if (titleOut) {
+                    title = titleOut;
+                } else {
+                    title = _msg.show('loginorregister');
+                }
+                modal.find('.modal-title').text(title);
+            }
+
+        });
+        // mobile dropdown popups //
+        $('#summary a[href="#venue-hire"]').on('click', function () {
+            window.location.hash = '#tab_venue-hire';
+            location.reload();
+        });
+        Unison.on('change', function (bp) {
+            switch (bp.name) {
+                case 'usn-x-small':
+                case 'usn-small':
+                    break;
+                case 'usn-small-medium':
+                case 'usn-medium':
+                case 'usn-large-medium':
+                case 'usn-large':
+                case 'usn-x-large':
+                    if ($('body').hasClass('dynamic-select-open')) {
+                        $('body').removeClass('dynamic-select-open');
+                        if ($('.modal:visible').length === 0) {
+                            $('body').removeClass('modal-open');
+                        }
+                    }
+                    break;
+            }
+            if ($('.mix img').length > 0) {
+                var posterPrefix = posters.posterPrefix();
+                var arr = [];
+                var endSrc;
+                $.each($('.mix img:not(.failed)'), function (idx, mix) {
+                    if ($(this).hasClass('loaded')) {
+                        var prevSize = $(this).attr('src').split('/');
+                        prevSize = prevSize[prevSize.length - 1].split('-');
+                        if (prevSize.length > 1) {
+                            prevSize = prevSize[1].replace('.jpg', '');
+                        } else {
+                            prevSize = prevSize[0].replace('.jpg', '');
+                        }
+                        switch (posterPrefix) {
+                            case 'md':
+                                if (prevSize == 'sm' || prevSize == 'sm2x') {
+                                    arr = $(mix).attr('src').split('.');
+                                    arr[0] = arr[0].substring(0, arr[0].length - 2);
+                                    endSrc = arr[0] + posterPrefix + '.' + arr[1];
+                                    $(mix).attr('src', endSrc);
+                                }
+                                break;
+                            case 'lg':
+                                if (prevSize == 'sm' || prevSize == 'md' || prevSize == 'sm2x' || prevSize == 'md2x') {
+                                    arr = $(mix).attr('src').split('.');
+                                    arr[0] = arr[0].substring(0, arr[0].length - 2);
+                                    endSrc = arr[0] + posterPrefix + '.' + arr[1];
+                                    $(mix).attr('src', endSrc);
+                                }
+                                break;
+                        }
+                    }
+                });
+            }
+        });
+        $('#modal-login').click(function () {
+            var username = $('#modal-email').val(),
+                password = $('#modal-pass').val();
+            $.post('/presLogin', {
+                username: username,
+                password: password
+            }, function (data) {
+                if (data && data.resultCode === 0) {
+                    if (utagDefined()) {
+                        utag.link({
+                            'event_name': 'customer login'
+                        }, function () {
+                            location.reload();
+                            return;
+                        });
+                    } else {
+                        location.reload();
+                    }
+                }
+            }).error(function (e) {
+                if (e.status == 403) {
+                    return;
+                }
+            });
+        });
+
+        if (!isHome) {
+            var first, name;
+            $('.nav.nav-tabs').first().on('shown.bs.tab', function (e) {
+                if (first && name && first != name && window.location.search.length === 0) {
+                    if ($('.breadcrumb .timepickerPosterLocation').length > 0 || $('.breadcrumb .hashLocation').length > 0) {
+                        $('.breadcrumb .hashLocation').text(name);
+                    } else {
+                        $('.breadcrumb').append('<i><\/i><span class="hashLocation">' + name + '<\/span>');
+                    }
+
+                } else {
+                    $('.breadcrumb .hashLocation').prev().remove();
+                    $('.breadcrumb .hashLocation').remove();
+                }
+            });
+            $('.nav-tabs:not(.child-tabs) li a[data-toggle="tab"]').on('click', function (e) {
+                if (location.hash != '#screen-hire-&-parties') {
+                    $('.venue-hire-form').hide();
+                }
+            });
+        }
+
+        // filter handler for posters
+        $('.filters .filter').on('click', function (e) {
+            var $this = $(this);
+            var filterContainer = $('.tab-pane.active .filters');
+            var filter = $this.data('filter');
+
+            $('.more-filter-chosen', filterContainer).addClass('hidden');
+            if ($this.hasClass('active')) {
+                $('.filter', filterContainer).removeClass('active');
+                $('.filter[data-filter=".mix"]', filterContainer).addClass('active');
+                $('.filters.visible-xs .dropdown-toggle .filter-name').empty().text($('.filter[data-filter=".mix"]').first().text());
+                filter = '.mix';
+            } else {
+                $('.filter', filterContainer).removeClass('active');
+                $('.filter[data-filter="' + filter + '"]', filterContainer).addClass('active');
+                $('.filters.visible-xs .dropdown-toggle .filter-name').empty().text($this.text());
+                if (typeof $this.data('more') !== 'undefined' && $this.data('more') === 1) {
+                    $('.more-filter-chosen .filter', filterContainer).text($this.text()).addClass('active');
+                    $('.more-filter-chosen', filterContainer).removeClass('hidden');
+                }
+            }
+            $this.blur();
+            $('.posters.active').mixItUp('multiMix', {
+                filter: filter.toLowerCase(),
+                sort: 'order:asc'
+            });
+        });
+        $('.filters.visible-xs .dropdown-toggle .filter-name').empty().text($('.filters .filter').first().text());
+    }, loadTimeout);
+    $(document).on('show.bs.modal', '.modal', function (event) {
+        var zIndex = 1040 + (10 * $('.modal:visible').length);
+        $(this).css('z-index', zIndex);
+        setTimeout(function () {
+            $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+        }, 0);
+    });
+
+    $('.modal:not(mobile-modal)').on('show.bs.modal', function (e) {
+        var $height = window.innerHeight - 120;
+        $('.modal-content', this).css('max-height', $height);
+    });
+});
+$(document).on('show.bs.dropdown', function () {
+    $('.bootstrap-select .dropdown-menu.open .bs-searchbox').show();
+});
+$(document).on('show.bs.dropdown', function () {
+    if ($('.bootstrap-select.open').length > 0 && $('.bootstrap-select.open').prev().data('live-search') === true) {
+        if ($('.bootstrap-select.open .dropdown-menu.open .bs-searchbox input').val().length > 0) {
+            $('.bootstrap-select.open .dropdown-menu.open .bs-searchbox').addClass('open');
+        } else {
+            $('.dropdown-menu.open .bs-searchbox').removeClass('open');
+        }
+    }
+});
+
+function unisonConditionalLoading(bp) {
+    $('[data-usn-load-if]').hide();
+    $('[data-usn-load-if="' + bp.name + '"]').show();
+}
+
+Unison.on('change', function (bp) {
+    unisonConditionalLoading(bp);
+});

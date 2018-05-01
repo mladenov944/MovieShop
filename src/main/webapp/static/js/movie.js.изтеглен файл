@@ -1,0 +1,343 @@
+var mixConfig = {};
+var paginationLimit;
+var wishlistIdx = -1;
+$(document).on('logininfo', function () {
+    if (tecs.customer) {
+        if (utagDefined()) {
+            utag.view({
+                'customer_id': tecs.customer.id,
+                'cinema_Id': tecs.customer.favSiteId
+            });
+        }
+        $('section#loggedin').show(); //
+        $('section#loggedin button, #wishlist-tab button').on('click', function () {
+            var $this = $(this);
+            var url = '/wishlistAdd';
+            if ($this.data('rem')) {
+                url = '/wishlistRemove';
+            }
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: {
+                    code: code
+                },
+                beforeSend: function () {
+                    $this.find('.fa-cog').remove();
+                    $this.prepend('<i class="fa fa-cog fa-spin"></i> ')
+                        .addClass('disabled');
+                },
+                success: function (data) {
+                    if (data && data.resultCode === 0) {
+                        if ($this.data('rem')) {
+                            $('#wishlist h3').text(_msg.show('wishlistAddPartial1') + ' ' + featureName + ' ' + _msg.show('wishlistAddPartial2'));
+                            $('#wishlist-tab [data-code] h3').text(_msg.show('wishlistAddPartial1') + ' ' + featureName + ' ' + _msg.show('wishlistAddPartial2'));
+                            $('section#loggedin button').data('rem', 0).text(_msg.show('wishlistAdd'));
+                            $('#wishlist-tab button').data('rem', 0).text(_msg.show('wishlistRemove'));
+                            tecs.wishlist.splice($this.data('wishlistIdx'), 1);
+                        } else {
+                            if (data && data.resultCode === 0) {
+                                $('#wishlist h3').text(_msg.show('alreadyInWishlist'));
+                                $('#wishlist-tab [data-code] h3').text(_msg.show('alreadyInWishlist'));
+                                $('section#loggedin button').data('rem', 1).text(_msg.show('wishlistRemove'));
+                                $('#wishlist-tab button').data('rem', 1).text(_msg.show('wishlistRemove'));
+                                tecs.wishlist.push({
+                                    featureCode: $this.data('code')
+                                });
+                                wishlistIdx = tecs.wishlist.length - 1;
+                            }
+                        }
+                    }
+                },
+                error: function () {
+                    $this.removeClass('disabled');
+                    $this.find('.fa-cog').remove();
+                },
+                complete: function () {
+                    $this.removeClass('disabled');
+                    $this.find('.fa-cog').remove();
+                }
+            });
+            return false;
+        });
+
+        $('.add-to-wishlist').attr('data-code', code);
+        for (var i = 0; i < tecs.wishlist.length; i++) {
+            if (tecs.wishlist[i].featureCode === code) {
+                $('.add-to-wishlist').attr('data-rem', 1).attr('data-wishlistIdx', i).text(_msg.show('wishlistRemove'));
+                $('.share').attr('data-rem', 1).attr('data-wishlistIdx', i).text(_msg.show('wishlistRemove'));
+                $('#wishlist h3').text(_msg.show('alreadyInWishlist'));
+                $('#wishlist-tab [data-code] h3').text(_msg.show('alreadyInWishlist'));
+                wishlistIdx = i;
+                break;
+            }
+        }
+        if (wishlistIdx < 0) {
+            $('.add-to-wishlist').attr('data-rem', 0).text(_msg.show('wishlistAdd'));
+        }
+        $('input#your-rating').change(function () {
+            $.post('/presVote', {
+                code: code,
+                score: parseInt($(this).val())
+            }, function (data) {
+            });
+        });
+    } else {
+        $('section#loggedout').show();
+        $('input#your-rating').change(function () {
+            $('#road-block').modal('show');
+        });
+    }
+    $('.rate-it-yourself').show();
+    if (showingInfo.prsnts <= 0) {
+        $('#wishlist').show();
+        if (wishlistIdx == -1) $('#wishlistNoTabs').show();
+    } else {
+        $('.mobile-booking').show();
+        $('#booking').show();
+    }
+});
+$(document).ready(function () {
+
+    sliders.initAllSliders();
+
+    if ($(window).width() > breakPoint && $(window).width() < 980) {
+        paginationLimit = 6;
+    }
+    if ($(window).width() > 980) {
+        paginationLimit = 8;
+    }
+    mixConfig = {
+        controls: {
+            enable: false,
+            live: true,
+            toggleFilterButtons: false
+        },
+        pagination: {
+            limit: paginationLimit,
+            maxPagers: false,
+            generatePagers: false,
+            pagerClass: 'pager',
+            prevButtonHTML: '',
+            nextButtonHTML: ''
+        },
+        selectors: {
+            target: '.mix'
+        },
+        animation: {
+            enable: false
+        },
+        layout: {
+            display: 'inline-block'
+        },
+        load: {
+            filter: 'all',
+            sort: 'order:asc'
+        },
+        callbacks: {
+            onMixStart: function (state) {
+                $('.tab-pane.active .not-found').hide();
+                $('.posters.active .mix.shown').removeClass('shown');
+            },
+            onMixEnd: function (state) {
+                var failContainer = $('.tab-pane.active .not-found');
+                var showMore = $('.tab-pane.active .show-more-films');
+
+                $.each(state.$targets, function (idx, poster) {
+                    $(poster).not(state.activeFilter).detach().appendTo('.posters.active');
+                });
+
+                if (state.fail) {
+                    failContainer.show();
+                    showMore.hide();
+                } else {
+                    failContainer.hide();
+                    showMore.show();
+
+                    if (state.activeFilter !== '' && state.activeFilter !== '.mix') {
+                        activeFilter = state.activeFilter.replace('.cat-', '');
+                    } else {
+                        activeFilter = '';
+                    }
+                }
+
+                $.each(state.$show, function (idx, poster) {
+                    $(poster).addClass('shown');
+                });
+
+                var posterPrefix = posters.posterPrefix();
+                var timer = setInterval(function () {
+                    if ($('.mix img:not(:hidden)').length !== 0) {
+                        clearInterval(timer);
+                    }
+                    /*******************************/
+                    $.each($('.mix[style^="display: inline-block"] img:not(:hidden):not(.loaded):not(.failed)'), function (idx, poster) {
+                        $(poster).css('height', $(poster).height());
+                        $(poster).animate({
+                            'opacity': 0
+                        }, '0', function () {
+                            $(poster).attr('src', $(this).attr('data-src')).addClass('loaded')
+                                .error(function () {
+                                    $(poster).attr('src', config.placeholderPoster)
+                                        .addClass('failed')
+                                        .animate({
+                                            'opacity': 1
+                                        }, '100', function () {
+                                            $(poster).attr('style', '');
+                                        });
+                                }).animate({
+                                'opacity': 1
+                            }, '100', function () {
+                                $(poster).attr('style', '');
+                                $(poster).parent().css('background', '#000');
+                            });
+                        });
+                    });
+                }, 50);
+            }
+        }
+    };
+    tecs.$movieRecommend = $('.recommendations-posters');
+
+    var url = window.location.href;
+    var shareTitle = _msg.show('social.share.articletitle');
+    var hashtag = _msg.show('brandName');
+
+    if (tecs.customer) {
+        $('.social .btnFb').removeAttr('href').attr('onClick', 'window.open("http://www.facebook.com/sharer.php?u=' + url + '", "targetwindow", "toolbar=no, location=0, status=0,menubar=0,scrollbars=0,resizebale=yes,width=500,height=300"); return false;');
+        $('.social .btnGp').removeAttr('href').attr('onClick', 'window.open("https://plus.google.com/share?url=' + url + '", "targetwindow", "toolbar=no, location=0, status=0,menubar=0,scrollbars=0,resizebale=yes,width=500,height=300"); return false;');
+        $('.social .btnTw').removeAttr('href').attr('onClick', 'window.open("http://twitter.com/share?url=' + url + '&text=' + shareTitle + '&hashtags=' + hashtag + '", "targetwindow", "toolbar=no, location=0, status=0,menubar=0,scrollbars=0,resizebale=yes,width=500,height=300"); return false;');
+    } else {
+        $('.social a').on('click', function (e) {
+            e.preventDefault();
+            $('#road-block').modal('show');
+        });
+    }
+    window.setTimeout(function () {
+        if (tecs.customer === null) {
+            $('.social a').attr('href', '#');
+        }
+
+        var dateStarted = moment(showingInfo.dateStarted, 'DD/MM/YYYY');
+        var isFutureEvent = moment(dateStarted).isAfter(moment());
+        if (isFutureEvent) {
+            $('section#feedback').remove();
+            $('.rate-it-yourself').hide();
+        }
+
+        $('.call-to-action-button').on('click', function () {
+            $('html,body').animate({
+                scrollTop: Math.round($('.quickbook-section').offset().top)
+            }, '500', 'easeOut');
+        });
+
+        $('.add-to-wishlist').on('click', function () {
+            var $this = $(this);
+            if (tecs.customer) {
+                if ($(this).data('rem')) {
+                    $.post('/wishlistRemove', {
+                        code: $this.data('code')
+                    }, function (data) {
+                        if (data && data.resultCode === 0) {
+                            $this.data('rem', 0).text(_msg.show('wishlistAdd'));
+                            tecs.wishlist.splice($this.data('wishlistIdx'), 1);
+                            userActions.wishlistRemoveMovieSuccessful();
+                        } else {
+                            userActions.wishlistRemoveMovieError();
+                        }
+                    });
+                    return false;
+                } else {
+                    $.post('/wishlistAdd', {
+                        code: $this.data('code')
+                    }, function (data) {
+                        if (data && data.resultCode === 0) {
+                            $this.data('rem', 1).text(_msg.show('wishlistRemove'));
+                            tecs.wishlist.push({
+                                featureCode: $this.data('code')
+                            });
+                            wishlistIdx = tecs.wishlist.length - 1;
+                            userActions.wishlistAddMovieSuccessful();
+                        } else {
+                            userActions.wishlistAddMovieError();
+                        }
+                    });
+                }
+            } else {
+                userActions.wishlistLoggedoutButtonClicked();
+                $('#road-block').modal('show');
+            }
+            return false;
+        });
+        var twitterWidgetHolder = '#twitterFeed ol.h-feed';
+        var amountOfTweetsToShow = 3;
+        if ($(document).width() < breakPoint) {
+            $('#more-info').removeClass('in');
+        }
+        $('a[data-target="#more-info"]').on('click', function (e) {
+            e.preventDefault();
+        });
+        var tweetsArray = [];
+        if (tweeterFeedEnabled) {
+            $.get('/getFeatTweets?code=' + code + '&mod=twitter_entry&max=20&pg=1&typ=2', function (data) {
+                if (data === '') {
+                    $('.user-tweet .tweet-text').text(_msg.show('noTweetsYet'));
+                } else {
+                    $('.user-tweet .tweet-text').text(_msg.show('tweetAboutFilm'));
+                }
+                var $data = '<div>' + data + '</div>';
+                $('.h-entry', $data).each(function () {
+                    var tweet = $('<div>').append($(this).css('opacity', '0').clone()).remove().html();
+                    tweetsArray.push(tweet);
+                });
+                populateTweeterFeed(twitterWidgetHolder, amountOfTweetsToShow);
+            });
+        }
+
+        function populateTweeterFeed(target, amount) {
+            for (var i = 0; i < amount; i++) {
+                if (tweetsArray.length > 0) {
+                    var tweet = tweetsArray.shift();
+                    $(target).append(tweet);
+                    $(target).find('li.tweet').animate({
+                        opacity: 1
+                    }, 500);
+                } else {
+                    $('.tw-feed .panel-footer').html(_msg.show('noMoreTweets'));
+                }
+            }
+        }
+
+        $('.tw-feed .panel-footer').on('click', function () {
+            populateTweeterFeed(twitterWidgetHolder, amountOfTweetsToShow);
+        });
+        if (typeof cats !== 'undefined' && cats !== '') {
+            $.get((qbApiUrl + '/v1' + '/poster/' + tenantId + '/by-categories/' + '?lang=' + langCode + '&categories=' + cats), {
+                max: 6,
+                ft: 1,
+                si: 0,
+                vt: 0,
+                cin: 1,
+                udays: 365,
+                pi: 0,
+                cats: JSON.stringify(cats),
+                repo: _msg.show('postersFolder'),
+                attrs: shownAttrs[langCode]
+            }, function (data) {
+                var count = 0;
+                var r_posters = data.body.posters;
+                $.each(r_posters, function (idx, feat) {
+                    if (feat.code.toString().toUpperCase() === code.toString().toUpperCase()) return;
+                    tecs.$movieRecommend.append('<div class="mix col-xs-6 col-sm-3" style="cursor:pointer"><a href="' + feat.url + '" class="movie"><img data-original="' + feat.posterSrc + '" src="' + resourceFolder + '/film.placeholder.poster.jpg" alt="' + feat.featureTitle + '" class="img-responsive poster lazy"><p>' + feat.featureTitle + '</p></a></div><i class="fix"></i>');
+                    count++;
+                });
+            }).done(function () {
+                $('section.wishlist .recommendations-posters').mixItUp(mixConfig);
+            });
+        }
+
+        $('.cast span, .director span').click(function () {
+            window.location = '/search?query=' + $(this).text();
+        });
+    }, loadTimeout);
+});

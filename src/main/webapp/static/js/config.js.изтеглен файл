@@ -1,0 +1,37 @@
+/**
+ * Created by t.stulka on 2016-11-23.
+ */
+
+var cfg = {
+    imgFolder: '/xmedia/img/' + tenantId,
+    repoFolder: '/xmedia-cw/repo',
+    generateConfig: function () {
+        var cfg = {};
+
+        cfg['articleHeroImg'] = this.repoFolder + '/articles/hero/';
+        cfg['articleThumbImg'] = this.repoFolder + '/articles/thumbs/';
+        cfg['articleWideImg'] = this.repoFolder + '/articles/hor/';
+        cfg['articleGalleryImg'] = this.repoFolder + '/articles/gallery/';
+        cfg['articleBannerImg'] = this.repoFolder + '/articles/banner/';
+        cfg['articleVenueHireImg'] = this.repoFolder + '/articles/venue-hire/';
+        cfg['articleOtherImg'] = this.repoFolder + '/articles/other/';
+        cfg['facilitiesImg'] = this.repoFolder + '/facs/';
+        cfg['giftsImg'] = this.repoFolder + '/articles/gifts/';
+        cfg['heroImg'] = this.repoFolder + '/articles/hero/';
+        cfg['heroLargeImg'] = this.repoFolder + '/home/slider/lg/';
+        cfg['heroSmallImg'] = this.repoFolder + '/home/slider/sm/';
+        cfg['heroThumbImg'] = this.repoFolder + '/home/slider/th/';
+        cfg['posterImg'] = this.repoFolder + '/feats/posters/';
+        cfg['siteImg'] = this.repoFolder + '/sites/';
+        cfg['placeholderArticle'] = this.imgFolder + '/placeholder.article.jpg';
+        cfg['placeholderBlogFooter'] = this.imgFolder + '/blog_footer_placeholder.png';
+        cfg['placeholderDefault'] = this.imgFolder + '/default-placeholder.png';
+        cfg['placeholderPoster'] = this.imgFolder + '/film.placeholder.poster-md.jpg';
+        cfg['placeholderPosterWoSuffix'] = this.imgFolder + '/film.placeholder.poster-';
+        cfg['placeholderLargePoster'] = this.imgFolder + '/film.placeholder.poster-lg.jpg';
+
+        return cfg;
+    }
+};
+
+var config = cfg.generateConfig();

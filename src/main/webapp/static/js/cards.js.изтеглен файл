@@ -1,0 +1,42 @@
+/**
+ * Created by t.stulka on 2016-12-16.
+ *
+ * This script calculates metching height for our cards components
+ *
+ * @params tab - jQuery tab on which cards are present or boolean false to trigger on non tabbed area
+ */
+
+var cards = {
+    init: function(tab){
+        if((tab && tab.css('display') !== 'none') || !tab) {
+            var cardContainers = $('.eqWrap .card');
+
+            if(typeof cardContainers !== 'undefined') {
+                var maxHeight = 0;
+                $.each(cardContainers, function (idx, element) {
+                    var $element = $(element);
+                    var height = $element.outerHeight();
+                    if (height > maxHeight) {
+                        maxHeight = height;
+                    }
+                    var styles = {
+                        position : "absolute",
+                        bottom: 0,
+                        left: 0,
+                        right: 0
+                    };
+                    $('.card-footer', $element).css(styles);
+                });
+                $('.eqWrap div.card').outerHeight(maxHeight);
+            }
+        }
+    },
+
+    onResize: function(tab) {
+        if(window.innerWidth >= 768) {
+            setTimeout(function () {
+                cards.init(tab);
+            }, 100);
+        }
+    }
+};

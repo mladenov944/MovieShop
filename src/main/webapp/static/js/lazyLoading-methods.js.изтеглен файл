@@ -1,0 +1,27 @@
+/**
+ * Created by t.stulka on 2017-04-13.
+ */
+
+function lazyImages() {
+    $("img.lazy:not(:hidden), img.lazy.movie-poster").unveil(600, function() {
+        $(this).addClass('loaded').removeClass('lazy');
+    }).error(function() {
+        var $this = $(this);
+        var checkSrc = typeof $this.data('src') !== 'undefined' && $this.data('src').indexOf("posters") !== 0;
+        var checkOriginal = typeof $this.data('original') !== 'undefined' && $this.data('original').indexOf("posters") !== 0;
+        var replacePoster = config.placeholderDefault;
+        if ( checkSrc || checkOriginal) {
+            if($this.hasClass('poster')) {
+                replacePoster = config.placeholderPoster;
+            } else if ($this.hasClass('movie-poster')) {
+                replacePoster = config.placeholderLargePoster;
+            }
+        }
+        $this.attr('src', replacePoster).removeAttr('data-src').removeAttr('data-original').removeClass('lazy');
+        return;
+    });
+}
+
+$('a[data-toggle="tab"]').on('shown.bs.tab', function(){
+    lazyImages();
+});

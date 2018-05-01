@@ -1,0 +1,43 @@
+function changeLanguage(option, windowObject) {
+    var url, urlParts, newUrl, paramSeparator, suffix, qbPathPresent = false;
+    url = windowObject.location.href;
+
+    //does url contain #?
+    if (/#/.test(url)) {
+        urlParts = url.split('#');
+        url = urlParts[0];
+    }
+
+    if (typeof urlParts !== 'undefined' && urlParts.length !== 1 && urlParts[1] !== '/') {
+        qbPathPresent = true;
+    }
+
+    //check if there is lang parameter present in url
+    if(/lang=/.test(url)) {
+        //try to replace existing lang parameter
+        //CCWEB-724 hashParam brokes the tabs during language change - it has to be removed
+        newUrl = url.replace(/lang=[a-z_A-Z]+[&]?/i, 'lang=' + option.value);
+        //check if there was something added by QB - if yes, restore it
+        if (qbPathPresent) {
+            newUrl += '#' + urlParts[1];
+        }
+    } else {
+        paramSeparator = '?';
+        if (/\?/.test(newUrl)) {
+            paramSeparator = '&';
+        }
+        suffix = '';
+        newUrl = url + paramSeparator + 'lang=' + option.value + suffix;
+
+        if (qbPathPresent) {
+            newUrl += '#' + urlParts[1];
+        }
+
+    }
+
+    //remove trailing '&' if present
+    if (/&$/.test(newUrl)) {
+        newUrl = newUrl.substr(0, newUrl.length - 1);
+    }
+    windowObject.location.href = newUrl;
+}

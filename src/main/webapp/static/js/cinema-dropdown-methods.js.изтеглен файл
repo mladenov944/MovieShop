@@ -1,0 +1,32 @@
+$(document).ready(function() {
+    function populateSiteSelects() {
+        var $siteSelects = [];
+
+        if (apiSitesList.length !== 0) {
+            $('select.siteselect').empty().each(function () {
+                $siteSelects.push($(this));
+            });
+        }
+
+        $.each(apiSitesList, function (idx, site) {
+            var $option = $('<option></option>').attr('value', site.id).html(site.name).attr('data-url', site.uri);
+            $option.appendTo($siteSelects);
+            if (typeof siteId !== 'undefined' && site.id === siteId) {
+                return true;
+            }
+        });
+
+        $.each($siteSelects, function (idx, site) {
+            if (site.data('init') !== 'manual') {
+                if (apiSitesList.length === 1) {
+                    site.val($('option', site).val()).selectpicker('refresh');
+                } else {
+                    site.val('0').selectpicker('refresh');
+                }
+            }
+        });
+        $(document).trigger('sitesReady');
+    }
+
+    populateSiteSelects();
+});

@@ -1,0 +1,196 @@
+/**
+ * Created by K.Gusz on 2016-12-05.
+ */
+
+var shownAttrs = {
+    "pl": "2D,3D,IMAX,VIP,DBOX,4DX,DUB,ST",
+    "gb": "2D,3D,IMAX,ViP,DBOX,4DX,M4J,SS,DUB,ST,CINB",
+    "ie": "2D,3D,IMAX,ViP,DBOX,4DX,M4J,SS,DUB,ST,CINB"
+};
+var attributes = {
+    'super': 'Superscreen',
+    'superShort': 'Superscreen',
+    'm4j': 'Movies for Juniors',
+    'm4jShort': 'MFJ',
+    'cinb': 'Cinebabies',
+    'cinbShort': 'Cinebabies'
+};
+
+var langCode = _msg.show('countryCode');
+
+function replaceScreeningType(toReplace, short) {
+
+        attributes.sub = attributesDubSub.sub ? attributesDubSub.sub : '';
+        attributes.subbed = attributesDubSub.subbed ? attributesDubSub.subbed : '';
+        attributes.dub = attributesDubSub.dub ? attributesDubSub.dub : '';
+        attributes.dubbed = attributesDubSub.dubbed ? attributesDubSub.dubbed : '';
+
+    if (typeof toReplace === 'string') {
+
+        var ssRegex = /\bSS|superscreen\b/gi, hasSs = false,
+            m4jRegex = /\bm4j|movies for juniors\b/gi, hasm4j = false,
+            imaxRegex = /\bimax\b/gi, hasImax = false,
+            vipRegex = /\bvip\b/gi, hasvip = false,
+            dboxRegex = /\bdbox\b/gi, hasdbox = false,
+            regex4dx = /\b4dx\b/gi, has4dx = false,
+            cinebRegex = /\bcinb|Cinebabies\b/gi, hasCineb = false,
+            regex2d = /\b2D\b/gi, has2d = false,
+            regex3d = /\b3D\b/gi, has3d = false;
+
+        var result = '';
+
+        if (toReplace.match(ssRegex) !== null) {
+            hasSs = true;
+        }
+        if (toReplace.match(m4jRegex) !== null) {
+            hasm4j = true;
+        }
+        if (toReplace.match(imaxRegex) !== null) {
+            hasImax = true;
+        }
+        if (toReplace.match(vipRegex) !== null) {
+            hasvip = true;
+        }
+        if (toReplace.match(regex4dx) !== null) {
+            has4dx = true;
+        }
+        if (toReplace.match(dboxRegex) !== null) {
+            hasdbox = true;
+        }
+        if (toReplace.match(cinebRegex) !== null) {
+            hasCineb = true;
+        }
+        if (toReplace.match(regex2d) !== null) {
+            has2d = true;
+        }
+        if (toReplace.match(regex3d) !== null) {
+            has3d = true;
+        }
+
+        if (hasSs) {
+            if (short === true) {
+                result = attributes.superShort;
+            } else {
+                result = attributes.super;
+            }
+
+            if (has3d) {
+                result =  result + '&nbsp;3D';
+            }
+            if (has2d) {
+                result =  result + '&nbsp;2D';
+            }
+
+        } else if (hasImax) {
+            if (has3d) {
+                result = 'IMAX&nbsp;3D';
+            }
+            if (has2d) {
+                result = 'IMAX&nbsp;2D';
+            }
+        } else if (hasvip) {
+            var vipText = _msg.show('type.isvip');
+            if (has3d) {
+                result = vipText + '&nbsp;3D';
+            }
+            if (has2d) {
+                result = vipText;
+            }
+        } else if (has4dx) {
+            if (has3d) {
+                result = '4DX&nbsp;3D';
+            }
+            if (has2d) {
+                result = '4DX';
+            }
+        } else if (hasdbox) {
+            if (has3d) {
+                result = 'DBOX&nbsp;3D';
+            }
+            if (has2d) {
+                result = 'DBOX';
+            }
+        } else if (hasCineb) {
+            if (has3d) {
+                result = attributes.cinb + '&nbsp;3D';
+            } else if (has2d) {
+                result = attributes.cinb + '&nbsp;2D';
+            } else {
+                result = attributes.cinb;
+            }
+        }else if (hasm4j) {
+            if (short === true) {
+                result = attributes.m4jShort;
+            } else {
+                result = attributes.m4j;
+            }
+            if (has3d) {
+                result = result + '&nbsp;3D';
+            }
+            if (has2d) {
+                result = result + '&nbsp;2D';
+            }
+        } else if (has3d && has2d) {
+            result = '2D,3D';
+        } else if (has3d) {
+            result = '3D';
+
+        } else if (has2d) {
+            result = '2D';
+
+        } else {
+            result = toReplace;
+        }
+
+        return replaceDubSub(toReplace, result, short);
+
+    } else {
+        return toReplace;
+    }
+}
+
+function replaceDubSub(toReplace, result, short) {
+    var stRegex = /\bST\b/gi,
+        dubRegex = /\bDUB\b/gi,
+        hasSt = false,
+        hasDub = false,
+        subResult = '',
+        dubResult = '';
+
+    var currShownAttrs = shownAttrs[langCode];
+
+    if (typeof toReplace === 'string' && typeof result === 'string' && currShownAttrs.match(stRegex) !== null && currShownAttrs.match(dubRegex) !== null) {
+        /*regex check to see if dub/sub is withing current shownAttr and should be processed*/
+        if(short === true) {
+            subResult = attributes.sub;
+            dubResult = attributes.dub;
+        } else {
+            subResult = attributes.subbed;
+            dubResult = attributes.dubbed;
+        }
+
+        if (toReplace.match(stRegex) !== null) {
+            hasSt = true;
+        }
+        if (toReplace.match(dubRegex) !== null) {
+            hasDub = true;
+        }
+
+        var secondary = [];
+        if(hasSt) {
+            secondary.push(subResult);
+        }
+        if(hasDub) {
+            secondary.push(dubResult);
+        }
+
+        if(secondary.length > 0) {
+            return result + '&nbsp;(' + secondary.join(',') + ')';
+        } else {
+            return result;
+        }
+
+    } else {
+        return result;
+    }
+}

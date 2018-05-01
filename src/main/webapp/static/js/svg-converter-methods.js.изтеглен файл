@@ -1,0 +1,51 @@
+/**
+ * Created by K.Gusz on 2017-05-24.
+ */
+var svg = (function () {
+
+    var config = {
+        selector: 'img.svg'
+    };
+
+    var convertSvg = function(selector) {
+        var $elements = $(config.selector);
+        if (typeof selector !== 'undefined' && selector !== '') {
+            $elements = $(selector);
+        }
+        $elements.each(function () {
+            var $img = jQuery(this);
+            var imgID = $img.attr('id');
+            var imgClass = $img.attr('class');
+            var imgURL = $img.attr('src');
+            var imgTitle = $img.attr('alt');
+            jQuery.get(imgURL, function (data) {
+                // Get the SVG tag, ignore the rest
+                var $svg = jQuery(data).find('svg');
+                // Defining role for svg helps screen readers
+                $svg = $svg.attr('role', 'img');
+                // Add replaced image's ID to the new SVG
+                if (typeof imgID !== 'undefined') {
+                    $svg = $svg.attr('id', imgID);
+                }
+                // Add replaced image's classes to the new SVG
+                if (typeof imgClass !== 'undefined') {
+                    $svg = $svg.attr('class', imgClass + ' replaced-svg');
+                }
+                // Add title tag for accessibility
+                if (typeof imgTitle !== 'undefined') {
+                    $svg = $svg.attr('aria-labelledby', 'title');
+                    $svg = $svg.prepend( "<title>" + imgTitle + "</title>" );
+                }
+                // Remove any invalid XML tags as per http://validator.w3.org
+                $svg = $svg.removeAttr('xmlns:a');
+                // Replace image with new SVG
+                $img.replaceWith($svg);
+            }, 'xml');
+        });
+    };
+
+    return {
+        convert: convertSvg,
+        config: config
+    }
+})();

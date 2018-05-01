@@ -1,0 +1,30 @@
+/**
+ * Created by K.Gusz on 2016-05-20.
+ */
+$(function () {
+
+    function handlePosterClick(obj, filter) {
+        var $poster = obj;
+        var movieCode = $poster.data('code');
+        var movieTitle = $poster.data('title');
+        var index = $($poster.closest('.mix')).index() + 1;
+        utagPosterClick(movieCode, movieTitle, index);
+
+    }
+
+    function utagPosterClick(movieCode, movieTitle, index) {
+        if (utagDefined()) {
+            utag.link({
+                'event_name': "poster_click",
+                'impression_id': [movieCode],
+                'impression_name': [movieTitle] + ' FB',
+                'impression_pos': [index]
+            });
+        }
+    }
+
+    $(document).on('click', '[data-postermodal]', function (e) {
+        handlePosterClick($(this), activeFilter);
+    });
+
+});

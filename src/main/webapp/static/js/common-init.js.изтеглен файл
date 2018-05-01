@@ -1,0 +1,82 @@
+window.fbAsyncInit = function () {
+    FB.init({
+        appId: wmParams.facebookAppId,
+        cookie: true,
+        xfbml: true,
+        version: 'v2.10'
+    });
+    if (window.location.hash && window.location.hash == '#facebook') {
+        fb_login();
+    }
+};
+(function (d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s);
+    js.id = id;
+    js.src = "//connect.facebook.net/" + _msg.show('facebookSdkLocale') + "/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+
+function checkIsLoggedIn() {
+    if(typeof tecs === 'undefined') {
+        tecs = { };
+    }
+    tecs.customer = null;
+    $.ajax({
+        type: 'POST',
+        url: $.fn.handleWebmatrixHost('/isLoggedIn'),
+        success: function (data) {
+            if (typeof data !== 'undefined' && typeof data.data !== 'undefined') {
+                tecs.customer = data.data;
+                if (typeof data.data.csi !== 'undefined') {
+                    tecs.wishlist = [];
+                    $.each(data.data.csi, function (idx, elem) {
+                        if (elem.featureCode !== '') {
+                            tecs.wishlist.push(elem.featureCode);
+                        }
+                    });
+                }
+            }
+        },
+        complete: function () {
+            if (tecs.customer !== null) {
+                $('.logged-in').show();
+                $('.header .logged-in').css('display', 'table-cell');
+                $('.logged-out').remove();
+                $('i.questionMark').hide();
+                $('.add-to-wishlist').removeAttr('data-toggle data-target data-title');
+                $.fn.route('ACCOUNT_MANAGEMENT_MMA_PAGE', function(url) {
+                    $('a[data-target="#user-menu2"]').attr('href', $.fn.handleWebmatrixHost(url));
+                });
+                $('.add-to-wishlist').on('click', function () {
+                    $(this).find('.fa-cog').remove();
+                    $(this).prepend('<i class="fa fa-cog fa-spin"></i> ');
+                    if (utagDefined()) {
+                        utag.link({
+                            'event_name': 'customer clicked add to wishlist'
+                        });
+                    }
+                });
+            } else {
+                $('.logged-in').remove();
+                $('.logged-out').show();
+                $.fn.route('LOGIN_FORM', function(url) {
+                    $('a[data-target="#user-menu2"]').attr('href', $.fn.handleWebmatrixHost(url));
+                });
+                $('.header .logged-out').css('display', 'table-cell');
+                $('i.questionMark').show();
+                $('a[data-target="#share-login-register"]:not(.confirmation)').attr('data-target', '#road-block');
+                $('button[data-target="#share-login-register"]').attr('data-target', '#road-block');
+                $('.share-btn[data-toggle="popover"]').attr('data-target', '#road-block').attr('data-toggle', 'modal');
+            }
+            $(document).trigger('logininfo');
+            $('html').addClass('logininfo');
+        }
+    });
+
+}
+
+$(document).ready(function() {
+    checkIsLoggedIn();
+});

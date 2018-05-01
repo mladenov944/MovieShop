@@ -1,0 +1,93 @@
+/**
+ * Created by t.stulka on 2017-02-07.
+ */
+
+/****************** LOGIN *********************/
+tecs.login = function (username, password, callback) {
+    $('#loginModal').modal('show');
+    $.post($.fn.handleWebmatrixHost('/presLogin'), {
+        username: username,
+        password: password
+    }, function (data) {
+        if (data && data.resultCode === 0) {
+            userActions.userLoginSuccess();
+            redirectAfterLogin();
+        } else {
+            $.fn.route('ACCOUNT_MANAGEMENT_RESET_PASSWORD', function(resetPasswordUrl) {
+                userActions.userLoginError();
+                data.errorMessage = _msg.show('error.incorrectlogin') + '<a href="' + resetPasswordUrl + '"> ' + _msg.show('error.resetPassword') + '</a> ' + _msg.show('error.incorrectloginLink');
+                callback(data);
+            });
+        }
+        $('#loginModal').modal('hide');
+    }).error(function () {
+        userActions.userLoginError();
+        callback(_msg.show('error.erroroccured'));
+        $('#loginModal').modal('hide');
+    });
+};
+
+function redirectAfterLogin() {
+    var myAccLink;
+    if (tenantId === '10103') {
+        myAccLink = '/';
+    } else {
+        $.fn.route('ACCOUNT_MANAGEMENT_MMA_PAGE', function(url) {
+            myAccLink = document.location.protocol + '//' + document.location.host + url;
+        });
+    }
+
+    $.fn.route('ACCOUNT_MANAGEMENT_UPDATE_PASSWORD', function(url) {
+        var accountMngUpdatePasswordLink = url;
+        if (!document.referrer || document.referrer === '' || document.referrer.indexOf(accountMngUpdatePasswordLink) !== -1) {
+            window.location.assign(myAccLink);
+        } else {
+            if (loginTokenEmailPattern.test(document.referrer)) {
+                window.location.assign(myAccLink);
+            } else {
+                window.location.assign(document.referrer);
+            }
+        }
+    });
+}
+
+function fb_login() {
+    if(typeof FB !== 'undefined') {
+        FB.login(function (response) {
+            if (response.authResponse) {
+                var req = response.authResponse.signedRequest;
+                FB.api('/me', function () {
+                    $.post($.fn.handleWebmatrixHost('/presFacebookLogin'), {
+                        req: req,
+                        customerServiceId: 1,
+                        enroll: 1
+                    }, function (data) {
+                        if (data && data.resultCode === 0) {
+                            userActions.userFacebookLoginSuccess();
+                            redirectAfterLogin();
+                        } else {
+                            userActions.userFacebookLoginError();
+                            var err = _msg.show('error.facebookError');
+                            if(data.error) {
+                                err = _msg.show('error.usernameTaken');
+                            }
+                            $('#loginmessage, #enrollmessage').text(err).show();
+                        }
+                        $('#loginModal').modal('hide');
+                    }).error(function () {
+                        userActions.userFacebookLoginError();
+                        $('#loginmessage, #enrollmessage').text(_msg.show('error.facebookError')).show();
+                        $('#loginModal').modal('hide');
+                    });
+                });
+            } else {
+                userActions.userFacebookLoginError();
+                $('#loginModal').modal('hide');
+            }
+        }, {
+            scope: 'email'
+        });
+    }
+}
+
+/****************** LOGIN END *********************/

@@ -1,0 +1,110 @@
+$.fn.center = function () {
+    this.css("position", "absolute");
+    this.css("left", Math.max(0, (($(this.parent()).width() - $(this).outerWidth()) / 2) + $(window).scrollLeft()) + "px");
+    return this;
+};
+$(document).ajaxSend(function (event, request, settings) {
+    if (settings.url.indexOf('pgm-feat?') > 0 || settings.url.indexOf('wishlist') > 0) {
+        //$('#ajax_loader').show();
+    }
+});
+$(document).ajaxComplete(function (event, request, settings) {
+    if (settings.url.indexOf('pgm-feat?') > 0 || settings.url.indexOf('wishlist') > 0) {
+        if ($('#ajax_loader').is(':visible')) {
+            $('#ajax_loader').hide();
+        }
+    }
+});
+$.fn.countdown = function (callback, duration, message) {
+    // If no message is provided, we use an empty string
+    message = message || "";
+    // Get reference to container, and set initial content
+    var container = $(this[0]).html(duration + message);
+    // Get reference to the interval doing the countdown
+    var countdown = setInterval(function () {
+        // If seconds remain
+        if (--duration) {
+            // Update our container's message
+            container.html(duration + message);
+            // Otherwise
+        } else {
+            // Clear the countdown interval
+            clearInterval(countdown);
+            // And fire the callback passing our container as `this`
+            callback.call(container);
+        }
+        // Run interval every 1000ms (1 second)
+    }, 1000);
+};
+
+function debouncer(func, timeout) {
+    var timeoutID;
+    timeout = timeout || 500;
+    return function () {
+        var scope = this,
+            args = arguments;
+        clearTimeout(timeoutID);
+        timeoutID = setTimeout(function () {
+            func.apply(scope, Array.prototype.slice.call(args));
+        }, timeout);
+    };
+}
+var pageVisited = localStorage.getItem('pageVisited');
+/** START ONLOAD **/
+$(function () {
+    window.setTimeout(function () {
+        $('.panel-footer').on('click', function () {
+            $('.other-reviews').show();
+        });
+        $('.trailer-holder .trailer-image').on('click', function () {
+            $(this).hide();
+            $('.trailer-holder iframe').attr('src', $('.trailer-holder iframe').attr('src') + '&autoplay=1');
+        });
+        /////////// COOKIES
+        $(document).mouseup(function (e) {
+            var search = $('#search-results');
+            if (search.is(':visible') && !search.is(e.target) && search.has(e.target).length === 0) {
+                search.hide();
+                $('ul', search).empty();
+                $('form#search input').val('').removeClass('has-results');
+            }
+            return false;
+        });
+        $('label[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            $('input').removeAttr('checked').removeProp('checked');
+            $(this).find('input').attr('checked', 'checked').prop('checked', 'checked');
+        });
+        $('.tooltipIco').click(function (e) {
+            e.preventDefault();
+        });
+        $(document).on('hover', '.tooltipIco', function (e) {
+            e.target.popover({
+                placement: 'bottom',
+                html: true,
+                trigger: 'hover',
+                template: '<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-content"></div></div>'
+            });
+        });
+        $(".btn-group form > .btn").click(function () {
+            $(this).siblings().removeClass("active");
+        });
+        $(".seeWhatsOn span.more-filters").click(function () {
+            $(".seeWhatsOn #filter-overlay").show();
+            $(document).mouseup(function (e) {
+                var container = $(".seeWhatsOn #filter-overlay");
+                if (!container.is(e.target) && container.has(e.target).length === 0)
+                    $(".seeWhatsOn #filter-overlay").hide();
+            });
+        });
+        $('#feedback .panel-footer').click(function () {
+            $("#feedback .panel-body .other-reviews").slideToggle("slow", function () {
+                $('#feedback .panel-body .other-reviews').addClass('active');
+            });
+        });
+        // Toggle spoiler
+        $('#feedback a.toggle-spoiler').click(function (e) {
+            e.preventDefault();
+            $('#feedback a.toggle-spoiler').parents('.media').find('.sloiler-content.media').toggle("slow");
+        });
+    }, 50);
+});

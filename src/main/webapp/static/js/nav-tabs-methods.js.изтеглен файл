@@ -1,0 +1,197 @@
+/**
+ * Created by K.Gusz on 2017-01-30.
+ */
+
+var navTabs = (function () {
+
+    var tabTriggerSelector = '[data-toggle="tab"]',
+        tabParentSelector = '.tab-content',
+        tabTriggerTargetAttribute = 'data-target',
+        scrollToTarget = '',
+        initialized = false;
+
+    var config = {
+        tabIdPrefix: 'tab_',
+        locationHashEnabled: true,
+        clearHashForFirstTab: true,
+        scrollToSelectedTabEnabled: true,
+        scrollOffset: -20,
+        scrollSpeed: 300
+    };
+
+    var selectTabs = function (selector) {
+        var fallbackSelectorForTabs = '.tab-pane:nth-of-type(1)';
+
+        if (typeof selector !== 'undefined' && selector !== '') {
+            $.each($(tabParentSelector), function (idx, tabParent) {
+                var $tabParent = $(tabParent),
+                    selectedTabId = '';
+
+                if ($(selector, $tabParent).length > 0) {
+                    selectedTabId = $(selector, $tabParent).attr('id');
+                    if (config.scrollToSelectedTabEnabled) {
+                        scrollToTarget = selectedTabId;
+                    }
+                } else {
+                    selectedTabId = $(fallbackSelectorForTabs, $tabParent).attr('id');
+                }
+                var selectorString = '[' + tabTriggerTargetAttribute + '="#' + selectedTabId + '"]';
+                $(selectorString).first().tab('show');
+            });
+        }
+    };
+
+    var handleTealiumForTabs = function (e) {
+        var film_weighting_tab,
+            searchString = '';
+        if (typeof $(e.currentTarget).attr(tabTriggerTargetAttribute) !== 'undefined' && $(e.currentTarget).attr(tabTriggerTargetAttribute) !== '') {
+            searchString = $(e.currentTarget).attr(tabTriggerTargetAttribute).replace('#' + config.tabIdPrefix, '');
+        }
+        switch (searchString) {
+            case "nowBooking":
+                film_weighting_tab = _msg.show('nowBooking');
+                break;
+            case "comingSoon":
+                film_weighting_tab = _msg.show('comingSoon');
+                break;
+            case "bollywood":
+                film_weighting_tab = _msg.show('bollywood');
+                break;
+            case "theatre":
+                film_weighting_tab = _msg.show('theatres');
+                break;
+        }
+        return false;
+    };
+
+    var handleHashInUrl = function () {
+        var hash = config.requestUrl.hash;
+        if(typeof config.requestUrl !== 'undefined' && typeof hash !== 'undefined' && hash !== '' && config.locationHashEnabled) {
+            selectTabs('.tab-pane[id="' + config.tabIdPrefix + hash.replace('#', '') + '"]');
+        } else {
+            selectTabs('fallback');
+        }
+    };
+
+    var handleChangeHashInUrl = function (e) {
+        e.preventDefault();
+        var id = $(e.target).attr(tabTriggerTargetAttribute),
+            isFirstChild = $(e.target).parent('li').is(':first-child');
+        if (typeof id !== 'undefined' && id !== '' && id.indexOf('#' + config.tabIdPrefix) === 0) {
+            var targetHash = id.replace('#' + config.tabIdPrefix, '');
+            if (isFirstChild) {
+                if (config.locationHashEnabled && config.clearHashForFirstTab) {
+                    var scr = $(document).scrollTop();
+                    window.location.hash = '';
+                    $(document).scrollTop(scr);
+                } else if (config.locationHashEnabled && !config.clearHashForFirstTab) {
+                    window.location.hash = targetHash;
+                }
+            } else {
+                if (config.locationHashEnabled) {
+                    window.location.hash = targetHash;
+                }
+            }
+        }
+        return false;
+    };
+
+    var handlePosterTab = function (e) {
+        if (typeof $(e.currentTarget).attr('data-load') !== 'undefined' && $(e.currentTarget).attr('data-load') !== '') {
+            var $previous = $(e.relatedTarget).attr('href');
+
+            try {
+                var $toClean = $('.posters', $previous);
+                $toClean.removeClass('active');
+                $toClean.mixItUp('destroy').removeClass('active').removeAttr('id');
+            } catch (err) {
+            }
+            if ($('.tab-pane.active .posters.active > div').length === 0) {
+                var posterCont = $(e.target).attr(tabTriggerTargetAttribute) + ' .posters';
+                var $target = $(e.currentTarget);
+                var queryObj = {};
+                $('.tab-pane.active .posters').html($loaderLight);
+                $('.tab-pane.active .posters .loaderLight').append('<br><br>' + _msg.show('loadingPosters'));
+                queryObj['showingType'] = $target.data('showing-type');
+                queryObj['orderingCode'] = $target.data('ordering');
+                queryObj['attr'] = $target.data('attr');
+                posters.get(queryObj, posterCont, e);
+            }
+        }
+    };
+
+    var handleShownTab = function (e) {
+
+        var $target = $(e.target),
+            $navTabs = {},
+            $dropdownTabs = {},
+            id = $target.attr(tabTriggerTargetAttribute);
+
+        if ($target.parents('ul.nav.nav-tabs').length === 1) {
+            //destop nav mode
+            $navTabs = $target.parents('ul.nav.nav-tabs');
+            $dropdownTabs = $target.parents('ul.nav.nav-tabs').siblings('.tab-content').find('.dropdown-tabs');
+
+        } else if ($target.parents('.dropdown-menu.dropdown-tabs').length === 1) {
+            //mobile nav mode
+            $navTabs = $target.parents('.tab-content').siblings('.nav.nav-tabs');
+            $dropdownTabs = $target.parents('.dropdown-tabs');
+        }
+
+        $navTabs.find('li.visible-xs a').text($(this).text());
+
+        $navTabs.find('li.active').removeClass('active');
+        $dropdownTabs.find('li.active').removeClass('active');
+
+        $navTabs.find('[' + tabTriggerTargetAttribute + '="' + id + '"]').parent('li').addClass('active');
+        $dropdownTabs.find('[' + tabTriggerTargetAttribute + '="' + id + '"]').parent('li').addClass('active');
+
+        handleTealiumForTabs(e);
+        handlePosterTab(e);
+    };
+
+    var handleClickTab = function (e) {
+        e.preventDefault();
+        handleChangeHashInUrl(e);
+    };
+
+    var scrollToTab = function (e) {
+        if (config.scrollToSelectedTabEnabled && scrollToTarget !== '') {
+            var targetId = '#' + scrollToTarget;
+            var offset = $(targetId).parents('.tab-content').parent().find('.nav.nav-tabs').first().offset().top;
+            $("html, body").animate({scrollTop: Math.abs(offset + config.scrollOffset)}, config.scrollSpeed);
+        }
+        return false;
+    };
+
+    var init = function () {
+        if (!initialized) {
+            $(document).on('shown.bs.tab', tabTriggerSelector, handleShownTab);
+            $(document).on('click', tabTriggerSelector, handleClickTab);
+        } else {
+            console.log('navTabs module already initialized');
+        }
+        return false;
+    };
+
+
+    return {
+        handleHashInUrl: handleHashInUrl,
+        scrollToTab: scrollToTab,
+        init: init,
+        config: config
+    }
+
+})();
+
+$(window).load(function (e) {
+    navTabs.handleHashInUrl();
+    navTabs.scrollToTab(e);
+});
+
+
+$(function () {
+    //change default module options here before init()
+    navTabs.config.requestUrl = requestUrl;
+    navTabs.init();
+});

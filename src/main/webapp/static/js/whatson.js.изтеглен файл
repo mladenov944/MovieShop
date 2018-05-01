@@ -1,0 +1,575 @@
+function selectCinema(url) {
+    return url + (window.location.href.indexOf('/venue-hire/for-') > -1 ? '#screen-hire-&-parties' : '');
+}
+var nearbyCinemasAdded = false;
+var $distances = [];
+
+var sessionCinemaExists = function() {
+    return typeof $.cookie('sessionCinema') !== 'undefined' && parseInt($.cookie('sessionCinema')) !== 0;
+};
+
+var tenantMode = '';
+
+$(document).ready(function () {
+
+    var googleFallback = false;
+
+    if (geolocationGoogleZeroResultsFallback == true) {
+        googleFallback = true;
+    }
+
+    $.removeCookie('searchLocation',{path:'/'});
+
+    if ((typeof isWhatsOn !== 'undefined') && isWhatsOn) {
+        nearbyCinemasAdded = false;
+        $('#cinemasPopover').remove();
+        if (specMsg && (specMsg.title.length || specMsg.txt.length)) {
+            $('#specialmessage').append('<strong>' + specMsg.title + '</strong>' + ' ' + specMsg.txt).show();
+        }
+        $('#defaultmenu .btn.with-cinema, #defaultmenu .btn.wo-cinema')
+            .attr('href', '#')
+            .attr('data-target', '#defaultmenu')
+            .attr('data-toggle', 'collapse');
+        $('.header .session-cinema').remove()
+    }
+
+    var sessionCheckbox = {};
+    var $results;
+    var latlong = false;
+    var locationLifeSpan = 1 / (24 * 6); //in days = 10minutes
+    var country = _msg.show('countryCode');
+    var lastQuery = '';
+    if(tenantId === '10108' || tenantId === '10109') {
+        tenantMode = 'cineworld';
+    } else {
+        tenantMode = 'cci';
+    }
+
+    var appendResultsToTarget = function (title, target, cardClass) {
+        if (title !== '') {
+            $(target).append('<div class="col-xs-12"><h4 class="mb-sm mt-sm">' + title + '</h4></div>');
+        }
+
+        if (sessionCinemaExists()) {
+            var spacingHeader = $('<h4 class="mb-sm mt-sm">&nbsp;</h4>');
+            $('.my-cinema h4').remove();
+            $('.session-cinema-header').after(spacingHeader)
+        }
+
+        $.each($results, function (idx, res) {
+            var card = $('<div>').addClass(cardClass);
+            card.append(renderCard(idx, res));
+            $(target).append(card);
+        });
+        disableSearchForm(false);
+    };
+
+    function disableSearchForm(bool) {
+        var $searchInput = $('.townOrPostCode:visible');
+        if (typeof bool !== 'undefined' && bool === false) {
+            $searchInput.prop('disabled', false).attr('disabled', false);
+        } else {
+            $searchInput.prop('disabled', true).attr('disabled', true);
+        }
+    }
+
+    function ClosestLocation(lat, long, title, target, loader) {
+        $('#searchTitle').text(title);
+        $distances = [];
+        var cardClass = 'col-xs-12 col-sm-6 col-md-3 card-container';
+        var $nearbyCinemas = $('.nearbyCinemas');
+        var $showNearby = $('.show-nearby');
+        if (target === '.searchedCinemas' || !$.cookie('cachedGeoCinemas') || $.cookie('cachedGeoCinemas') === '') {
+            $(loader).empty();
+            $(target).empty();
+            $distances = locationService.populateDistances(lat, long, apiSitesList);
+            $results = $distances.slice(0, 4);
+
+            if (sessionCinemaExists() && target === '.nearbyCinemas') {
+                $nearbyCinemas.removeClass('cards3 cards4').addClass('cards3');
+                cardClass = 'col-xs-12 col-sm-6 col-md-4 card-container';
+            } else if (target === '.nearbyCinemas') {
+                $nearbyCinemas.removeClass('cards3 cards4').addClass('cards4');
+            }
+
+            if (target === '.nearbyCinemas') {
+                $.cookie('cachedGeoCinemas', JSON.stringify($results), {path: '/', expires: 7});
+            }
+
+            if (target === '.nearbyCinemas') {
+                if ($showNearby.is(':checked')) {
+                    nearbyCinemasAdded = true;
+                }
+            }
+            appendResultsToTarget(title, target, cardClass);
+        } else {
+            $results = JSON.parse($.cookie('cachedGeoCinemas'));
+
+            $(loader).empty();
+            $(target).empty();
+            if (target === '.nearbyCinemas') {
+                if (sessionCinemaExists()) {
+                    $nearbyCinemas.removeClass('cards3 cards4').addClass('cards3');
+                    cardClass = 'col-xs-12 col-sm-6 col-md-4 card-container';
+                } else {
+                    $nearbyCinemas.removeClass('cards3 cards4').addClass('cards4');
+                }
+
+                if ($showNearby.is(':checked')) {
+                    appendResultsToTarget(title, target, cardClass);
+                    nearbyCinemasAdded = true;
+                }
+            } else {
+                appendResultsToTarget(title, target, cardClass);
+            }
+        }
+    }
+
+    function renderMySessionCinemaCard(cinemaId) {
+        updateCardsAndHeadersLayout();
+
+        var result = apiSitesList.filter(function (v) {
+            return parseInt(v.externalCode) === cinemaId; // Filter out the appropriate one
+        })[0];
+        if (typeof result !== 'undefined') {
+            $('#defaultmenu [data-whatson-link], .session-cinema .map-marker').attr('href', result.uri);
+            $('.session-cinema .map-marker span').text(result.name);
+            var $sessionCinemaCard = renderCard(-1, result);
+
+            $('.sessionCinema').empty().append($sessionCinemaCard);
+        }
+    }
+
+    function checkSessionCinema() {
+
+        if (!$.cookie('sessionCinema') || $.cookie('sessionCinema') === '') {
+            $.ajax({
+                url: '/isLoggedIn',
+                type: 'POST',
+                async: false,
+                cache: false,
+                success: function (data) {
+                    if (data && data.data) {
+                        sessionCinema = parseInt(data.data.defExternalCode);
+                    }
+                }
+            });
+        }
+
+        if (tenantId === '10109') {
+            $.cookie('sessionCinema', apiSitesList[0].externalCode, {path: '/', expires: 7});
+        }
+
+        if ((typeof externalCode !== 'undefined') && parseInt(externalCode) > 0) {
+            sessionCinema = parseInt(externalCode);
+        } else {
+            if (sessionCinemaExists()) {
+                sessionCinema = parseInt($.cookie('sessionCinema'));
+            } else {
+                sessionCinema = 0;
+            }
+        }
+
+        if (sessionCinema !== 0) {
+            $('.session-cinema').addClass('has-cinema');
+        }
+
+        $.cookie('sessionCinema', sessionCinema, {path: '/', expires: 7});
+
+        renderMySessionCinemaCard(sessionCinema);
+        return parseInt(sessionCinema);
+    }
+
+    function updateCardsAndHeadersLayout() {
+        $('.sessionCinema').empty();
+        var $myCinema = $('.my-cinema');
+        var $allNearby = $('.all-nearby');
+        if (sessionCinemaExists()) {
+            $myCinema.removeClass('hidden');
+            $allNearby.addClass('col-sm-8 col-md-9');
+        } else {
+            $myCinema.addClass('hidden');
+            $allNearby.removeClass('col-sm-6 col-md-9');
+        }
+    }
+
+    var renderCard = function (idx, site) {
+        var $cardTemplate = $('.cinema-card.template').first();
+        if (typeof apiSitesList !== 'undefined' && apiSitesList.length > 0) {
+            var apiSite = objectHelper.getObjectsByKey(apiSitesList, 'id', site.id)[0];
+            if (typeof apiSite !== 'undefined') {
+                var $newCard = $cardTemplate.clone();
+                var url = selectCinema(apiSite.uri);
+                var cssimgurl = 'background-image:url(' + apiSite.filename + ')';
+                $('[data-cardTop]', $newCard).attr('style', cssimgurl);
+                $newCard.attr('href', url);
+                $('[data-cinema-name]', $newCard).text(apiSite.name).removeAttr('data-cinema-name');
+
+                if (typeof site.dist !== 'undefined') {
+                    $('[data-distance]', $newCard).html(parseFloat(site.dist).toFixed(2) + '&nbsp;' + locationService.distanceUnits.word).removeAttr('data-distance');
+                } else {
+                    $('[data-distance]', $newCard).html('&nbsp;').removeAttr('data-distance');
+                }
+
+                var address = [];
+                $.each(apiSite.address, function (idx, item) {
+                    if (item !== '') {
+                        address.push(item);
+                    }
+                });
+                $('[data-address]', $newCard).html($.grep(address, Boolean).join(", ")).removeAttr('data-address');
+                $newCard.removeClass('template');
+                if (idx === -1) {
+                    $newCard.addClass('active');
+                }
+                return $newCard;
+            }
+        }
+    };
+
+    function renderSearchResultMessage(msg, queryString) {
+        var $searchedCinemas = $('.searchedCinemas');
+        if (typeof msg !== 'undefined') {
+            if (typeof queryString !== 'undefined') {
+                $searchedCinemas.empty().html('<div class="col-xs-12 text-center"><p>' + _msg.show('noSearchResultsFor') + ' "' + lastQuery + '".</p><p>&nbsp;</p></div>');
+            } else {
+                $searchedCinemas.empty().html('<div class="col-xs-12 text-center"><p>' + _msg.show(msg) + '.</p><p>&nbsp;</p></div>');
+            }
+        }
+        disableSearchForm(false);
+    }
+
+    function handleCallbackFunction(queryString, callbackFunction) {
+        if (typeof callbackFunction !== 'undefined' && typeof queryString !== 'undefined') {
+            if (callbackFunction === 'searchGoogle') {
+                searchGoogle(queryString);
+            } else if (callbackFunction === 'searchBing') {
+                searchBing(queryString);
+            } else if (callbackFunction === 'searchODM') {
+                searchOSM(queryString);
+            }
+
+        } else if (typeof callbackFunction === 'undefined') {
+            $('.searchLoaderContainer .loaderDark').remove();
+            renderSearchResultMessage('noSearchResultsFor', lastQuery);
+        } else {
+            $('.searchLoaderContainer .loaderDark').remove();
+        }
+    }
+
+    function handleGeoCodeSuccessResults(status, queryString, lat, long) {
+        if (status === 'OK' && typeof lat !== 'undefined' && typeof long !== 'undefined') {
+            ClosestLocation(lat, long, _msg.show('cinemasClosestTo') + ' \'' + lastQuery + '\':', '.searchedCinemas', '.searchLoaderContainer');
+        }
+    }
+
+    function searchOSM(queryString) {
+        //console.log('searchOSM called with query: ', queryString);
+        locationService.geoCodeAddressOSM(queryString, country).then(
+            function (success) {
+                var result = locationService.geoCodeAddressOSMSuccess(success);
+                if (typeof result.status !== 'undefined' && result.status === 'OK') {
+                    handleGeoCodeSuccessResults(result.status, queryString, result.lat, result.long);
+                    if (utagDefined()) {
+                        utag.link({
+                            'event_type': 'osm_query',
+                            'event_name': 'success'
+                        });
+                    }
+                } else {
+                    handleCallbackFunction(queryString, 'searchGoogle');
+                    if (utagDefined()) {
+                        utag.link({
+                            'event_type': 'osm_query',
+                            'event_name': 'error'
+                        });
+                    }
+                }
+            },
+            function (error) {
+                handleCallbackFunction(queryString, 'searchGoogle');
+                if (utagDefined()) {
+                    utag.link({
+                        'event_type': 'osm_query',
+                        'event_name': 'error'
+                    });
+                }
+            });
+    }
+
+    function searchGoogle(queryString) {
+        //console.log('searchGoogle called with query: ', queryString);
+        locationService.geoCodeAddressGoogle(queryString, country).then(
+            function (success) {
+                var result = locationService.geoCodeAddressGoogleSuccess(success);
+                if (result.status === 'OK') {
+                    handleGeoCodeSuccessResults(result.status, queryString, result.lat, result.long);
+                    if (utagDefined()) {
+                        utag.link({
+                            'event_type': 'google_api_query',
+                            'event_name': 'success'
+                        });
+                    }
+                } else {
+                    if (result.status === 'ZERO_RESULTS') {
+                        if (googleFallback) {
+                            handleCallbackFunction(queryString, 'searchBing');
+                        } else {
+                            handleCallbackFunction(queryString);
+                        }
+                    } else {
+                        handleCallbackFunction(queryString, 'searchBing');
+                    }
+                    if (utagDefined()) {
+                        utag.link({
+                            'event_type': 'google_api_query',
+                            'event_name': 'error'
+                        });
+                    }
+                }
+            },
+            function (error) {
+                handleCallbackFunction(queryString, 'searchBing');
+                if (utagDefined()) {
+                    utag.link({
+                        'event_type': 'google_api_query',
+                        'event_name': 'error'
+                    });
+                }
+            });
+    }
+
+    function searchBing(queryString) {
+        //console.log('searchBing called with query: ', queryString);
+        locationService.geoCodeAddressBing(queryString, country).then(
+            function (success) {
+                var result = locationService.geoCodeAddressBingSuccess(success);
+                if (result.status === 'OK') {
+                    handleGeoCodeSuccessResults(result.status, queryString, result.lat, result.long);
+                } else {
+                    handleCallbackFunction(queryString);
+                }
+                if (utagDefined()) {
+                    utag.link({
+                        'event_type': 'bing_api_query',
+                        'event_name': 'success'
+                    });
+                }
+            },
+            function () {
+                handleCallbackFunction(queryString);
+                if (utagDefined()) {
+                    utag.link({
+                        'event_type': 'bing_api_query',
+                        'event_name': 'error'
+                    });
+                }
+            });
+    }
+
+    function searchLocation(queryString) {
+        //console.log('searchFunction called with query: ', queryString);
+
+        userActions.cinemaSearchQueryUsed();
+
+        $('.searchLoaderContainer').empty().prepend($loaderDark);
+        $('.searchedCinemas').empty();
+        searchOSM(queryString);
+    }
+
+    if (tecs.customer) {
+        if (utagDefined()) {
+            utag.view({
+                'customer_id': tecs.customer.id
+            });
+        }
+    }
+
+    window.setTimeout(function () {
+        $('.show-nearby, .show-nearby-mobile').prop('checked', false).removeAttr('checked');
+        $('.cinema-search-container select.whatsonCinemaSelect').selectpicker('refresh');
+
+        updateCardsAndHeadersLayout();
+        $(document).on('change', '.show-nearby-mobile', function () {
+            if ($(this).is(':checked')) {
+                $('.show-nearby, .show-nearby-mobile').prop('checked', true);
+            } else {
+                $('.show-nearby, .show-nearby-mobile').prop('checked', false);
+            }
+            $('.show-nearby').trigger('change');
+        });
+
+        $(document).on('change', '.show-nearby', function (e) {
+            if ($(this).is(':checked')) {
+                $('.show-nearby, .show-nearby-mobile').prop('checked', true);
+                $.cookie('sessionCheckbox', 'checked', {path: '/'});
+                if (!nearbyCinemasAdded) {
+                    Geolocation();
+                }
+            } else {
+                $('.show-nearby, .show-nearby-mobile').prop('checked', false);
+                nearbyCinemasAdded = false;
+                $.cookie('sessionCheckbox', '', {path: '/'});
+                $('.geolocation-error').hide();
+                $.cookie('cachedGeoCinemas', '', {path: '/'});
+                $('.nearbyloaderContainer').empty();
+                $('.nearbyCinemas').empty();
+            }
+        });
+
+        $(document).on('click', '.searchedCinemas a.cinema-card', function(e) {
+            userActions.cinemaSearchQueryCinemaSelected();
+        });
+        $(document).on('click', '.nearbyCinemas a.cinema-card', function(e) {
+            userActions.cinemaSearchNearbyCinemaSelected();
+        });
+
+        sessionCheckbox = $.cookie('sessionCheckbox');
+        if (sessionCheckbox === 'checked') {
+            $('.show-nearby, .show-nearby-mobile').prop('checked', true);
+        } else {
+            $('.show-nearby, .show-nearby-mobile').prop('checked', false);
+        }
+        if (((typeof isWhatsOn !== 'undefined') && isWhatsOn) || ((typeof isVenueHire !== 'undefined') && isVenueHire)) {
+            $('.show-nearby').first().trigger('change');
+        }
+
+        function cloneAsObject(obj) {
+            if (obj === null || !(obj instanceof Object)) {
+                return obj;
+            }
+            var temp = (obj instanceof Array) ? [] : {};
+            for (var key in obj) {
+                temp[key] = cloneAsObject(obj[key]);
+            }
+            return temp;
+        }
+
+        function errorCallback(error) {
+            var message = "";
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    message = _msg.show('geoNoPermission') + "<br>" + _msg.show('geoSearchByCinema');
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    message = _msg.show('geoCantGetPosition') + "<br>" + _msg.show('geoSearchByCinema');
+                    break;
+                case error.PERMISSION_DENIED_TIMEOUT:
+                    message = _msg.show('geoTimeout');
+                    break;
+            }
+            if (message == "") {
+                message = _msg.show('geoNoPermission') + "<br>" + _msg.show('geoSearchByCinema');
+            }
+            $('.geolocation-error p').html(message);
+            $('.geolocation-error').show();
+            $('.nearbyloaderContainer').empty();
+
+            if (utagDefined()) {
+                utag.link({
+                    'event_name': 'closest suggested cinemas search ' + error.code
+                });
+            }
+        }
+
+        function Geolocation() {
+            $('.nearbyloaderContainer').empty().prepend($loaderDark);
+            $('.nearbyCinemas').empty();
+            $('.geolocation-error').hide();
+            if (typeof $.cookie('userLocation') !== 'undefined' && $.cookie('userLocation') !== '') {
+                var location = JSON.parse($.cookie('userLocation'));
+                UserLocation(location);
+                userActions.cinemaSearchNearbyFromCache();
+            } else {
+                userActions.cinemaSearchNearbyUsed();
+                navigator.geolocation.getCurrentPosition(UserLocation, errorCallback);
+            }
+        }
+
+        function UserLocation(position) {
+            latlong = true;
+            $.cookie('userLocation', JSON.stringify(cloneAsObject(position)), {expires: locationLifeSpan});
+            if(utagDefined()) {
+                utag.link({
+                    'event_name': 'closest suggested cinemas search performed'
+                });
+            }
+            ClosestLocation(parseFloat(position.coords.latitude).toFixed(4), parseFloat(position.coords.longitude).toFixed(4), _msg.show('closestSuggestedCinemas'), '.nearbyCinemas', '.nearbyloaderContainer');
+        }
+
+        checkSessionCinema();
+        $('.session-cinema').addClass('in');
+
+        var submitSearchForm = function () {
+            if ($('.townOrPostCode:disabled').length === 0) {
+                disableSearchForm();
+                if (utagDefined()) {
+                    utag.view({
+                        'event_name': 'customer search for closest cinemas'
+                    });
+                }
+                var queryString = $.trim($('.townOrPostCode:visible').val());
+                lastQuery = queryString;
+                if(tenantMode === 'cci') {
+                    lastQuery = lastQuery.toUpperCase();
+                }
+                var encodedQueryString = encodeURIComponent(queryString).replace(/[!'()]/g, escape).replace(/\*/g, "%2A");
+                if (queryString && queryString.length > 2) {
+                    if ($.cookie('searchLocation') !== queryString) {
+                        $.cookie('searchLocation', queryString, {path: '/'});
+                        searchLocation(encodedQueryString);
+                    } else {
+                        disableSearchForm(false);
+                    }
+                } else {
+                    renderSearchResultMessage('searchTermTooShort')
+                }
+            }
+
+            return false;
+        };
+
+        $('.header [data-toggle="popover"]')
+            .on('shown.bs.popover, hidden.bs.popover, inserted.bs.popover', function () {
+                $.removeCookie('searchLocation',{path:'/'});
+            });
+
+
+        $(document)
+            .on('submit', '#find-a-cinema', function (e) {
+                e.preventDefault();
+                submitSearchForm();
+            })
+            .on('click', 'i#search-cinema', function () {
+                submitSearchForm();
+            });
+
+        setTimeout(function () {
+            if (!latlong) {
+                $('.suggestedCinemas .loaderLight').remove();
+            }
+        }, 7000); // Wait extra second
+        if ((typeof isExperiences !== 'undefined') && isExperiences) {
+            $(document).on('click', 'div.cinema a', function () {
+                var $whatsonCinemaSelect = $('.header-cinema-popover select.whatsonCinemaSelect, .cinema-search-container select.whatsonCinemaSelect');
+                $whatsonCinemaSelect.find(':selected').prop('selected', false);
+                $whatsonCinemaSelect.find('option[value="' + $(this).data('id') + '"]').prop('selected', true);
+                if (utagDefined()) {
+                    utag.link({
+                        'event_name': 'booking tickets change to by cinema',
+                        'book_tickets_widget': 'By Cinema',
+                        'cinema_id': $(this).data('id')
+                    }, function () {
+                        $(document).trigger('cinemaSelected', $(this).data('id'));
+                        return false;
+                    });
+                } else {
+                    $(document).trigger('cinemaSelected', $(this).data('id'));
+                    return false;
+                }
+            });
+        }
+
+
+    }, loadTimeout);
+});
