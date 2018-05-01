@@ -18,7 +18,7 @@ public class UserDAO implements IUserDAO {
 	private static final String SELECT_SUBSCRIBED_USERS = "SELECT * FROM users WHERE isSubscribed = 1";
 	private static final int RESULT_SET_RETURN = 1;
 	private static final String LOGIN_USER_SQL = "SELECT * FROM users WHERE email=? and password = sha1(?)";
-	private static final String ADD_USER_SQL = "INSERT INTO users VALUES (null, ?,?, sha1(?), ?,0,?)";
+	private static final String ADD_USER_SQL = "INSERT INTO users VALUES (null, ?,?, sha1(?), ?,0,?,0)";
 
 	@Override
 	public User login(String email, String password) throws UserException {
