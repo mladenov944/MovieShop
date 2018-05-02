@@ -10,7 +10,7 @@ public class User {
 	private boolean isAdmin;
 	private float money;
 	private boolean isSubscribed;
-	private Trolley trolley;
+	private Cart trolley;
 
 	public User(String name, String lastName, String email, String password) {
 		this.name = name;
@@ -20,14 +20,14 @@ public class User {
 		this.isAdmin = false;
 		this.money = (int) ((Math.random() * 50) + 20);
 		this.isSubscribed = false;
-		this.trolley = new Trolley();
+		this.trolley = new Cart();
 	}
 
-	public Trolley getTrolley() {
+	public Cart getTrolley() {
 		return trolley;
 	}
 
-	public void setTrolley(Trolley trolley) {
+	public void setTrolley(Cart trolley) {
 		this.trolley = trolley;
 	}
 

@@ -2,6 +2,7 @@ package com.movieshop.model;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.springframework.stereotype.Component;
@@ -10,12 +11,27 @@ import com.movieshop.db.DBConnection;
 import com.movieshop.exceptions.MovieException;
 
 @Component
-public class MovieDAO {
+public class MovieDAO implements IMovieDAO {
 
+	private static final String ALL_MOVIES = "SELECT * FROM movies";
 	private static final String ADD_MOVIE_SQL = "INSERT INTO movies VALUES (null, ?,?,?,?,?,?,?,?,?)";
 	// @Autowired
 	// MovieDAO dao;
 
+	
+	@Override
+	public void getAllMovies() throws MovieException {
+		Statement stmt;
+		try {
+				stmt = DBConnection.getInstance().getConnection().prepareStatement(ALL_MOVIES);
+			
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			throw new MovieException("Nqma q bazata!", e);
+		}
+		
+		
+	}
 	public void addMovie(Movie movie) throws MovieException {
 		PreparedStatement pstmt;
 
@@ -42,5 +58,10 @@ public class MovieDAO {
 			e.printStackTrace();
 			throw new MovieException("Cannot add movie !", e);
 		}
+	}
+	@Override
+	public void addMovie() {
+		// TODO Auto-generated method stub
+		
 	}
 }

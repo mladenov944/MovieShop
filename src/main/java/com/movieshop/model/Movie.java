@@ -12,7 +12,7 @@ public class Movie {
 	private String genre;
 	private String infoLink;
 	private short quantity;
-	private Trolley trolley;
+	private Cart cart;
 
 	public Movie(String name, String director, short year, String summary, String picture, float price, String genre,
 			String infoLink, short quantity) {
@@ -102,12 +102,12 @@ public class Movie {
 		this.infoLink = infoLink;
 	}
 
-	public Trolley getTrolley() {
-		return trolley;
+	public Cart getTrolley() {
+		return cart;
 	}
 
-	public void setTrolley(Trolley trolley) {
-		this.trolley = trolley;
+	public void setTrolley(Cart cart) {
+		this.cart = cart;
 	}
 
 	public int getQuantity() {
