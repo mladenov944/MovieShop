@@ -28,7 +28,7 @@ function hideURLbar(){ window.scrollTo(0,1); }
 	<div class="main-agileits">
 		<h2 class="sub-head">Register</h2>
 		<div class="sub-main">
-			<form action="./reg" method="post">
+			<form action="./register" method="post">
 				<input placeholder="First Name" name="name" class="name" type="text"
 					required=""> <span class="icon1"><i
 					class="fa fa-user" aria-hidden="true"></i></span><br> <input

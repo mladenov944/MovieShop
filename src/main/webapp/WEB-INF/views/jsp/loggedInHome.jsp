@@ -22,9 +22,9 @@
     </div>
     <div id="navigation">
       <ul>
-        <li><a class="active" href="/FinalProject/loggedIn">HOME</a></li>
+        <li><a class="active" href="/FinalProject/loggedInHome">HOME</a></li>
         <li><a href="/FinalProject/register">MY ACCOUNT</a></li>
-        <li><a href="/FinalProject/logoutuser">LOGOUT</a></li>
+        <li><a href="/FinalProject/logout">LOGOUT</a></li>
       </ul>
     </div>
     <div id="sub-navigation">

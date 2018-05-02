@@ -8,11 +8,11 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import com.movieshop.db.DBConnection;
 
-@Service
+@Component
 public class UserDAO implements IUserDAO {
 
 	private static final String SELECT_SUBSCRIBED_USERS = "SELECT * FROM users WHERE isSubscribed = 1";

@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <html>
-<title>Home Page</title>
+<title>Admin Page</title>
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="css/style.css" type="text/css" media="all" />
@@ -18,9 +18,9 @@
     </div>
     <div id="navigation">
       <ul>
-        <li><a class="active" href="/FinalProject/loggedIn">HOME</a></li>
+        <li><a class="active" href="/FinalProject/adminPage">HOME</a></li>
         <li><a href="/FinalProject/addmovie">ADD MOVIE</a></li>
-        <li><a href="/FinalProject/logoutuser">LOGOUT</a></li>
+        <li><a href="/FinalProject/logout">LOGOUT</a></li>
       </ul>
     </div>
     <div id="sub-navigation">
