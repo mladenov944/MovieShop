@@ -11,6 +11,7 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import com.movieshop.db.DBConnection;
+import com.movieshop.exceptions.UserException;
 
 @Component
 public class UserDAO implements IUserDAO {

@@ -11,8 +11,22 @@ public class Movie {
 	private float price;
 	private String genre;
 	private String infoLink;
+	private short quantity;
 	private Trolley trolley;
-	
+
+	public Movie(String name, String director, short year, String summary, String picture, float price, String genre,
+			String infoLink, short quantity) {
+		this.name = name;
+		this.director = director;
+		this.year = year;
+		this.summary = summary;
+		this.picture = picture;
+		this.price = price;
+		this.genre = genre;
+		this.infoLink = infoLink;
+		this.quantity = quantity;
+	}
+
 	public Movie() {
 	}
 
@@ -95,6 +109,13 @@ public class Movie {
 	public void setTrolley(Trolley trolley) {
 		this.trolley = trolley;
 	}
-	
-	
+
+	public int getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(short quantity) {
+		this.quantity = quantity;
+	}
+
 }

@@ -1,4 +1,4 @@
-package com.movieshop.model;
+package com.movieshop.exceptions;
 
 public class UserException extends Exception {
 

@@ -35,7 +35,7 @@ public class HomeController {
 	public String adminPage(HttpServletRequest request, HttpServletResponse response) {
 		if (!(request.getSession().getAttribute("email").equals("admin@admin.bg") || (request.getSession(false) == null)
 				|| (request.getSession().getAttribute("id") == null))) {
-			return ("redirect:home");
+			return ("home");
 		}
 		return "adminPage";
 	}

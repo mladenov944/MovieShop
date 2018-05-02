@@ -12,7 +12,7 @@ public class DBConnection {
 	private static final String DB_USER = "root";
 	private static final String DB_PASS = "Senegal944!";
 	private static final String DB_PORT = "3306";
-	private static final String DB_SCHEMA = "movieshoptest";
+	private static final String DB_SCHEMA = "finalproject";
 
 	private static volatile DBConnection instance = null;
 

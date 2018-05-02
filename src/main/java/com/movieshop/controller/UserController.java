@@ -14,9 +14,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.movieshop.exceptions.UserException;
 import com.movieshop.model.User;
 import com.movieshop.model.UserDAO;
-import com.movieshop.model.UserException;
 
 @Controller
 @RequestMapping("/")
