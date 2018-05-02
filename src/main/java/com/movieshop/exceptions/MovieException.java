@@ -2,9 +2,6 @@ package com.movieshop.exceptions;
 
 public class MovieException extends Exception {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	public MovieException() {

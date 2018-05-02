@@ -16,7 +16,7 @@ import com.movieshop.model.Movie;
 import com.movieshop.model.MovieDAO;
 
 @Controller
-@RequestMapping("/")
+@RequestMapping("/") // smeni gi za da izlizat poveche papki..
 public class MovieController {
 
 	@Autowired

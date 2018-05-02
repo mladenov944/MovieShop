@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.movieshop.exceptions.UserException;
 import com.movieshop.model.User;
@@ -34,15 +35,14 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public String loginCheck(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		String email = request.getParameter("email");
-		String password = request.getParameter("pass");
+	public String loginCheck(HttpServletRequest request, HttpServletResponse response,
+			@RequestParam("email") String email, @RequestParam("pass") String password) throws IOException {
 
 		try {
 
 			User user = dao.login(email, password);
 
-			if (user.getId() != 0 && user.isAdmin() == false) {
+			if (user.getId() != 0 && !user.isAdmin()) {
 
 				HttpSession session = request.getSession();
 				session.setAttribute("cash", user.getMoney());
@@ -51,7 +51,7 @@ public class UserController {
 				session.setAttribute("lastName", user.getLastName());
 				session.setMaxInactiveInterval(600);
 
-				return "loggedInHome"; // za jsp redirect nova zaqvka kym drug url nov kontroler
+				return "loggedInHome"; // za jsp redirect nova zaqvka kym drug url nov kontroler i sesiqta e druga
 			} else {
 				HttpSession session = request.getSession();
 
@@ -85,7 +85,7 @@ public class UserController {
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
 	public String register(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-		String name = request.getParameter("name");
+		String name = request.getParameter("name");// sloji request parameter > vij gore
 		String lastName = request.getParameter("lastname");
 		String email = request.getParameter("mail");
 		String password = request.getParameter("password");

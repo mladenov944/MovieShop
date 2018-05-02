@@ -24,6 +24,7 @@ public class UserDAO implements IUserDAO {
 	@Override
 	public User login(String email, String password) throws UserException {
 		PreparedStatement pstmt;
+		Movie movie = new Movie();
 		try {
 			pstmt = DBConnection.getInstance().getConnection().prepareStatement(LOGIN_USER_SQL);
 			pstmt.setString(1, email);
