@@ -1,6 +1,8 @@
 package com.movieshop.controller;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,6 +21,9 @@ import com.movieshop.model.UserException;
 @Controller
 @RequestMapping("/")
 public class UserController {
+
+	private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+			+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
 	@Autowired
 	private UserDAO dao;
@@ -89,7 +94,7 @@ public class UserController {
 		User u = new User(name, lastName, email, password);
 
 		try {
-			if ((checkEMail(email)) && (checkName(name, lastName)) && (checkPassword(password, confirmPassword))) {
+			if ((isValidEmail(email)) && (checkName(name, lastName)) && (checkPassword(password, confirmPassword))) {
 				dao.register(u);
 				return ("redirect:/login");
 			}
@@ -100,26 +105,15 @@ public class UserController {
 		return ("redirect:/register");
 	}
 
-	private boolean checkEMail(String mail) {
-		if ((mail.contains("@")) && (mail.contains("."))) {
-			int indexQ = 0;
-			int indexDot = 0;
-			for (int i = 0; i < mail.length(); i++) {
-				if (mail.charAt(i) == '@') {
-					indexQ = i;
-				}
-				if (mail.charAt(i) == '.') {
-					indexDot = i;
-				}
-			}
-			if (indexQ < indexDot) {
+	public static boolean isValidEmail(String email) throws UserException {
+		if (email != null) {
+			Pattern p = Pattern.compile(EMAIL_PATTERN);
+			Matcher m = p.matcher(email);
+			if (m.find()) {
 				return true;
-			} else {
-				return false;
 			}
-		} else {
-			return false;
 		}
+		throw new UserException("Invalid email!");
 	}
 
 	private boolean checkName(String name, String lastname) {

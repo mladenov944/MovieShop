@@ -29,7 +29,7 @@ public class EmailService {
 	@Autowired
 	private UserDAO dao;
 
-	@Scheduled(cron = "0 0 0 25 12 ?")
+	@Scheduled(cron = "0/5 * * * * ?")
 	public void sendEmails() {
 
 		final String username = "plamendanielpics@gmail.com";
@@ -51,11 +51,12 @@ public class EmailService {
 		for (User user : users) {
 
 			try {
+				// proveri dali user-a e subsribnat
 
 				Message message = new MimeMessage(session);
 
 				message.setFrom(new InternetAddress("plamendanielpics@gmail.com"));
-				message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("ivelin.mladenov@yahoo.com"));
+				message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("g.angelovaa@abv.bg"));
 				message.setSubject("Our new promotion is here");
 				message.setText("Dear, " + user.getName() + " " + user.getLastName()
 						+ " \ntoday we have special offer for you ! P" + "lease visit our site for more information !");
