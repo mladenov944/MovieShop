@@ -51,7 +51,7 @@ public class UserController {
 				session.setAttribute("lastName", user.getLastName());
 				session.setMaxInactiveInterval(600);
 
-				return "loggedInHome";
+				return "loggedInHome"; // za jsp redirect nova zaqvka kym drug url nov kontroler
 			} else {
 				HttpSession session = request.getSession();
 

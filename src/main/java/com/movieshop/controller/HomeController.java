@@ -19,6 +19,7 @@ public class HomeController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/index")
 	public String indexPage(Model model) {
+
 		return "redirect:home";
 	}
 
