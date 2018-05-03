@@ -31,8 +31,8 @@ public class HomeController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/adminPage")
 	public String adminPage(HttpServletRequest request, HttpServletResponse response) {
-		if (!(request.getSession().getAttribute("email").equals("admin@admin.bg") || (request.getSession(false) == null)
-				|| (request.getSession().getAttribute("id") == null))) {
+		if ((request.getSession(false) == null) || (request.getSession().getAttribute("id") == null)
+				|| (!(request.getSession().getAttribute("email").equals("admin@admin.bg")))) {
 			return ("redirect:home");
 		}
 		return "adminPage";

@@ -25,7 +25,7 @@
     
       <ul>
         <li><a class="active" href="/FinalProject/loggedInHome">HOME</a></li>
-        <li><a href="/FinalProject/register">MY ACCOUNT</a></li>
+        <li><a href="/FinalProject/changePassword">CHANGE PASSWORD</a></li>
         <li><a href="/FinalProject/logout">LOGOUT</a></li>
         
       </ul>

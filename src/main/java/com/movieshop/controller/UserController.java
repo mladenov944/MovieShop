@@ -1,9 +1,15 @@
 package com.movieshop.controller;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Formatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -35,40 +41,50 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public String loginCheck(HttpServletRequest request, HttpServletResponse response,
-			@RequestParam("email") String email, @RequestParam("pass") String password) throws IOException {
+	public String loginCheck(HttpSession session, HttpServletRequest request, HttpServletResponse response,
+			@RequestParam("email") String email, @RequestParam("pass") String password)
+			throws IOException, UserException, ServletException {
+
+		PrintWriter out = response.getWriter();
 
 		try {
 
 			User user = dao.login(email, password);
 
-			if (user.getId() != 0 && !user.isAdmin()) {
+			if (user.getId() != 0) {
 
-				HttpSession session = request.getSession();
-				session.setAttribute("cash", user.getMoney());
-				session.setAttribute("id", user.getId());
-				session.setAttribute("name", user.getName());
-				session.setAttribute("lastName", user.getLastName());
-				session.setMaxInactiveInterval(600);
+				if (user.isAdmin()) {
+					// HttpSession session = request.getSession();
 
-				return "loggedInHome"; // za jsp redirect nova zaqvka kym drug url nov kontroler i sesiqta e druga
+					session.setAttribute("id", user.getId());
+					session.setAttribute("password", user.getPassword());
+					session.setAttribute("name", user.getName());
+					session.setAttribute("isAdmin", user.isAdmin());
+					session.setAttribute("email", user.getEmail());
+					session.setMaxInactiveInterval(6000);
+					return "redirect:adminPage";
+				} else {
+
+					session.setAttribute("cash", user.getMoney());
+					session.setAttribute("password", user.getPassword());
+					session.setAttribute("id", user.getId());
+					session.setAttribute("name", user.getName());
+					session.setAttribute("lastName", user.getLastName());
+					session.setMaxInactiveInterval(600);
+
+					return "redirect:loggedInHome"; // za jsp redirect nova zaqvka kym drug url nov kontroler i sesiqta
+				}
+
 			} else {
-				HttpSession session = request.getSession();
-
-				session.setAttribute("id", user.getId());
-				session.setAttribute("name", user.getName());
-				session.setAttribute("isAdmin", user.isAdmin());
-				session.setAttribute("email", user.getEmail());
-				session.setMaxInactiveInterval(6000);
-				return "adminPage";
+				out.print("Sorry, username or password error!");
+				return "login";
 			}
 
 		} catch (UserException e) {
-			response.getWriter().println("<h1> You did not log in ! </h1>");
-			response.sendRedirect("./login");
 			e.printStackTrace();
+			out.print("Sorry, username or password error!");
+			return "login";
 		}
-		return "login";
 	}
 
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
@@ -83,13 +99,10 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
-	public String register(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
-		String name = request.getParameter("name");// sloji request parameter > vij gore
-		String lastName = request.getParameter("lastname");
-		String email = request.getParameter("mail");
-		String password = request.getParameter("password");
-		String confirmPassword = request.getParameter("confirmPassword");
+	public String register(HttpServletRequest request, HttpServletResponse response, @RequestParam("name") String name,
+			@RequestParam("lastname") String lastName, @RequestParam("mail") String email,
+			@RequestParam("password") String password, @RequestParam("confirmPassword") String confirmPassword)
+			throws IOException {
 
 		User u = new User(name, lastName, email, password);
 
@@ -105,7 +118,68 @@ public class UserController {
 		return ("redirect:/register");
 	}
 
-	public static boolean isValidEmail(String email) throws UserException {
+	@RequestMapping(value = "/changePassword", method = RequestMethod.GET)
+	public String changePassword(HttpServletRequest request, HttpServletResponse response) {
+		if ((request.getSession(false) == null) || (request.getSession().getAttribute("id") == null)) {
+			return ("redirect:home");
+		}
+		return "changePassword";
+	}
+
+	@RequestMapping(value = "/changePassword", method = RequestMethod.POST)
+	public String changingPassword(HttpSession session, HttpServletRequest request, HttpServletResponse response)
+			throws IOException {
+
+		String password = request.getParameter("new_password");
+		String oldPassword = request.getParameter("old_password");
+
+		String oldcrypt = encryptPassword(oldPassword);
+
+		Integer id = (Integer) session.getAttribute("id");
+		String maikati = (String) session.getAttribute("password");
+
+		if (!(maikati).equals(oldcrypt)) {
+			response.getWriter().println("Wrong old password !");
+			return ("redirect:/changePassword");
+		}
+
+		try {
+			dao.changePassword(id, password);
+			return ("redirect:/login");
+
+		} catch (UserException e1) {
+			response.getWriter().println("<h1> Something went wrong with the server! We are sorry! </h1>");
+			e1.printStackTrace();
+		}
+		return ("redirect:/changePassword");
+	}
+
+	private String encryptPassword(String password) {
+		String sha1 = "";
+		try {
+			MessageDigest crypt = MessageDigest.getInstance("SHA-1");
+			crypt.reset();
+			crypt.update(password.getBytes("UTF-8"));
+			sha1 = byteToHex(crypt.digest());
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return sha1;
+	}
+
+	private String byteToHex(final byte[] hash) {
+		Formatter formatter = new Formatter();
+		for (byte b : hash) {
+			formatter.format("%02x", b);
+		}
+		String result = formatter.toString();
+		formatter.close();
+		return result;
+	}
+
+	private static boolean isValidEmail(String email) throws UserException {
 		if (email != null) {
 			Pattern p = Pattern.compile(EMAIL_PATTERN);
 			Matcher m = p.matcher(email);

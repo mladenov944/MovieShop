@@ -58,9 +58,8 @@ function hideURLbar(){ window.scrollTo(0,1); }
 					required=""> <span class="icon4"><i
 					class="fa fa-unlock" aria-hidden="true"></i></span><br>  -->
 					
-					<p>INPUT PICTURE <input type="file" name="movie_picture"> </p>
+					<p style="color:red;">INPUT PICTURE <input type="file" name="movie_picture"> </p>
 					  
-					
 					<input
 					placeholder="Price" name="movie_price" class="price" type="text"
 					required=""> <span class="icon6"><i

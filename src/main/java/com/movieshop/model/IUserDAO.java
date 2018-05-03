@@ -9,7 +9,9 @@ public interface IUserDAO {
 	User login(String username, String password) throws UserException;
 
 	int register(User user) throws UserException;
-	
+
+	void changePassword(int id, String passowrd) throws UserException;
+
 	List<User> getSubscribedUsers();
 
 }

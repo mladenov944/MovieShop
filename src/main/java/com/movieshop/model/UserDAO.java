@@ -20,11 +20,11 @@ public class UserDAO implements IUserDAO {
 	private static final int RESULT_SET_RETURN = 1;
 	private static final String LOGIN_USER_SQL = "SELECT * FROM users WHERE email=? and password = sha1(?)";
 	private static final String ADD_USER_SQL = "INSERT INTO users VALUES (null, ?,?, sha1(?), ?,0,?,0)";
+	private static final String CHANGE_PASS_SQL = "UPDATE users SET password = sha1(?) WHERE id = ?";
 
 	@Override
 	public User login(String email, String password) throws UserException {
 		PreparedStatement pstmt;
-		Movie movie = new Movie();
 		try {
 			pstmt = DBConnection.getInstance().getConnection().prepareStatement(LOGIN_USER_SQL);
 			pstmt.setString(1, email);
@@ -35,6 +35,7 @@ public class UserDAO implements IUserDAO {
 
 			while (resultSet.next()) {
 				user.setId(resultSet.getInt("id"));
+				user.setPassword(resultSet.getString("password"));
 				user.setName(resultSet.getString("name"));
 				user.setLastName(resultSet.getString("last_name"));
 				user.setMoney(resultSet.getFloat("money"));
@@ -47,6 +48,24 @@ public class UserDAO implements IUserDAO {
 		} catch (Exception e) {
 			throw new UserException("Something went wrong with the server! " + e.getMessage());
 
+		}
+	}
+
+	@Override
+	public void changePassword(int id, String password) throws UserException {
+		PreparedStatement pstmt;
+
+		try {
+			pstmt = DBConnection.getInstance().getConnection().prepareStatement(CHANGE_PASS_SQL,
+					Statement.RETURN_GENERATED_KEYS);
+			pstmt.setString(1, password);
+			pstmt.setInt(2, id);
+
+			pstmt.executeUpdate();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new UserException("Cannot change password!", e);
 		}
 	}
 
