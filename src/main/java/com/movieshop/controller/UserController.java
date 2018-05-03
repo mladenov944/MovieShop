@@ -136,9 +136,9 @@ public class UserController {
 		String oldcrypt = encryptPassword(oldPassword);
 
 		Integer id = (Integer) session.getAttribute("id");
-		String maikati = (String) session.getAttribute("password");
+		String temp_pass = (String) session.getAttribute("password");
 
-		if (!(maikati).equals(oldcrypt)) {
+		if (!(temp_pass).equals(oldcrypt)) {
 			response.getWriter().println("Wrong old password !");
 			return ("redirect:/changePassword");
 		}
