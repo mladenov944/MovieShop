@@ -17,7 +17,7 @@ import com.movieshop.exceptions.MovieException;
 public class MovieDAO implements IMovieDAO {
 
 	private static final String ALL_MOVIES = "SELECT * FROM movies";
-	private static final String ADD_MOVIE_SQL = "INSERT INTO movies VALUES (null, ?,?,?,?,?,?,?,?,?)";
+	private static final String ADD_MOVIE_SQL = "INSERT INTO movies VALUES (null, ?,?,?,?,?,?,?,?)";
 	// @Autowired
 	// MovieDAO dao;
 
@@ -32,7 +32,6 @@ public class MovieDAO implements IMovieDAO {
 
 			while (result.next()) {
 				Movie movie = new Movie();
-
 				movie.setName(result.getString("name"));
 				movie.setDirector(result.getString("director"));
 				movie.setYear(result.getShort("year"));
@@ -80,10 +79,16 @@ public class MovieDAO implements IMovieDAO {
 			throw new MovieException("Cannot add movie !", e);
 		}
 	}
-
+	
 	@Override
-	public void addMovie() {
-		// TODO Auto-generated method stub
-
+	public Movie getMovieByIndex(int index) throws MovieException {
+		Movie movies;
+		try {
+				movies = getAllMovies().get(index);
+		} catch (MovieException e) {
+			e.printStackTrace();
+			throw new MovieException("Нещо се обърка, моля опитайте по-късно!");
+		}
+		return movies;
 	}
 }

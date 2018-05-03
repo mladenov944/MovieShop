@@ -4,17 +4,17 @@
 <html>
 <link href="http://www.cinemacity.bg/films/ready-player-one" rel="canonical"> 
   <link href="https://www.cinemacity.bg/xmedia/img/10106/fav.png?v=ver-2.5.13" rel="icon" type="image/png"> 
-  <link href="css/breakpoints.css" rel="stylesheet"> 
-  <link href="css/bootstrap_1.css" rel="stylesheet"> 
-  <link href="css/fhmm.css" rel="stylesheet"> 
-  <link href="css/datepicker3.css" rel="stylesheet"> 
-  <link href="css/bootstrap-datetimepicker.min.css" rel="stylesheet"> 
-  <link href="css/bootstrap-select.min.css" rel="stylesheet"> 
-  <link href="css/font-awesome.min_1.css" rel="stylesheet"> 
-  <link href="css/cards.css" rel="stylesheet"> 
-  <link href="css/theme.css" rel="stylesheet"> 
-  <link href="css/theme-mobile.css" rel="stylesheet"> 
-  <link href="css/print.css" rel="stylesheet" media="print"> 
+  <link href="/FinalProject/css/breakpoints.css" rel="stylesheet"> 
+  <link href="/FinalProject/css/bootstrap_1.css" rel="stylesheet"> 
+  <link href="/FinalProject/css/fhmm.css" rel="stylesheet"> 
+  <link href="/FinalProject/css/datepicker3.css" rel="stylesheet"> 
+  <link href="/FinalProject/css/bootstrap-datetimepicker.min.css" rel="stylesheet"> 
+  <link href="/FinalProject/css/bootstrap-select.min.css" rel="stylesheet"> 
+  <link href="/FinalProject/css/font-awesome.min_1.css" rel="stylesheet"> 
+  <link href="/FinalProject/css/cards.css" rel="stylesheet"> 
+  <link href="/FinalProject/css/theme.css" rel="stylesheet"> 
+  <link href="/FinalProject/css/theme-mobile.css" rel="stylesheet"> 
+  <link href="/FinalProject/css/print.css" rel="stylesheet" media="print"> 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Movie Details</title>
@@ -38,7 +38,7 @@
                 'film_title': 'Играч първи, приготви се'
             };
         </script> 
-  <!-- TEALIUM  script   sasho--> 
+  <!-- TEALIUM  script  --> 
   <script type="text/javascript">
 
     (function (a, b, c, d) {
@@ -79,20 +79,20 @@
    <div class="container-fluid"> 
     <div class="row"> 
      <div class="col-xs-12"> 
-      <p class="breadcrumb"> <a href="http://localhost:8080/FinalProject/home">Home</a> <span class="arrow"> ► </span> <span>Играч първи, приготви се</span> </p> 
+      <p class="breadcrumb"> <a href="http://localhost:8080/FinalProject/home">Home</a> <span class="arrow"> ► </span> <span>${movie.name}</span> </p> 
      </div> 
     </div> 
     <div class="row"> 
      <div class="col-xs-12"> 
       <ul class="list-inline mt-sm test" style="display: inline-block;"> 
-       <li> <h1 class="text-uppercase">Играч първи, приготви се <span data-rating-id="17"> </span> </h1> </li> 
+       <li> <h1 class="text-uppercase">${movie.name}<span data-rating-id="17"> </span> </h1> </li> 
       </ul> 
       <div class="call-to-action-button pull-right">
-       <a href="https://www.cinemacity.bg/films/ready-player-one#" scroll-to="" class="btn btn-lg btn-primary text-center hidden-xs"> <span class="h2 text-bold">КУПЕТЕ СЕГА</span> </a> 
+       <a href="https://www.cinemacity.bg/films/ready-player-one#" scroll-to="" class="btn btn-lg btn-primary text-center hidden-xs"> <span class="h2 text-bold">ADD TO CART</span> </a> 
       </div> 
      </div> 
      <div class="col-xs-12 visible-xs call-to-action-button"> 
-      <a href="https://www.cinemacity.bg/films/ready-player-one#" scroll-to="" class="btn btn-lg btn-primary btn-block text-center"> <span class="h2 text-bold">КУПЕТЕ СЕГА</span> </a> 
+      <a href="https://www.cinemacity.bg/films/ready-player-one#" scroll-to="" class="btn btn-lg btn-primary btn-block text-center"> <span class="h2 text-bold">ADD TO CART</span> </a> 
      </div> 
     </div> 
     <div class="row"> 
@@ -109,14 +109,14 @@
    <div class="container"> 
     <div class="row"> 
      <div class="col-xs-12"> 
-      <h2 class="text-uppercase"> ПОВЕЧЕ ИНФОРМАЦИЯ ЗА Играч първи, приготви се</h2> 
+      <h2 class="text-uppercase">INFORMATION</h2> 
      </div> 
     </div> 
     <div class="row"> 
      <div class="col-md-8 col-sm-6 col-xs-12"> 
       <div class="row"> 
        <div class="col-xs-6"> 
-        <svg xmlns="http://www.w3.org/2000/svg" id="Warstwa_1" data-name="Warstwa 1" viewBox="0 0 35 35" role="img" class="svg realise-icon light replaced-svg" aria-labelledby="title"><title>Премиерна дата</title>
+        <svg xmlns="http://www.w3.org/2000/svg" id="Warstwa_1" data-name="Warstwa 1" viewBox="0 0 35 35" role="img" class="svg realise-icon light replaced-svg" aria-labelledby="title"><title>Release year</title>
   <title>cci</title>
   <path d="M30.49,34.28h-26a4,4,0,0,1-4-4v-21a4,4,0,0,1,4-4h26a4,4,0,0,1,4,4v21A4,4,0,0,1,30.49,34.28Zm-26-27a2,2,0,0,0-2,2v21a2,2,0,0,0,2,2h26a2,2,0,0,0,2-2v-21a2,2,0,0,0-2-2h-26Z"></path>
   <g>
@@ -126,72 +126,72 @@
   </g>
   <polygon points="17.35 15.63 19.2 19.25 23.35 19.83 20.35 22.65 21.06 26.63 17.35 24.75 13.64 26.63 14.35 22.65 11.35 19.83 15.49 19.25 17.35 15.63"></polygon>
 </svg> 
-        <h4 class="ttl">ПРЕМИЕРНА ДАТА:</h4> 
-        <p class="info-descr">30 Март 2018</p> 
+        <h4 class="ttl">Year:</h4> 
+        <p class="info-descr">${movie.year}</p> 
        </div> 
        <div class="col-xs-6"> 
-        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Warstwa_1" x="0px" y="0px" width="35px" height="35px" viewBox="0 0 35 35" enable-background="new 0 0 35 35" xml:space="preserve" role="img" class="svg time-icon light replaced-svg" aria-labelledby="title"><title>Времетраене</title>
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Warstwa_1" x="0px" y="0px" width="35px" height="35px" viewBox="0 0 35 35" enable-background="new 0 0 35 35" xml:space="preserve" role="img" class="/FinalProject/img/X_Men.jpg" aria-labelledby="title"><title>Price</title>
 <path d="M17.5,34.5c-9.4,0-17-7.6-17-17s7.6-17,17-17s17,7.6,17,17S26.9,34.5,17.5,34.5z M17.5,2.5  c-8.3,0-15,6.7-15,15s6.7,15,15,15s15-6.7,15-15C32.5,9.2,25.8,2.5,17.5,2.5C17.5,2.5,17.5,2.5,17.5,2.5L17.5,2.5z M23.3,23.9  l-6.8-6.8V6.5h1v10.3l6.5,6.4L23.3,23.9z"></path>
 </svg> 
-        <h4 class="ttl">ВРЕМЕТРАЕНЕ:</h4> 
-        <p class="info-descr">140 мин.</p> 
+        <h4 class="ttl">PRICE:</h4> 
+        <p class="info-descr">${movie.price}</p> 
        </div> 
       </div> 
       <div class="row"> 
        <div class="col-xs-12"> 
-        <p class="text-content">През 2044 година реалността представлява грозна картинка и всички хора прекарват времето си във виртуален свят на име OASIS, като по този начин избягват енергийната криза и главоломното нарастване на населението. Създателят и собственик на софтуера, който поддържа гигантската игрова платформа, умира. Оказва се, че той е завещал несметните си богатства на онзи, който успее да открие всички следи, оставени в системата, да събере определен брой ключове и да разкрие посланието, скрито зад три „врати”.Тийнейджърът Уейд Уотс се натъква на първата следа, но скоро бива обкръжен от играчи, които са готови да го убият, за да се доберат до наградата. За да оцелее, Уейд трябва да спечели и да се изправи срещу реалния свят, от който винаги е искал да избяга.</p> 
+        <p class="text-content">${movie.summary}</p> 
        </div> 
       </div> 
       <div class="info-tbl"> 
        <div class="tbl-row"> 
         <div class="tbl-cell-ttl ttl">
-         ОРИГИНАЛНО ЗАГЛАВИЕ:
+         <!-- ОРИГИНАЛНО ЗАГЛАВИЕ: -->
         </div> 
-        <span>Ready Player One</span> 
+       <!--  <span>Ready Player One</span>  -->
        </div> 
        <div class="tbl-row"> 
         <div class="tbl-cell-ttl ttl">
-         ЖАНР:
+         GENRE:
         </div> 
-        <span>Екшън, Фантастика, Приключенски</span> 
+        <span>${movie.genre}</span> 
        </div> 
        <div class="tbl-row"> 
         <div class="tbl-cell-ttl ttl">
-         АКТЬОРИ:
+         <!-- АКТЬОРИ:
         </div> 
         <span>Letitia Wright, Hannah John-Kamen, Simon Pegg</span> 
        </div> 
        <div class="tbl-row"> 
-        <div class="tbl-cell-ttl ttl">
-         РЕЖИСЬОР:
+        <div class="tbl-cell-ttl ttl"> -->
+         DIRECTOR:
         </div> 
-        <div class="tbl-cell-descr director"> 
-         <span>Стивън Спилбърг</span> 
+        <div class="tbl-cell-descr"> 
+         <span>${movie.director}</span> 
         </div> 
        </div> 
        <div class="tbl-row"> 
         <div class="tbl-cell-ttl ttl">
-         ПРОДУКЦИЯ:
+         PRODUCTION:
         </div> 
-        <span>USA 2018</span> 
+        <span>USA ${movie.year}</span> 
        </div> 
        <div class="tbl-row"> 
         <div class="tbl-cell-ttl ttl">
-         КАТЕГОРИЯ:
+         IMDB LINK:
         </div> 
-        <span>Без възрастови ограничения</span> 
+        <span><a href= "https://www.imdb.com/title/tt4154756/">LINK</a></span>
        </div> 
        <div class="tbl-row"> 
         <div class="tbl-cell-ttl ttl">
-         ИЗЛЪЧВА СЕ В:
+       QUANTITY:
         </div> 
         <div class="tbl-cell-descr formats"> 
-         <span>3D</span> 
+         <span>${movie.quantity}</span> 
         </div> 
        </div> 
       </div> 
       <div class="row"> 
-       <div class="col-xs-12 advert-banner"> 
+       <div class="col-xs-12 advert-banner">
         <!-- BEGIN ADVERTSERVE CODE --> 
         <script>
 
@@ -210,7 +210,7 @@
       </div> 
      </div> 
      <div class="col-md-4 col-sm-6 col-sm-offset-0 col-xs-6 col-xs-offset-3"> 
-      <img class="img-responsive movie-poster loaded" src="./Играч първи, приготви се- original_files/2474S3R-md.jpg" alt="Играч първи, приготви се" data-src="/xmedia-cw/repo/feats/posters/2474S3R-md.jpg"> 
+      <img class="img-responsive movie-poster loaded" src="/FinalProject/img/X_Men.jpg" alt="Играч първи, приготви се" data-src="/xmedia-cw/repo/feats/posters/2474S3R-md.jpg"> 
      </div> 
     </div> 
    </div> 

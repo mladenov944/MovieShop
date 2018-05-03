@@ -6,7 +6,9 @@ import com.movieshop.exceptions.MovieException;
 
 public interface IMovieDAO {
 
-	public void addMovie();
+	public void addMovie(Movie movie) throws MovieException;
 
 	public List<Movie> getAllMovies() throws MovieException;
+	
+	public Movie getMovieByIndex(int index) throws MovieException;
 }

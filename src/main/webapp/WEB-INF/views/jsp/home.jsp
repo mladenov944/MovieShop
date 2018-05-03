@@ -41,18 +41,18 @@
       </div>
     </div>
   </div>
-  <div id="main">
     <div id="content">
       <div class="box">
         <div class="head">
           <h2>LATEST TRAILERS</h2>
           <p class="text-right"><a href="#">See all</a></p>
         </div>
-      <c:forEach items="${movie}" var="movie" varStatus="loop">
-          <li><a href="./home/${loop.index}">${movie.name}></a></li>
-          <div class="movie-image"> <span class="play"><span class="name">${movie.name}</span></span> <a href="/movies/${movie.id}"><img src="${movie.picture}" alt="" /></a> </div>
+     <ul>   
+      <c:forEach items="${movies}" var="movie" varStatus="loop">
+          
+          <span class="name"><a href="./movieDetails/${loop.index}">${movie.name}</a></span><img src='/FinalProject/img/X_Men.jpg' alt="" width="150px"/>
       </c:forEach>
-        
+     </ul>   
   <!--       <div class="movie">
           <div class="movie-image"> <span class="play"><span class="name">SPIDER MAN 2</span></span> <a href="#"><img src="css/images/movie2.jpg" alt="" /></a> </div>
           <div class="rating">
@@ -224,6 +224,7 @@
       </div>
     </div>
     <div class="cl">&nbsp;</div>--> 
+  </div>
   </div>
 </div> 
 </body>

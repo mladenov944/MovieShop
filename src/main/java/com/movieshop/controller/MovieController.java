@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -21,7 +23,25 @@ public class MovieController {
 
 	@Autowired
 	private MovieDAO dao;
+	
+	@RequestMapping(method=RequestMethod.GET, value="/movieDetails")
+	public String movieDetail() {
+		return "movieDetails";
+	}
 
+	@RequestMapping(method=RequestMethod.GET, value="/movieDetails/{id}")
+	public String viewMovie(Model model, @PathVariable Integer id) {
+		Movie movie;
+		try {
+			movie = dao.getMovieByIndex(id);
+			model.addAttribute(movie);
+		} catch (MovieException e) {
+			e.printStackTrace();
+		}
+		return "movieDetails";
+	}
+	
+	
 	@RequestMapping(method = RequestMethod.GET, value = "/addmovie")
 	public String homePage(HttpServletRequest request, HttpServletResponse response) {
 		if (!(request.getSession().getAttribute("email").equals("admin@admin.bg") || (request.getSession(false) == null)
