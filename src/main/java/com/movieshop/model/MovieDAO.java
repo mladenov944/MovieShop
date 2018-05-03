@@ -25,7 +25,8 @@ public class MovieDAO implements IMovieDAO {
 	public List<Movie> getAllMovies() throws MovieException {
 		List<Movie> allMovies = new ArrayList<>();
 		PreparedStatement pstmt;
-		try (Connection conn = DBConnection.getInstance().getConnection()) {
+		try {
+			Connection conn = DBConnection.getInstance().getConnection();
 			pstmt = conn.prepareStatement(ALL_MOVIES);
 			ResultSet result = pstmt.executeQuery();
 

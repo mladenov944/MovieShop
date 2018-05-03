@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <html>
 <title>Home Page</title>
 
@@ -21,14 +22,17 @@
       </ul>
     </div>
     <div id="navigation">
+    
       <ul>
         <li><a class="active" href="/FinalProject/loggedInHome">HOME</a></li>
         <li><a href="/FinalProject/register">MY ACCOUNT</a></li>
         <li><a href="/FinalProject/logout">LOGOUT</a></li>
+        
       </ul>
     </div>
     <div id="sub-navigation">
       <ul>
+      
         <li><a href="#">SHOW ALL</a></li>
         <li><a href="#">TOP RATED</a></li>
       </ul>
@@ -45,6 +49,7 @@
     <div id="content">
       <div class="box">
         <div class="head">
+        
           <h2>LATEST TRAILERS</h2>
           <p class="text-right"><a href="#">See all</a></p>
         </div>

@@ -65,6 +65,8 @@ public class MovieController {
 		return ("addMovie");
 	}
 
+	// Validation sector starts here...
+
 	public boolean isValidURL(String urlString) {
 		try {
 			URL url = new URL(urlString);

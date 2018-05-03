@@ -29,6 +29,7 @@ function hideURLbar(){ window.scrollTo(0,1); }
 		<h2 class="sub-head">ADD MOVIE</h2>
 		<div class="sub-main">
 			<form action="./addmovie" method="post">
+			
 				<input placeholder="Movie name" name="movie_name" class="name" type="text"
 					required=""> <span class="icon1"><i
 					class="fa fa-user" aria-hidden="true"></i></span><br> <input
@@ -39,16 +40,28 @@ function hideURLbar(){ window.scrollTo(0,1); }
 					
 					placeholder="Year" name="movie_year" class="Year" type="text"
 					required=""> <span class="icon3"><i
-					class="fa fa-envelope" aria-hidden="true"></i></span><br> <input
+					class="fa fa-envelope" aria-hidden="true"></i></span><br> 
 					
-					placeholder="Genre" name="movie_genre" class="genre" type="text"
+						<select name="movie_genre">
+						  <option value="">Select a genre:</option>
+						  <option value="Action">Action</option>
+						  <option value="Horror">Horror</option>
+						  <option value="Comedy">Comedy</option>
+						  <option value="Fantasy">Fantasy</option>
+						  <option value="Drama">Drama</option>
+						  <option value="Mystery">Mystery</option>
+						  <option value="Animation">Animation</option>
+						  <option value="Sci-fy">Sci-fy</option>
+						  </select>
+					
+					<!-- placeholder="Genre" name="movie_genre" class="genre" type="text"
 					required=""> <span class="icon4"><i
-					class="fa fa-unlock" aria-hidden="true"></i></span><br> <input
+					class="fa fa-unlock" aria-hidden="true"></i></span><br>  -->
 					
-					placeholder="Picture" name="movie_picture" class="picture"
-					type="text" required=""> <span class="icon5"><i
-					class="fa fa-unlock" aria-hidden="true"></i></span><br> <input
+					<p>INPUT PICTURE <input type="file" name="movie_picture"> </p>
+					  
 					
+					<input
 					placeholder="Price" name="movie_price" class="price" type="text"
 					required=""> <span class="icon6"><i
 					class="fa fa-unlock" aria-hidden="true"></i></span><br> <input

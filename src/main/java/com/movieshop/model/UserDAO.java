@@ -79,7 +79,8 @@ public class UserDAO implements IUserDAO {
 	public List<User> getSubscribedUsers() {
 		List<User> users = new ArrayList<>();
 		PreparedStatement pstmt;
-		try (Connection conn = DBConnection.getInstance().getConnection()) {
+		try {
+			Connection conn = DBConnection.getInstance().getConnection();
 			pstmt = DBConnection.getInstance().getConnection().prepareStatement(SELECT_SUBSCRIBED_USERS);
 			ResultSet resultSet = pstmt.executeQuery();
 
