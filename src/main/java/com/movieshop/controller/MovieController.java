@@ -23,13 +23,13 @@ public class MovieController {
 
 	@Autowired
 	private MovieDAO dao;
-	
-	@RequestMapping(method=RequestMethod.GET, value="/movieDetails")
+
+	@RequestMapping(method = RequestMethod.GET, value = "/movieDetails")
 	public String movieDetail() {
 		return "movieDetails";
 	}
 
-	@RequestMapping(method=RequestMethod.GET, value="/movieDetails/{id}")
+	@RequestMapping(method = RequestMethod.GET, value = "/movieDetails/{id}")
 	public String viewMovie(Model model, @PathVariable Integer id) {
 		Movie movie;
 		try {
@@ -40,8 +40,7 @@ public class MovieController {
 		}
 		return "movieDetails";
 	}
-	
-	
+
 	@RequestMapping(method = RequestMethod.GET, value = "/addmovie")
 	public String homePage(HttpServletRequest request, HttpServletResponse response) {
 		if (!(request.getSession().getAttribute("email").equals("admin@admin.bg") || (request.getSession(false) == null)
@@ -98,7 +97,7 @@ public class MovieController {
 	}
 
 	public boolean isValidName(String name, String director) {
-		if ((name.length() > 2) && (director.length() > 2)) {
+		if (!(name == null) && (director == null)) {
 			return true;
 		}
 		return false;
