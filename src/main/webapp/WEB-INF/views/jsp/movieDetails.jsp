@@ -88,11 +88,11 @@
        <li> <h1 class="text-uppercase">${movie.name}<span data-rating-id="17"> </span> </h1> </li> 
       </ul> 
       <div class="call-to-action-button pull-right">
-       <a href="https://www.cinemacity.bg/films/ready-player-one#" scroll-to="" class="btn btn-lg btn-primary text-center hidden-xs"> <span class="h2 text-bold">ADD TO CART</span> </a> 
+       <a href="http://localhost:8080/FinalProject/home" scroll-to="" class="btn btn-lg btn-primary text-center hidden-xs"> <span class="h2 text-bold">ADD TO CART</span> </a> 
       </div> 
      </div> 
      <div class="col-xs-12 visible-xs call-to-action-button"> 
-      <a href="https://www.cinemacity.bg/films/ready-player-one#" scroll-to="" class="btn btn-lg btn-primary btn-block text-center"> <span class="h2 text-bold">ADD TO CART</span> </a> 
+      <a href="http://localhost:8080/FinalProject/home" scroll-to="" class="btn btn-lg btn-primary btn-block text-center"> <span class="h2 text-bold">ADD TO CART</span> </a> 
      </div> 
     </div> 
     <div class="row"> 
@@ -130,7 +130,7 @@
         <p class="info-descr">${movie.year}</p> 
        </div> 
        <div class="col-xs-6"> 
-        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Warstwa_1" x="0px" y="0px" width="35px" height="35px" viewBox="0 0 35 35" enable-background="new 0 0 35 35" xml:space="preserve" role="img" class="/FinalProject/img/X_Men.jpg" aria-labelledby="title"><title>Price</title>
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Warstwa_1" x="0px" y="0px" width="35px" height="35px" viewBox="0 0 35 35" enable-background="new 0 0 35 35" xml:space="preserve" role="img" class="${movie.picture}" aria-labelledby="title"><title>Price</title>
 <path d="M17.5,34.5c-9.4,0-17-7.6-17-17s7.6-17,17-17s17,7.6,17,17S26.9,34.5,17.5,34.5z M17.5,2.5  c-8.3,0-15,6.7-15,15s6.7,15,15,15s15-6.7,15-15C32.5,9.2,25.8,2.5,17.5,2.5C17.5,2.5,17.5,2.5,17.5,2.5L17.5,2.5z M23.3,23.9  l-6.8-6.8V6.5h1v10.3l6.5,6.4L23.3,23.9z"></path>
 </svg> 
         <h4 class="ttl">PRICE:</h4> 
@@ -179,7 +179,7 @@
         <div class="tbl-cell-ttl ttl">
          IMDB LINK:
         </div> 
-        <span><a href= "https://www.imdb.com/title/tt4154756/">LINK</a></span>
+        <span><a href= "${movie.infoLink}">LINK</a></span>
        </div> 
        <div class="tbl-row"> 
         <div class="tbl-cell-ttl ttl">
@@ -210,7 +210,7 @@
       </div> 
      </div> 
      <div class="col-md-4 col-sm-6 col-sm-offset-0 col-xs-6 col-xs-offset-3"> 
-      <img class="img-responsive movie-poster loaded" src="/FinalProject/img/X_Men.jpg" alt="Играч първи, приготви се" data-src="/xmedia-cw/repo/feats/posters/2474S3R-md.jpg"> 
+      <img class="img-responsive movie-poster loaded" src="${movie.picture}" alt="${movie.name}" data-src="/xmedia-cw/repo/feats/posters/2474S3R-md.jpg"> 
      </div> 
     </div> 
    </div> 

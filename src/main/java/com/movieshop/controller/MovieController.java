@@ -41,6 +41,18 @@ public class MovieController {
 		return "movieDetails";
 	}
 
+	@RequestMapping(method = RequestMethod.GET, value = "/movieGenre")
+	public String movieByGenre(Model model) {
+		Movie movieGenre;
+//		try {
+//			movieGenre = dao.showMovieByGenre();
+//			model.addAttribute(movieGenre);
+//		} catch (MovieException e) {
+//			e.printStackTrace();
+//		}
+		return "movieGenre";
+	}
+	
 	@RequestMapping(method = RequestMethod.GET, value = "/addmovie")
 	public String homePage(HttpServletRequest request, HttpServletResponse response) {
 		if (!(request.getSession().getAttribute("email").equals("admin@admin.bg") || (request.getSession(false) == null)
