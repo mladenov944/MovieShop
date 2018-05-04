@@ -1,7 +1,7 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-
 <style>
 body {
 	background-image: url('images/bg.jpg');
@@ -60,6 +60,7 @@ body {
 							placeholder="Email"> <span class="focus-input100-1"></span>
 						<span class="focus-input100-2"></span>
 					</div>
+					
 
 					<div class="wrap-input100 rs1 validate-input"
 						data-validate="Password is required">

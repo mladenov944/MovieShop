@@ -44,15 +44,15 @@ public class MovieController {
 	@RequestMapping(method = RequestMethod.GET, value = "/movieGenre")
 	public String movieByGenre(Model model) {
 		Movie movieGenre;
-//		try {
-//			movieGenre = dao.showMovieByGenre();
-//			model.addAttribute(movieGenre);
-//		} catch (MovieException e) {
-//			e.printStackTrace();
-//		}
+		// try {
+		// movieGenre = dao.showMovieByGenre();
+		// model.addAttribute(movieGenre);
+		// } catch (MovieException e) {
+		// e.printStackTrace();
+		// }
 		return "movieGenre";
 	}
-	
+
 	@RequestMapping(method = RequestMethod.GET, value = "/addmovie")
 	public String homePage(HttpServletRequest request, HttpServletResponse response) {
 		if (!(request.getSession().getAttribute("email").equals("admin@admin.bg") || (request.getSession(false) == null)
@@ -60,7 +60,7 @@ public class MovieController {
 			return ("home");
 		}
 
-		return "addMovie";
+		return "adminPage";
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/addmovie")
@@ -83,8 +83,7 @@ public class MovieController {
 		Movie temp = new Movie(name, director, year, summary, picture, pricee, genre, imdb_link, quantityy);
 
 		try {
-			if ((isValidURL(imdb_link)) && (isValidName(name, director)) && isValidYear(year)
-					&& isValidQuantity(quantityy) && checkPrice(pricee)) {
+			if ((isValidURL(imdb_link)) && isValidYear(year) && isValidQuantity(quantityy) && checkPrice(pricee)) {
 				dao.addMovie(temp);
 				return ("adminPage");
 			}
@@ -92,7 +91,11 @@ public class MovieController {
 			response.getWriter().println("<h1> Something went wrong with the server! We are sorry! </h1>");
 			e1.printStackTrace();
 		}
-
+		System.out.println("neshto se sgovni pri dobavqne na film..");
+		System.out.println(isValidURL(imdb_link) + " imdb");
+		System.out.println(isValidQuantity(quantityy) + " quantity");
+		System.out.println(checkPrice(pricee) + " price");
+		System.out.println(isValidYear(year) + " year");
 		return ("addMovie");
 	}
 
@@ -106,13 +109,6 @@ public class MovieController {
 		} catch (Exception exception) {
 			return false;
 		}
-	}
-
-	public boolean isValidName(String name, String director) {
-		if (!(name == null) && (director == null)) {
-			return true;
-		}
-		return false;
 	}
 
 	public boolean isValidYear(short year) {

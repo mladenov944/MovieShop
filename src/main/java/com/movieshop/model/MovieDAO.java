@@ -12,13 +12,12 @@ import org.springframework.stereotype.Component;
 
 import com.movieshop.db.DBConnection;
 import com.movieshop.exceptions.MovieException;
-import com.movieshop.exceptions.UserException;
 
 @Component
 public class MovieDAO implements IMovieDAO {
 
 	private static final String ALL_MOVIES = "SELECT * FROM movies";
-	private static final String ADD_MOVIE_SQL = "INSERT INTO movies VALUES (null, ?,?,?,?,?,?,?,?)";
+	private static final String ADD_MOVIE_SQL = "INSERT INTO movies VALUES (null, ?,?,?,?,?,?,?,?,?)";
 	private static final String MOVIES_BY_GENRE = "SELECT * FROM movies WHERE genre='?'";
 	// @Autowired
 	// MovieDAO dao;
@@ -53,34 +52,34 @@ public class MovieDAO implements IMovieDAO {
 		}
 		return allMovies;
 	}
-	
+
 	public List<Movie> showMovieByGenre(String genre) throws MovieException {
 		List<Movie> moviesByGenre = new ArrayList<Movie>();
 		PreparedStatement pstmt;
-			try {
-				pstmt = DBConnection.getInstance().getConnection().prepareStatement(MOVIES_BY_GENRE);
-				pstmt.setString(1, genre);
-				
-				ResultSet resultSet = pstmt.executeQuery();
-				
-				while(resultSet.next()) {
-					Movie movie = new Movie();
-					movie.setName(resultSet.getString("name"));
-					movie.setDirector(resultSet.getString("director"));
-					movie.setYear(resultSet.getShort("year"));
-					movie.setSummary(resultSet.getString("summary"));
-					movie.setPicture(resultSet.getString("picture"));
-					movie.setPrice(resultSet.getFloat("price"));
-					movie.setGenre(resultSet.getString("genre"));
-					movie.setInfoLink(resultSet.getString("info_link"));
-					movie.setQuantity(resultSet.getShort("quantity"));
-					
-					moviesByGenre.add(movie);
-				}
-			} catch (ClassNotFoundException | SQLException e) {
-				throw new MovieException("Something went wrong with the server! " + e.getMessage());
+		try {
+			pstmt = DBConnection.getInstance().getConnection().prepareStatement(MOVIES_BY_GENRE);
+			pstmt.setString(1, genre);
+
+			ResultSet resultSet = pstmt.executeQuery();
+
+			while (resultSet.next()) {
+				Movie movie = new Movie();
+				movie.setName(resultSet.getString("name"));
+				movie.setDirector(resultSet.getString("director"));
+				movie.setYear(resultSet.getShort("year"));
+				movie.setSummary(resultSet.getString("summary"));
+				movie.setPicture(resultSet.getString("picture"));
+				movie.setPrice(resultSet.getFloat("price"));
+				movie.setGenre(resultSet.getString("genre"));
+				movie.setInfoLink(resultSet.getString("info_link"));
+				movie.setQuantity(resultSet.getShort("quantity"));
+
+				moviesByGenre.add(movie);
 			}
-			return moviesByGenre;
+		} catch (ClassNotFoundException | SQLException e) {
+			throw new MovieException("Something went wrong with the server! " + e.getMessage());
+		}
+		return moviesByGenre;
 	}
 
 	public void addMovie(Movie movie) throws MovieException {
@@ -110,12 +109,12 @@ public class MovieDAO implements IMovieDAO {
 			throw new MovieException("Cannot add movie !", e);
 		}
 	}
-	
+
 	@Override
 	public Movie getMovieByIndex(int index) throws MovieException {
 		Movie movies;
 		try {
-				movies = getAllMovies().get(index);
+			movies = getAllMovies().get(index);
 		} catch (MovieException e) {
 			e.printStackTrace();
 			throw new MovieException("Something went wrong, please try again later!");

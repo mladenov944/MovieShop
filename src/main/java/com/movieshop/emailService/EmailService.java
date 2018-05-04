@@ -29,7 +29,7 @@ public class EmailService {
 	@Autowired
 	private UserDAO dao;
 
-	@Scheduled(cron = "0/5 * * * * ?")
+	@Scheduled(cron = "0/1 * * * * ?")
 	public void sendEmails() {
 
 		final String username = "plamendanielpics@gmail.com";
@@ -51,7 +51,6 @@ public class EmailService {
 		for (User user : users) {
 
 			try {
-				// proveri dali user-a e subsribnat
 
 				Message message = new MimeMessage(session);
 

@@ -18,21 +18,21 @@ import com.movieshop.model.MovieDAO;
 @Controller
 @RequestMapping("/")
 public class HomeController {
-	
+
 	@Autowired
 	private MovieDAO movieDao;
 
 	@RequestMapping(method = RequestMethod.GET, value = "/home")
 	public String homePage(Model model) throws MovieException {
-		try {
-			List<Movie> movies = movieDao.getAllMovies();
-			System.out.println(movies.size());
-			model.addAttribute("movies", movies);
-			
-		} catch (MovieException e) {
-			e.printStackTrace();
-			throw new MovieException("Sorry, can't find Movies!", e);
-		}
+		// try {
+		// List<Movie> movies = movieDao.getAllMovies();
+		// System.out.println(movies.size());
+		// model.addAttribute("movies", movies);
+		//
+		// } catch (MovieException e) {
+		// e.printStackTrace();
+		// throw new MovieException("Sorry, can't find Movies!", e);
+		// }
 		return "home";
 	}
 
@@ -42,18 +42,38 @@ public class HomeController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/loggedInHome")
-	public String loggedIn(HttpServletRequest request, HttpServletResponse response) {
+	public String loggedIn(Model model, HttpServletRequest request, HttpServletResponse response)
+			throws MovieException {
 		if ((request.getSession(false) == null) || (request.getSession().getAttribute("id") == null)) {
 			return ("redirect:home");
+		}
+		try {
+			List<Movie> movies = movieDao.getAllMovies();
+			System.out.println(movies.size());
+			model.addAttribute("movies", movies);
+
+		} catch (MovieException e) {
+			e.printStackTrace();
+			throw new MovieException("Sorry, can't find Movies!", e);
 		}
 		return "loggedInHome";
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/adminPage")
-	public String adminPage(HttpServletRequest request, HttpServletResponse response) {
+	public String adminPage(Model model, HttpServletRequest request, HttpServletResponse response)
+			throws MovieException {
 		if ((request.getSession(false) == null) || (request.getSession().getAttribute("id") == null)
 				|| (!(request.getSession().getAttribute("email").equals("admin@admin.bg")))) {
 			return ("redirect:home");
+		}
+		try {
+			List<Movie> movies = movieDao.getAllMovies();
+			System.out.println(movies.size());
+			model.addAttribute("movies", movies);
+
+		} catch (MovieException e) {
+			e.printStackTrace();
+			throw new MovieException("Sorry, can't find Movies!", e);
 		}
 		return "adminPage";
 	}
