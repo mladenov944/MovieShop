@@ -109,7 +109,7 @@ public class UserController {
 		try {
 			if ((isValidEmail(email)) && (checkName(name, lastName)) && (checkPassword(password, confirmPassword))) {
 				dao.register(u);
-				return ("redirect:/login");
+				return ("redirect:/loggedInHome");
 			}
 		} catch (UserException e1) {
 			response.getWriter().println("<h1> Something went wrong with the server! We are sorry! </h1>");

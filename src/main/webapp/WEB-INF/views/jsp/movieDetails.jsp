@@ -79,7 +79,7 @@
    <div class="container-fluid"> 
     <div class="row"> 
      <div class="col-xs-12"> 
-      <p class="breadcrumb"> <a href="http://localhost:8080/FinalProject/home">Home</a> <span class="arrow"> ► </span> <span>${movie.name}</span> </p> 
+      <p class="breadcrumb"> <a href="/FinalProject/loggedInHome">Home</a> <span class="arrow"> ► </span> <span>${movie.name}</span> </p> 
      </div> 
     </div> 
     <div class="row"> 

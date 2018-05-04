@@ -22,7 +22,7 @@ import com.movieshop.model.MovieDAO;
 public class MovieController {
 
 	@Autowired
-	private MovieDAO dao;
+	private MovieDAO movieDAO;
 
 	@RequestMapping(method = RequestMethod.GET, value = "/movieDetails")
 	public String movieDetail() {
@@ -33,7 +33,7 @@ public class MovieController {
 	public String viewMovie(Model model, @PathVariable Integer id) {
 		Movie movie;
 		try {
-			movie = dao.getMovieByIndex(id);
+			movie = movieDAO.getMovieByIndex(id);
 			model.addAttribute(movie);
 		} catch (MovieException e) {
 			e.printStackTrace();
@@ -57,10 +57,10 @@ public class MovieController {
 	public String homePage(HttpServletRequest request, HttpServletResponse response) {
 		if (!(request.getSession().getAttribute("email").equals("admin@admin.bg") || (request.getSession(false) == null)
 				|| (request.getSession().getAttribute("id") == null))) {
-			return ("home");
+			return "home";
 		}
 
-		return "adminPage";
+		return "addmovie";
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/addmovie")
@@ -84,19 +84,16 @@ public class MovieController {
 
 		try {
 			if ((isValidURL(imdb_link)) && isValidYear(year) && isValidQuantity(quantityy) && checkPrice(pricee)) {
-				dao.addMovie(temp);
-				return ("adminPage");
+				movieDAO.addMovie(temp);
+				return "redirect:adminPage";
+			} else {
+				return "addmovie";
 			}
 		} catch (MovieException e1) {
 			response.getWriter().println("<h1> Something went wrong with the server! We are sorry! </h1>");
 			e1.printStackTrace();
 		}
-		System.out.println("neshto se sgovni pri dobavqne na film..");
-		System.out.println(isValidURL(imdb_link) + " imdb");
-		System.out.println(isValidQuantity(quantityy) + " quantity");
-		System.out.println(checkPrice(pricee) + " price");
-		System.out.println(isValidYear(year) + " year");
-		return ("addMovie");
+		return "redirect:adminPage";
 	}
 
 	// Validation sector starts here...
