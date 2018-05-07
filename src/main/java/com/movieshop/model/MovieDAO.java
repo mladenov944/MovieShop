@@ -21,7 +21,7 @@ public class MovieDAO implements IMovieDAO {
 	private static final String ALL_MOVIES = "SELECT * FROM movies";
 	private static final String ADD_MOVIE_SQL = "INSERT INTO movies VALUES (null, ?,?,?,?,?,?,?,?,?)";
 	private static final String MOVIES_BY_GENRE = "SELECT * FROM movies WHERE genre='?'";
-	private static final String SELECT_MOVIE_BY_NAME = "SELECT * FROM movies WHERE name LIKE ?";
+//	private static final String SELECT_MOVIE_BY_NAME = "SELECT * FROM movies WHERE name LIKE ?";
 	// @Autowired
 	// MovieDAO dao;
 
@@ -136,5 +136,10 @@ public class MovieDAO implements IMovieDAO {
 			}
 		
 			return movies;
+	}
+
+	public Movie getId(int id) {
+		
+		return null;
 	}
 }

@@ -23,7 +23,7 @@
     <div id="navigation">
       <ul>
         <li><a class="active" href="/FinalProject/adminPage">HOME</a></li>
-        <li><a href="/FinalProject/addmovie">ADD MOVIE</a></li>
+        <li><a href="/FinalProject/addMovie">ADD MOVIE</a></li>
         <li><a href="/FinalProject/logout">LOGOUT</a></li>
       </ul>
     </div>
@@ -62,7 +62,7 @@
      <ul>   
       <c:forEach items="${movies}" var="movie" varStatus="loop">
           
-          <span class="name"><a href="./movieDetails/${loop.index}">${movie.name}</a></span><img src='${movie.picture}' alt="" width="150px"/>
+          <span class="name"><a href="./movieDetails/${loop.index}"><img src='${movie.picture}' alt="" height = "200px" width="150px"/></a></span>
       </c:forEach>
      </ul>   
   </div>

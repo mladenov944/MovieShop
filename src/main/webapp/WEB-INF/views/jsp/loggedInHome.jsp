@@ -29,7 +29,7 @@
     </div>
     <div id="sub-navigation">
       <ul>
-        <li><button onclick="sortListDir()">SHOW BY TITLE</button></li>
+        <li><button onclick="sortListDir()">SORT BY TITLE</button></li>
         <li><a href="#">SHOW BY GENRE</a></li>
        
         <li><select name="movie_genre">

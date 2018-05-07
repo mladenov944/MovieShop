@@ -11,7 +11,7 @@ public class Movie {
 	private float price;
 	private String genre;
 	private String infoLink;
-	private short quantity;
+	private int quantity;
 	private Cart cart;
 
 	public Movie(String name, String director, short year, String summary, String picture, float price, String genre,
@@ -114,7 +114,7 @@ public class Movie {
 		return quantity;
 	}
 
-	public void setQuantity(short quantity) {
+	public void setQuantity(int quantity) {
 		this.quantity = quantity;
 	}
 

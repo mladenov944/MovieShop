@@ -40,30 +40,30 @@ public class MovieController {
 		}
 		return "movieDetails";
 	}
-
-	@RequestMapping(method = RequestMethod.GET, value = "/movieGenre")
-	public String movieByGenre(Model model) {
-		Movie movieGenre;
+	// need to fix serch by Genre
+//	@RequestMapping(method = RequestMethod.GET, value = "/movieGenre")
+//	public String movieByGenre(Model model) {
+//		Movie movieGenre;
 		// try {
 		// movieGenre = dao.showMovieByGenre();
 		// model.addAttribute(movieGenre);
 		// } catch (MovieException e) {
 		// e.printStackTrace();
 		// }
-		return "movieGenre";
-	}
+//		return "movieGenre";
+//	}
 
-	@RequestMapping(method = RequestMethod.GET, value = "/addmovie")
+	@RequestMapping(method = RequestMethod.GET, value = "/addMovie")
 	public String homePage(HttpServletRequest request, HttpServletResponse response) {
 		if (!(request.getSession().getAttribute("email").equals("admin@admin.bg") || (request.getSession(false) == null)
 				|| (request.getSession().getAttribute("id") == null))) {
 			return "home";
 		}
 
-		return "addmovie";
+		return "addMovie";
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = "/addmovie")
+	@RequestMapping(method = RequestMethod.POST, value = "/addMovie")
 	public String addMovie(HttpServletRequest request, HttpServletResponse response)
 			throws MovieException, IOException {
 
@@ -87,7 +87,7 @@ public class MovieController {
 				movieDAO.addMovie(temp);
 				return "redirect:adminPage";
 			} else {
-				return "addmovie";
+				return "addMovie";
 			}
 		} catch (MovieException e1) {
 			response.getWriter().println("<h1> Something went wrong with the server! We are sorry! </h1>");
