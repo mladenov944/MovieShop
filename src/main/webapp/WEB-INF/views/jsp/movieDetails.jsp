@@ -129,12 +129,13 @@
         <h4 class="ttl">Year:</h4> 
         <p class="info-descr">${movie.year}</p> 
        </div> 
+       <h4 class="ttl">PRICE:</h4> 
+        <p class="info-descr">${movie.price}</p>
        <div class="col-xs-6"> 
         <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Warstwa_1" x="0px" y="0px" width="35px" height="35px" viewBox="0 0 35 35" enable-background="new 0 0 35 35" xml:space="preserve" role="img" class="${movie.picture}" aria-labelledby="title"><title>Price</title>
-<path d="M17.5,34.5c-9.4,0-17-7.6-17-17s7.6-17,17-17s17,7.6,17,17S26.9,34.5,17.5,34.5z M17.5,2.5  c-8.3,0-15,6.7-15,15s6.7,15,15,15s15-6.7,15-15C32.5,9.2,25.8,2.5,17.5,2.5C17.5,2.5,17.5,2.5,17.5,2.5L17.5,2.5z M23.3,23.9  l-6.8-6.8V6.5h1v10.3l6.5,6.4L23.3,23.9z"></path>
+
 </svg> 
-        <h4 class="ttl">PRICE:</h4> 
-        <p class="info-descr">${movie.price}</p> 
+         
        </div> 
       </div> 
       <div class="row"> 
@@ -195,17 +196,9 @@
         <!-- BEGIN ADVERTSERVE CODE --> 
         <script>
 
-    document.write('<scr' + 'ipt '
-            + 'src="//cineworld.advertserve.com/servlet/view/banner/javascript/zone'
-            + '?pid=0'
-            + '&' + "zid=14\u0026custom1=0\u0026custom2=action|adventure|sci-fi\u0026custom3=2474S3R\u0026custom4=3D,SUBBED"
-            + '&resolution=' + screen.width + 'x' + screen.height
-            + '&random=' + Math.floor(89999999 * Math.random() + 10000000)
-            + '&millis=' + new Date().getTime()
-            + '&referrer=' + encodeURIComponent((window != top && window.location.ancestorOrigins) ? window.location.ancestorOrigins[0] : document.location)
-            + '" type="text/javascript"></scr' + 'ipt>');
+
 </script><script src="./Играч първи, приготви се- original_files/zone" type="text/javascript"></script> 
-        <!-- END ADVERTSERVE CODE --> 
+    
        </div> 
       </div> 
      </div> 
@@ -215,14 +208,7 @@
     </div> 
    </div> 
   </section> 
-  <!-- MORE INFO END --> 
-   
-  <!--<link href=https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.3/css/bootstrap-select.min.css rel=stylesheet crossorigin=anonymous>
-<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.css>--> 
-  <!-- FEEDBACK START  class name has been changed to generic--> 
-  <!-- FEEDBACK END --> 
-  <!-- WISHLIST SECTION START --> 
-  <!-- REVIEW LOGIN/REGISTER OVERLAY --> 
+  
   <div class="modal fade" id="review-login" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"> 
    <div class="modal-dialog"> 
     <div class="modal-content"> 
@@ -244,173 +230,9 @@
     </div> 
    </div> 
   </div> 
-  <!-- EXPERIENCES START --> 
+
    
-  <!-- EXPERIENCES END--> 
-  <!-- BLOG START --> 
-  <!-- BLOG END --> 
-  <!-- FOOTER START --> 
-   
-  <div id="cinemasPopover" class="hidden"> 
-   <div class="row"> 
-    <div class="col-sm-12"> 
-     <h2>НАМЕРЕТЕ КИНО</h2> 
-     <form id="find-a-cinema"> 
-      <div class="form-group"> 
-       <div class=" inner-addon right-addon"> 
-        <i id="search-cinema" class="search-icon-dark"></i> 
-        <input class="townOrPostCode form-control" title="Град, Пощенски код" placeholder="Град, Пощенски код"> 
-       </div> 
-      </div> 
-     </form> 
-    </div> 
-   </div> 
-   <div class="row searchLoaderContainer"></div> 
-   <div class="row cinemas-list searchedCinemas"> 
-   </div> 
-   <hr> 
-   <div class="row"> 
-    <div class="col-xs-12 col-sm-4 col-md-3 my-cinema"> 
-     <h2 class="inline-block mb-sm session-cinema-header">ВАШЕТО КИНО</h2> 
-     <div class="row cinemas-list"> 
-      <div class="col-xs-12 sessionCinema"><a href="https://www.cinemacity.bg/cinemas/mallofsofia" class="cinema-card active"> 
-    <div class="card-top" data-cardtop="" style="background-image:url(/static/dam/jcr:39b2274e-c5cf-46bf-b716-33cc4d65ec1d)"> 
-     <div class="content"> 
-      <p class="map-marker"><strong>София - Мол София</strong> <span>&nbsp;</span></p> 
-     </div> 
-    </div> 
-    <div class="card-block"> 
-     <p class="card-text">Мол София, бул. "Александър Стамболийски" 101, София, 1303</p> 
-     <p class="mt-sm" data-travel-time=""></p> 
-    </div> </a></div> 
-     </div> 
-    </div> 
-    <div class="col-xs-12 all-nearby col-sm-8 col-md-9"> 
-     <div class="row"> 
-      <div class="col-xs-12 cinemas-nearby-header"> 
-       <h2 class="inline-block mb-sm">КИНА В БЛИЗОСТ</h2> 
-       <div class="hidden-xs pull-right"> 
-        <div class="checkbox mb-none mt-none"> 
-         <label> <input type="checkbox" class="show-nearby"> Kина в близост </label> 
-        </div> 
-       </div> 
-      </div> 
-      <div class="col-xs-12 visible-xs"> 
-       <div class="checkbox mb-none mt-none"> 
-        <label> <input type="checkbox" class="show-nearby-mobile"> Kина в близост </label> 
-       </div> 
-      </div> 
-     </div> 
-     <div class="row nearbyloaderContainer"></div> 
-     <div class="row"> 
-      <div class="col-xs-12 geolocation-error mt-lg"> 
-       <p class="text-center"></p> 
-      </div> 
-     </div> 
-     <div class="row cinemas-list nearbyCinemas"> 
-     </div> 
-    </div> 
-   </div> 
-   <hr> 
-   <div class="row"> 
-    <div class="col-xs-12"> 
-     <h2 class="cinemas-nearby-header">ВСИЧКИ КИНА</h2> 
-    </div> 
-    <div class="col-sm-12"> 
-     <select class="form-control whatsonCinemaSelect siteselect" data-live-search="true" data-max-options="1" data-init="manual" data-container=".selectpicker-dropdown-container" title="Изберете кино"><option value="10111" data-url="/cinemas/burgas">Бургас</option><option value="10108" data-url="/cinemas/plovdiv">Пловдив</option><option value="10110" data-url="/cinemas/ruse">Русе</option><option value="10107" data-url="/cinemas/mallofsofia">София - Мол София</option><option value="10112" data-url="/cinemas/paradisecenter">София - Парадайс Център</option><option value="10109" data-url="/cinemas/starazagora">Стара Загора</option></select> 
-    </div> 
-   </div> 
-   <a href="https://www.cinemacity.bg/films/ready-player-one#" class="cinema-card template"> 
-    <div class="card-top" data-cardtop=""> 
-     <div class="content"> 
-      <p class="map-marker"><strong data-cinema-name=""></strong> <span data-distance=""></span></p> 
-     </div> 
-    </div> 
-    <div class="card-block"> 
-     <p class="card-text" data-address=""></p> 
-     <p class="mt-sm" data-travel-time=""></p> 
-    </div> </a> 
-  </div> 
-  <div id="ajax_loader" style="display: none;">
-   <img alt="Страницата се зарежда" src="./Играч първи, приготви се- original_files/ajax-loader-poster.gif">
-  </div> 
-  <div class="modal fade" id="share-login-register" tabindex="-1" role="dialog" aria-hidden="true"> 
-   <div class="modal-dialog"> 
-    <div class="modal-content"> 
-     <div class="modal-header"> 
-      <a href="https://www.cinemacity.bg/films/ready-player-one#" data-dismiss="modal" class="btn btn-grey pull-left close pull-right visible-xs">Затвори</a> 
-      <h4 class="modal-title"></h4> 
-     </div> 
-     <div class="modal-body"> 
-      <p></p> 
-      <ul class="list-inline login-buttons hidden-xs"> 
-       <li><a href="https://www.cinemacity.bg/films/ready-player-one#" class="btn btn-social-share fb">Споделете във Facebook</a></li> 
-       <li><a href="https://www.cinemacity.bg/films/ready-player-one#" class="btn btn-social-share tw"></a></li> 
-       <li><a href="https://www.cinemacity.bg/films/ready-player-one#" class="btn btn-social-share gplus"></a></li> 
-       <li><a href="https://www.cinemacity.bg/films/ready-player-one#" class="btn btn-link">Споделете на имейл</a></li> 
-      </ul> 
-      <div class="login-buttons visible-xs"> 
-       <a href="https://www.cinemacity.bg/films/ready-player-one#" class="btn btn-block btn-social-share fb">Споделете във Facebook</a> 
-       <a href="https://www.cinemacity.bg/films/ready-player-one#" class="btn btn-block btn-social-share tw"></a> 
-       <a href="https://www.cinemacity.bg/films/ready-player-one#" class="btn btn-block btn-social-share gplus"></a> 
-       <a href="https://www.cinemacity.bg/films/ready-player-one#" class="btn  btn-block btn-link">Споделете на имейл</a> 
-      </div> 
-     </div> 
-     <div class="border-sep"></div> 
-     <div class="modal-footer"> 
-      <a href="https://www.cinemacity.bg/films/ready-player-one#" data-dismiss="modal" class="pull-left close hidden-xs">Затвори</a> 
-     </div> 
-    </div> 
-   </div> 
-  </div> 
-  <div class="modal fade" id="road-block" tabindex="-1" role="dialog" aria-hidden="true"> 
-   <div class="modal-dialog"> 
-    <div class="modal-content"> 
-     <div class="modal-header"> 
-      <a href="https://www.cinemacity.bg/films/ready-player-one#" data-dismiss="modal" class="btn btn-grey pull-left close pull-right visible-xs">Затвори</a> 
-      <h4 class="modal-title"></h4> 
-     </div> 
-     <div class="modal-body"> 
-      <p></p> 
-     </div> 
-     <div class="border-sep"></div> 
-     <div class="modal-footer"> 
-      <a href="https://www.cinemacity.bg/films/ready-player-one#" data-dismiss="modal" class="pull-left close hidden-xs">Затвори</a> 
-      <ul class="list-inline login-buttons hidden-xs"> 
-       <li><a href="https://www.cinemacity.bg/films/ready-player-one" class="btn-arrow-primary register"><strong></strong></a></li> 
-       <li><a href="https://www.cinemacity.bg/films/ready-player-one" class="btn-arrow-primary login"><strong></strong></a></li> 
-       <li><a href="javascript:fb_login();" class="btn-facebook"></a></li> 
-      </ul> 
-      <div class="login-buttons visible-xs"> 
-       <a href="https://www.cinemacity.bg/films/ready-player-one" class="btn btn-block btn-primary register" data-title="title-share-article"><strong></strong></a> 
-       <a href="https://www.cinemacity.bg/films/ready-player-one" class="btn btn-block btn-primary login" data-title="title-share-article"><strong></strong></a> 
-       <a href="https://www.cinemacity.bg/films/ready-player-one#" onclick="javascript:fb_login();" class="btn btn-block btn-facebook"></a> 
-      </div> 
-     </div> 
-    </div> 
-   </div> 
-  </div> 
-  <div class="modal fade" tabindex="-1" role="dialog" id="loginModal" data-backdrop="static" data-keyboard="false" aria-hidden="true"> 
-   <div class="modal-dialog"> 
-    <div class="modal-content"> 
-     <p class="loaderLight"><img alt="Страницата се зарежда" src="./Играч първи, приготви се- original_files/loader-light.gif"></p> 
-     <p class="text-center">Зареждане. Моля, изчакайте.</p> 
-    </div> 
-   </div> 
-  </div> 
-  <div class="modal fade" tabindex="-1" role="dialog" id="registerModal" data-backdrop="static" data-keyboard="false" aria-hidden="true"> 
-   <div class="modal-dialog"> 
-    <div class="modal-content"> 
-     <p class="loaderLight"><img alt="Страницата се зарежда" src="./Играч първи, приготви се- original_files/loader-light.gif"></p> 
-     <p class="text-center"></p> 
-    </div> 
-   </div> 
-  </div> 
-  <div class="selectpicker-dropdown-container"> 
-   <div class="title visible-xs"></div> 
-  </div> 
-  <!-- FOOTER END --> 
-  <!-- VERSION: ver-2.5.13 --> 
+  
   <div xmlns="http://www.w3.org/1999/xhtml"> 
  </body>
 </html>

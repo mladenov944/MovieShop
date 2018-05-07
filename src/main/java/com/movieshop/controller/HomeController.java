@@ -1,6 +1,7 @@
 package com.movieshop.controller;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -49,7 +50,7 @@ public class HomeController {
 		}
 		try {
 			List<Movie> movies = movieDao.getAllMovies();
-			System.out.println(movies.size());
+//			System.out.println(movies.size());
 			model.addAttribute("movies", movies);
 
 		} catch (MovieException e) {

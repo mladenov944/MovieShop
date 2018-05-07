@@ -29,7 +29,7 @@
     </div>
     <div id="sub-navigation">
       <ul>
-        <li><button onclick="sortListDir()">SHOW BY TITLE</button></li>
+        <li><a href="/FinalProject/searchAll">SHOW BY TITLE</a></li>
         <li><a href="#">SHOW BY GENRE</a></li>
        
         <li><select name="movie_genre">
@@ -59,54 +59,11 @@
           <h2>LATEST TRAILERS</h2>
           <p class="text-right"><a href="#">See all</a></p>
         </div>
-        
-     <div><ul id="${movies}">   
+     <ul>   
       <c:forEach items="${movies}" var="movie" varStatus="loop">
           
-          <span class="name"><a id = "${movie.name}" href="./movieDetails/${loop.index}"><img src='${movie.picture}' alt="" height = "200px" width="150px"/></a></span>
+          <span class="name"><a href="./movieDetails/${loop.index}"><img src='${movie.picture}' alt="" height = "200px" width="150px"/></a></span>
       </c:forEach>
-	</div>
-	<!--  sorted films by name asc and desc -->
-		
-		
-		<script>
-		
-		function sortListDir() {
-		  var list, i, switching, b, shouldSwitch, dir, switchcount = 0;
-		  list = document.getElementById("${movies}");
-		  switching = true;
-		  dir = "asc"; 
-		  while (switching) {
-		    switching = false;
-		    b = list.getElementsByTagName("SPAN");
-		    for (i = 0; i < (b.length - 1); i++) {
-		      shouldSwitch = false;
-		      if (dir == "asc") {
-		        if (b[i].innerHTML.toLowerCase() > b[i + 1].innerHTML.toLowerCase()) {
-		          shouldSwitch= true;
-		          break;
-		        }
-		      } else if (dir == "desc") {
-		        if (b[i].innerHTML.toLowerCase() < b[i + 1].innerHTML.toLowerCase()) {
-		          shouldSwitch= true;
-		          break;
-		        }
-		      }
-		    }
-		    if (shouldSwitch) {
-		      b[i].parentNode.insertBefore(b[i + 1], b[i]);
-		      switching = true;
-		      switchcount ++;
-		    } else {
-		      if (switchcount == 0 && dir == "asc") {
-		        dir = "desc";
-		        switching = true;
-		      }
-		    }
-		  }
-		}
-		</script>
-	
      </ul>   
   </div>
   </div>
