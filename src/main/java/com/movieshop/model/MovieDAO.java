@@ -22,7 +22,6 @@ public class MovieDAO implements IMovieDAO {
 	private static final String ADD_MOVIE_SQL = "INSERT INTO movies VALUES (null, ?,?,?,?,?,?,?,?,?)";
 	private static final String MOVIES_BY_GENRE = "SELECT * FROM movies WHERE genre='?'";
 	private static final String GET_SPECIFIC_MOVIE = "SELECT * FROM movies WHERE id = ?";
-//	private static final String SELECT_MOVIE_BY_NAME = "SELECT * FROM movies WHERE name LIKE ?";
 	// @Autowired
 	// MovieDAO dao;
 
@@ -160,15 +159,6 @@ public class MovieDAO implements IMovieDAO {
 					movie.setInfoLink(rs.getString("info_link"));
 					movie.setQuantity(rs.getInt("quantity"));
 					
-					StringBuilder desc = new StringBuilder(movie.getSummary());
-
-					for (int index = 0; index < desc.length(); index++) {
-						if (desc.charAt(index) == '•') {
-							desc.append(System.getProperty("line.separator"));
-							index++;
-						}
-					}
-					movie.setSummary(desc.toString());
 				}
 				pstmt.close();
 				return movie;
