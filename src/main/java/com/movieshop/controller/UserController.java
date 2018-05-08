@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.movieshop.exceptions.UserException;
+import com.movieshop.model.MovieDAO;
 import com.movieshop.model.User;
 import com.movieshop.model.UserDAO;
 
@@ -33,7 +34,10 @@ public class UserController {
 			+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
 	@Autowired
-	private UserDAO dao;
+	private UserDAO userDAO;
+	
+	@Autowired
+	private MovieDAO movieDAO;
 
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public String login(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -49,7 +53,7 @@ public class UserController {
 
 		try {
 
-			User user = dao.login(email, password);
+			User user = userDAO.login(email, password);
 
 			if (user.getId() != 0) {
 
@@ -108,7 +112,7 @@ public class UserController {
 
 		try {
 			if ((isValidEmail(email)) && (checkName(name, lastName)) && (checkPassword(password, confirmPassword))) {
-				dao.register(u);
+				userDAO.register(u);
 				return ("redirect:/loggedInHome");
 			}
 		} catch (UserException e1) {
@@ -144,7 +148,7 @@ public class UserController {
 		}
 
 		try {
-			dao.changePassword(id, password);
+			userDAO.changePassword(id, password);
 			return ("redirect:/login");
 
 		} catch (UserException e1) {
@@ -153,6 +157,7 @@ public class UserController {
 		}
 		return ("redirect:/changePassword");
 	}
+
 
 	private String encryptPassword(String password) {
 		String sha1 = "";
@@ -203,4 +208,6 @@ public class UserController {
 		}
 		return false;
 	}
+	
+	
 }

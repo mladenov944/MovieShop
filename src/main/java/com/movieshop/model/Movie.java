@@ -118,4 +118,11 @@ public class Movie {
 		this.quantity = quantity;
 	}
 
+	@Override
+	public String toString() {
+		return "Movie [id=" + id + ", name=" + name + ", director=" + director + ", year=" + year + ", summary="
+				+ summary + ", picture=" + picture + ", price=" + price + ", genre=" + genre + ", infoLink=" + infoLink
+				+ ", quantity=" + quantity + ", cart=" + cart + "]";
+	}
+
 }

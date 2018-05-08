@@ -24,21 +24,20 @@ public class MovieController {
 	@Autowired
 	private MovieDAO movieDAO;
 
-	@RequestMapping(method = RequestMethod.GET, value = "/movieDetails")
+	@RequestMapping(method = RequestMethod.GET, value = "/movie")
 	public String movieDetail() {
-		return "movieDetails";
+		return "movie";
 	}
 
-	@RequestMapping(method = RequestMethod.GET, value = "/movieDetails/{id}")
+	@RequestMapping(method = RequestMethod.GET, value = "/{id}")
 	public String viewMovie(Model model, @PathVariable Integer id) {
-		Movie movie;
 		try {
-			movie = movieDAO.getMovieByIndex(id);
+			Movie movie = movieDAO.getMovieId(id);
 			model.addAttribute(movie);
 		} catch (MovieException e) {
 			e.printStackTrace();
 		}
-		return "movieDetails";
+		return "movie";
 	}
 	// need to fix serch by Genre
 //	@RequestMapping(method = RequestMethod.GET, value = "/movieGenre")

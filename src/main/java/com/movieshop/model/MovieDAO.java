@@ -37,6 +37,7 @@ public class MovieDAO implements IMovieDAO {
 
 			while (result.next()) {
 				Movie movie = new Movie();
+				movie.setId(result.getInt("id"));
 				movie.setName(result.getString("name"));
 				movie.setDirector(result.getString("director"));
 				movie.setYear(result.getShort("year"));
@@ -152,7 +153,7 @@ public class MovieDAO implements IMovieDAO {
 					movie.setName(rs.getString("name"));
 					movie.setDirector(rs.getString("director"));
 					movie.setYear(rs.getShort("year"));
-					movie.setSummary(rs.getString("description"));
+					movie.setSummary(rs.getString("summary"));
 					movie.setPicture(rs.getString("picture"));
 					movie.setPrice(rs.getFloat("price"));
 					movie.setGenre(rs.getString("genre"));

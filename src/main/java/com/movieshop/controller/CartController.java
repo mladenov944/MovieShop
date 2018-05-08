@@ -1,6 +1,5 @@
 package com.movieshop.controller;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,20 +28,19 @@ public class CartController {
 	
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/addItem")
-	public String addItem(Model model, @RequestParam(value = "movieId", required = false) String id,
-			@RequestParam(value = "movieQuantity", required = false) String quantity, HttpServletRequest request,
+	public String addItem(Model model, @RequestParam(value = "movieId", required = false) int id,
+			@RequestParam(value = "movieQuantity", required = false) int quantity, HttpServletRequest request,
 			HttpServletResponse response) {
 		try {
-			int movieId = Integer.parseInt(id.toString());
-			int requestQuantity = Integer.parseInt(quantity.toString());
+			int movieId = id;
+			int requestQuantity = quantity;
 			Movie movie = movieDAO.getMovieId(movieId);
 
 			if (movie.getQuantity() > requestQuantity) {
 				
 				HttpSession session = request.getSession(false);
 				//create cookie with  (userId + itemId) ( itemId and quantity)
-				Cookie cookie = new Cookie((session.getAttribute("id")) + "&" + id,
-						id.toString() + "&" + quantity.toString());
+				Cookie cookie = new Cookie((session.getAttribute("id")) + "&" + id, "" + id + "&" + quantity);
 				cookie.setMaxAge(5000);
 				response.addCookie(cookie);
 			} else {
@@ -54,6 +52,7 @@ public class CartController {
 		}
 		return "redirect:cart";
 	}
+	
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/cart")
 	public String cart(Model model, HttpServletRequest request) {
@@ -110,6 +109,18 @@ public class CartController {
 		}
 
 		return "cart";
+	}	
+	
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/removeMovie")
+	public String removeItem(Model model, @RequestParam(value = "movieId", required = false) int id,
+			HttpServletRequest request, HttpServletResponse response) {
 
+			HttpSession session = request.getSession(false);
+			Cookie cookie = new Cookie((session.getAttribute("id")) + "&" + id, "");
+			cookie.setMaxAge(0);
+
+			response.addCookie(cookie);
+			return "redirect:cart";
 	}
 }

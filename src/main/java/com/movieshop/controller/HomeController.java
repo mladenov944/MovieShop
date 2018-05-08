@@ -43,19 +43,18 @@ public class HomeController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/loggedInHome")
-	public String loggedIn(Model model, HttpServletRequest request, HttpServletResponse response)
-			throws MovieException {
+	public String loggedIn(Model model, HttpServletRequest request, HttpServletResponse response) {
 		if ((request.getSession(false) == null) || (request.getSession().getAttribute("id") == null)) {
 			return ("redirect:home");
 		}
 		try {
 			List<Movie> movies = movieDao.getAllMovies();
-//			System.out.println(movies.size());
+			System.out.println(movies.size());
+			System.out.println(movies.toString());
 			model.addAttribute("movies", movies);
 
 		} catch (MovieException e) {
 			e.printStackTrace();
-			throw new MovieException("Sorry, can't find Movies!", e);
 		}
 		return "loggedInHome";
 	}
