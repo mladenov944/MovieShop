@@ -49,8 +49,6 @@ public class HomeController {
 		}
 		try {
 			List<Movie> movies = movieDao.getAllMovies();
-			System.out.println(movies.size());
-			System.out.println(movies.toString());
 			model.addAttribute("movies", movies);
 
 		} catch (MovieException e) {

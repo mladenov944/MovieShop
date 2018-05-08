@@ -23,8 +23,8 @@ public class MovieDAO implements IMovieDAO {
 	private static final String MOVIES_BY_GENRE = "SELECT * FROM movies WHERE genre='?'";
 	private static final String GET_SPECIFIC_MOVIE = "SELECT * FROM movies WHERE id = ?";
 	private static final String UPDATE_MOVIE_QUANTITY = "UPDATE movies SET quantity = quantity - ? Where id = ?";
-	// @Autowired
-	// MovieDAO dao;
+	private static final String SORT_MOVIES_BY_NAME_ASC = "SELECT * FROM movies ORDER BY name ASC";
+	
 
 	@Override
 	public List<Movie> getAllMovies() throws MovieException {
@@ -127,18 +127,6 @@ public class MovieDAO implements IMovieDAO {
 		return movies;
 	}
 
-	//Arrange movies by Name
-	public Set<Movie> getMovieByTitle() throws MovieException {
-			Set<Movie> movies = new TreeSet<Movie>();
-			try {
-				movies.addAll(getAllMovies());
-			} catch (MovieException e) {
-				e.printStackTrace();
-				throw new MovieException("Something went wrong, please try again later!");
-			}
-		
-			return movies;
-	}
 
 	public Movie getMovieId(int id) throws MovieException {
 		try {	
@@ -186,4 +174,38 @@ public class MovieDAO implements IMovieDAO {
 		
 		
 	}
+
+	@Override
+	public List<Movie> sortMovieByName() throws MovieException {
+		List<Movie> movies = new ArrayList<>();
+		PreparedStatement pstmt;
+		try {
+			Connection conn = DBConnection.getInstance().getConnection();
+			pstmt = conn.prepareStatement(SORT_MOVIES_BY_NAME_ASC);
+			ResultSet result = pstmt.executeQuery();
+
+			while (result.next()) {
+				Movie movie = new Movie();
+				movie.setId(result.getInt("id"));
+				movie.setName(result.getString("name"));
+				movie.setDirector(result.getString("director"));
+				movie.setYear(result.getShort("year"));
+				movie.setSummary(result.getString("summary"));
+				movie.setPicture(result.getString("picture"));
+				movie.setPrice(result.getFloat("price"));
+				movie.setGenre(result.getString("genre"));
+				movie.setInfoLink(result.getString("info_link"));
+				movie.setQuantity(result.getShort("quantity"));
+
+				movies.add(movie);
+			}
+
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			throw new MovieException("Something went wrong with DB, please try again later!", e);
+		}
+		return movies;
+	}
+
+	
 }

@@ -2,6 +2,8 @@ package com.movieshop.controller;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,13 +34,20 @@ public class MovieController {
 	@RequestMapping(method = RequestMethod.GET, value = "/{id}")
 	public String viewMovie(Model model, @PathVariable Integer id) {
 		try {
-			Movie movie = movieDAO.getMovieId(id);
-			model.addAttribute(movie);
+			if (isValidMovieId(id)) {
+				Movie movie = movieDAO.getMovieId(id);
+				model.addAttribute(movie);
+				return "movie";
+			}
+			
 		} catch (MovieException e) {
 			e.printStackTrace();
 		}
-		return "movie";
+		return "redirect:loggedInHome";
 	}
+	
+	
+	
 	// need to fix serch by Genre
 //	@RequestMapping(method = RequestMethod.GET, value = "/movieGenre")
 //	public String movieByGenre(Model model) {
@@ -94,9 +103,41 @@ public class MovieController {
 		}
 		return "redirect:adminPage";
 	}
+	
+//	@RequestMapping(method=RequestMethod.GET, value="/search/{text}")
+//	public String searchItems(Model model, @PathVariable("text") String text) {
+//		model.addAttribute("newItem", new Movie());
+//		
+//		try{
+//		
+//		List<Movie> movies = movieDAO.getMovieByName(text);
+//		
+//		model.addAttribute("movies",movies);
+//		
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		
+//		return "search";
+//	}
 
 	// Validation sector starts here...
 
+	public boolean isValidMovieId(int movieId) throws MovieException {
+		List<Movie> movies = new ArrayList<Movie>();
+		try {
+			movies = movieDAO.getAllMovies();
+			for (Movie movie : movies) {
+				if (movie.getId() == movieId) {
+					return true;
+				}
+			} 
+		}catch (MovieException e) {
+			throw new MovieException("There is no movie with that ID!");
+		}
+		return false;
+	}
+	
 	public boolean isValidURL(String urlString) {
 		try {
 			URL url = new URL(urlString);
