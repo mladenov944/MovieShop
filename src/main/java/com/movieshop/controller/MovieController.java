@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.movieshop.exceptions.MovieException;
 import com.movieshop.model.Movie;
@@ -32,34 +33,35 @@ public class MovieController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/{id}")
-	public String viewMovie(Model model, @PathVariable Integer id) {
+	public String viewMovie(Model model, @PathVariable Integer id, HttpServletRequest request) {
 		try {
 			if (isValidMovieId(id)) {
 				Movie movie = movieDAO.getMovieId(id);
 				model.addAttribute(movie);
+				if (request.getSession().getAttribute("email").equals("admin@admin.bg")) {
+					return "adminMovie";
+				}
 				return "movie";
 			}
-			
+
 		} catch (MovieException e) {
 			e.printStackTrace();
 		}
 		return "redirect:loggedInHome";
 	}
-	
-	
-	
+
 	// need to fix serch by Genre
-//	@RequestMapping(method = RequestMethod.GET, value = "/movieGenre")
-//	public String movieByGenre(Model model) {
-//		Movie movieGenre;
-		// try {
-		// movieGenre = dao.showMovieByGenre();
-		// model.addAttribute(movieGenre);
-		// } catch (MovieException e) {
-		// e.printStackTrace();
-		// }
-//		return "movieGenre";
-//	}
+	// @RequestMapping(method = RequestMethod.GET, value = "/movieGenre")
+	// public String movieByGenre(Model model) {
+	// Movie movieGenre;
+	// try {
+	// movieGenre = dao.showMovieByGenre();
+	// model.addAttribute(movieGenre);
+	// } catch (MovieException e) {
+	// e.printStackTrace();
+	// }
+	// return "movieGenre";
+	// }
 
 	@RequestMapping(method = RequestMethod.GET, value = "/addMovie")
 	public String homePage(HttpServletRequest request, HttpServletResponse response) {
@@ -101,25 +103,49 @@ public class MovieController {
 			response.getWriter().println("<h1> Something went wrong with the server! We are sorry! </h1>");
 			e1.printStackTrace();
 		}
+		return "adminPage";
+	}
+
+	@RequestMapping(method = RequestMethod.GET, value = "/removeMovie")
+	public String removeMovieGet(HttpServletRequest request, HttpServletResponse response) {
+		if (!(request.getSession().getAttribute("email").equals("admin@admin.bg") || (request.getSession(false) == null)
+				|| (request.getSession().getAttribute("id") == null))) {
+			return "home";
+		}
+
+		return "removeMovie";
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "/removeMovie")
+	public String removeMovie(HttpServletRequest request, HttpServletResponse response, @RequestParam("movieId") int id)
+			throws MovieException, IOException {
+
+		try {
+			movieDAO.removeMovie(id);
+			return "redirect:adminPage";
+		} catch (MovieException e1) {
+			response.getWriter().println("<h1> Something went wrong with the server! We are sorry! </h1>");
+			e1.printStackTrace();
+		}
 		return "redirect:adminPage";
 	}
-	
-//	@RequestMapping(method=RequestMethod.GET, value="/search/{text}")
-//	public String searchItems(Model model, @PathVariable("text") String text) {
-//		model.addAttribute("newItem", new Movie());
-//		
-//		try{
-//		
-//		List<Movie> movies = movieDAO.getMovieByName(text);
-//		
-//		model.addAttribute("movies",movies);
-//		
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		
-//		return "search";
-//	}
+
+	// @RequestMapping(method=RequestMethod.GET, value="/search/{text}")
+	// public String searchItems(Model model, @PathVariable("text") String text) {
+	// model.addAttribute("newItem", new Movie());
+	//
+	// try{
+	//
+	// List<Movie> movies = movieDAO.getMovieByName(text);
+	//
+	// model.addAttribute("movies",movies);
+	//
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	//
+	// return "search";
+	// }
 
 	// Validation sector starts here...
 
@@ -131,13 +157,13 @@ public class MovieController {
 				if (movie.getId() == movieId) {
 					return true;
 				}
-			} 
-		}catch (MovieException e) {
+			}
+		} catch (MovieException e) {
 			throw new MovieException("There is no movie with that ID!");
 		}
 		return false;
 	}
-	
+
 	public boolean isValidURL(String urlString) {
 		try {
 			URL url = new URL(urlString);

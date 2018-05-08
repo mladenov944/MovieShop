@@ -28,7 +28,7 @@ function hideURLbar(){ window.scrollTo(0,1); }
 	<div class="main-agileits">
 		<h2 class="sub-head">ADD MOVIE</h2>
 		<div class="sub-main">
-			<form action="./addmovie" method="post">
+			<form action="./addMovie" method="post">
 			
 				<input placeholder="Movie name" name="movie_name" class="name" type="text"
 					required=""> <span class="icon1"><i

@@ -22,6 +22,7 @@ public class MovieDAO implements IMovieDAO {
 	private static final String GET_SPECIFIC_MOVIE = "SELECT * FROM movies WHERE id = ?";
 	private static final String UPDATE_MOVIE_QUANTITY = "UPDATE movies SET quantity = quantity - ? Where id = ?";
 	private static final String SORT_MOVIES_BY_NAME_ASC = "SELECT * FROM movies ORDER BY name ASC";
+	private static final String REMOVE_MOVIE_BY_ID = "DELETE from movies where id = ?";
 
 	@Override
 	public List<Movie> getAllMovies() throws MovieException {
@@ -110,6 +111,25 @@ public class MovieDAO implements IMovieDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new MovieException("Cannot add movie !", e);
+		}
+	}
+
+	@Override
+	public void removeMovie(int id) throws MovieException {
+		PreparedStatement pstmt;
+
+		try {
+			pstmt = DBConnection.getInstance().getConnection().prepareStatement(REMOVE_MOVIE_BY_ID,
+					Statement.RETURN_GENERATED_KEYS);
+
+			pstmt.setInt(1, id);
+			pstmt.executeUpdate();
+
+			System.out.println("removed movie");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new MovieException("Cannot remove movie !", e);
 		}
 	}
 

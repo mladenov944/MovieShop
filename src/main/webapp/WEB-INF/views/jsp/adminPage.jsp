@@ -36,7 +36,7 @@
      <ul>   
       <c:forEach items="${movies}" var="movie" varStatus="loop">
           
-          <span class="name"><a href="./movieDetails/${movie.id}"><img src='${movie.picture}' alt="" height = "200px" width="150px"/></a></span>
+          <span class="name"><a id = "${movie.name}" href="/FinalProject/${movie.id}"><img src='${movie.picture}' alt="" height = "200px" width="150px"/></a></span>
       </c:forEach>
      </ul>   
   </div>

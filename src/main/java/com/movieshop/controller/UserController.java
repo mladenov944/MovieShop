@@ -38,17 +38,17 @@ public class UserController {
 
 	@Autowired
 	private UserDAO userDAO;
-	
+
 	@Autowired
 	private MovieDAO movieDAO;
-	
-	
+
 	@RequestMapping(method = RequestMethod.GET, value = "/loggedInHome")
-	public String loggedIn(Model model, HttpServletRequest request, HttpServletResponse response) {
+	public String loggedIn(HttpSession session, Model model, HttpServletRequest request, HttpServletResponse response) {
 		if ((request.getSession(false) == null) || (request.getSession().getAttribute("id") == null)) {
 			return ("redirect:home");
 		}
 		try {
+
 			List<Movie> movies = movieDAO.getAllMovies();
 			model.addAttribute("movies", movies);
 
@@ -57,7 +57,7 @@ public class UserController {
 		}
 		return "loggedInHome";
 	}
-	
+
 	@RequestMapping(method = RequestMethod.GET, value = "/sortedMovies")
 	public String sortedmovies(Model model, HttpServletRequest request, HttpServletResponse response) {
 		if ((request.getSession(false) == null) || (request.getSession().getAttribute("id") == null)) {
@@ -73,7 +73,7 @@ public class UserController {
 		} catch (MovieException e) {
 			e.printStackTrace();
 		}
-		
+
 		return "sortedMovies";
 	}
 
@@ -196,7 +196,6 @@ public class UserController {
 		return ("redirect:/changePassword");
 	}
 
-
 	private String encryptPassword(String password) {
 		String sha1 = "";
 		try {
@@ -246,6 +245,5 @@ public class UserController {
 		}
 		return false;
 	}
-	
-	
+
 }

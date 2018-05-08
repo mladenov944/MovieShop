@@ -22,11 +22,10 @@ import com.movieshop.model.MovieDAO;
 @Controller
 @RequestMapping("/")
 public class CartController {
-	
+
 	@Autowired
 	private MovieDAO movieDAO;
-	
-	
+
 	@RequestMapping(method = RequestMethod.GET, value = "/addItem")
 	public String addItem(Model model, @RequestParam(value = "movieId", required = false) int id,
 			@RequestParam(value = "movieQuantity", required = false) int quantity, HttpServletRequest request,
@@ -37,9 +36,9 @@ public class CartController {
 			Movie movie = movieDAO.getMovieId(movieId);
 
 			if (movie.getQuantity() > requestQuantity) {
-				
+
 				HttpSession session = request.getSession(false);
-				//create cookie with  (userId + itemId) ( itemId and quantity)
+				// create cookie with (userId + itemId) ( itemId and quantity)
 				Cookie cookie = new Cookie((session.getAttribute("id")) + "&" + id, "" + id + "&" + quantity);
 				cookie.setMaxAge(5000);
 				response.addCookie(cookie);
@@ -52,8 +51,7 @@ public class CartController {
 		}
 		return "redirect:cart";
 	}
-	
-	
+
 	@RequestMapping(method = RequestMethod.GET, value = "/cart")
 	public String cart(Model model, HttpServletRequest request) {
 
@@ -109,18 +107,6 @@ public class CartController {
 		}
 
 		return "cart";
-	}	
-	
-	
-	@RequestMapping(method = RequestMethod.GET, value = "/removeMovie")
-	public String removeItem(Model model, @RequestParam(value = "movieId", required = false) int id,
-			HttpServletRequest request, HttpServletResponse response) {
-
-			HttpSession session = request.getSession(false);
-			Cookie cookie = new Cookie((session.getAttribute("id")) + "&" + id, "");
-			cookie.setMaxAge(0);
-
-			response.addCookie(cookie);
-			return "redirect:cart";
 	}
+
 }
