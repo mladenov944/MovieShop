@@ -1,10 +1,12 @@
 package com.movieshop.controller;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +14,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import com.movieshop.exceptions.MovieException;
 import com.movieshop.model.Movie;
 import com.movieshop.model.MovieDAO;
-import com.sun.mail.imap.protocol.Item;
 
 @Controller
 @RequestMapping("/")
@@ -24,6 +27,33 @@ public class CartController {
 	@Autowired
 	private MovieDAO movieDAO;
 	
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/addItem")
+	public String addItem(Model model, @RequestParam(value = "movieId", required = false) String id,
+			@RequestParam(value = "movieQuantity", required = false) String quantity, HttpServletRequest request,
+			HttpServletResponse response) {
+		try {
+			int movieId = Integer.parseInt(id.toString());
+			int requestQuantity = Integer.parseInt(quantity.toString());
+			Movie movie = movieDAO.getMovieId(movieId);
+
+			if (movie.getQuantity() > requestQuantity) {
+				
+				HttpSession session = request.getSession(false);
+				//create cookie with  (userId + itemId) ( itemId and quantity)
+				Cookie cookie = new Cookie((session.getAttribute("id")) + "&" + id,
+						id.toString() + "&" + quantity.toString());
+				cookie.setMaxAge(5000);
+				response.addCookie(cookie);
+			} else {
+				return "redirect:/" + movieId;
+			}
+
+		} catch (MovieException e) {
+			e.printStackTrace();
+		}
+		return "redirect:cart";
+	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/cart")
 	public String cart(Model model, HttpServletRequest request) {
@@ -55,7 +85,7 @@ public class CartController {
 					int quantity = Integer.parseInt(itemQuantity);
 					totalMovies += quantity;
 
-					Movie movie = movieDAO.getId(id);
+					Movie movie = movieDAO.getMovieId(id);
 					movie.setQuantity(quantity);
 					movie.setPrice(movie.getPrice() * movie.getQuantity());
 

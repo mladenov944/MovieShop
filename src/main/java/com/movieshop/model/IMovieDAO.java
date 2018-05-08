@@ -16,4 +16,6 @@ public interface IMovieDAO {
 	public List<Movie>showMovieByGenre(String genre) throws MovieException;
 	
 	public Set<Movie> getMovieByTitle() throws MovieException;
+	
+	public void updateItemQuantity(int id, int quantity) throws MovieException;
 }

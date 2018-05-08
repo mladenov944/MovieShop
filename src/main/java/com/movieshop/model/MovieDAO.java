@@ -22,6 +22,7 @@ public class MovieDAO implements IMovieDAO {
 	private static final String ADD_MOVIE_SQL = "INSERT INTO movies VALUES (null, ?,?,?,?,?,?,?,?,?)";
 	private static final String MOVIES_BY_GENRE = "SELECT * FROM movies WHERE genre='?'";
 	private static final String GET_SPECIFIC_MOVIE = "SELECT * FROM movies WHERE id = ?";
+	private static final String UPDATE_MOVIE_QUANTITY = "UPDATE movies SET quantity = quantity - ? Where id = ?";
 	// @Autowired
 	// MovieDAO dao;
 
@@ -146,7 +147,6 @@ public class MovieDAO implements IMovieDAO {
 
 			Movie movie = new Movie();
 
-			
 				if (rs.next()) {
 					movie.setId(rs.getInt("id"));
 					movie.setName(rs.getString("name"));
@@ -165,7 +165,24 @@ public class MovieDAO implements IMovieDAO {
 				
 			} catch (ClassNotFoundException | SQLException e) {
 				e.printStackTrace();
-				throw new MovieException("Something went wrong, please try again later!");
+				throw new MovieException("There are no Movie with same ID!");
 			}
+	}
+
+	@Override
+	public void updateItemQuantity(int id, int quantity) throws MovieException {
+		PreparedStatement stmt;
+		try {
+			stmt = DBConnection.getInstance().getConnection().prepareStatement(UPDATE_MOVIE_QUANTITY);
+			stmt.setInt(1, quantity);
+			stmt.setInt(2, id);
+			stmt.executeUpdate();
+			stmt.close();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			throw new MovieException("There are no Movie with same ID!"); 
+		}
+		
+		
 	}
 }
