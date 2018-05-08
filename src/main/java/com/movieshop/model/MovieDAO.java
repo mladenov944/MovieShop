@@ -7,8 +7,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.springframework.stereotype.Component;
 
@@ -24,7 +22,6 @@ public class MovieDAO implements IMovieDAO {
 	private static final String GET_SPECIFIC_MOVIE = "SELECT * FROM movies WHERE id = ?";
 	private static final String UPDATE_MOVIE_QUANTITY = "UPDATE movies SET quantity = quantity - ? Where id = ?";
 	private static final String SORT_MOVIES_BY_NAME_ASC = "SELECT * FROM movies ORDER BY name ASC";
-	
 
 	@Override
 	public List<Movie> getAllMovies() throws MovieException {
@@ -93,6 +90,7 @@ public class MovieDAO implements IMovieDAO {
 		try {
 			pstmt = DBConnection.getInstance().getConnection().prepareStatement(ADD_MOVIE_SQL,
 					Statement.RETURN_GENERATED_KEYS);
+
 			pstmt.setString(1, movie.getName());
 			pstmt.setString(2, movie.getDirector());
 			pstmt.setInt(3, movie.getYear());
@@ -127,35 +125,34 @@ public class MovieDAO implements IMovieDAO {
 		return movies;
 	}
 
-
 	public Movie getMovieId(int id) throws MovieException {
-		try {	
+		try {
 			PreparedStatement pstmt = DBConnection.getInstance().getConnection().prepareStatement(GET_SPECIFIC_MOVIE);
 			pstmt.setInt(1, id);
 			ResultSet rs = pstmt.executeQuery();
 
 			Movie movie = new Movie();
 
-				if (rs.next()) {
-					movie.setId(rs.getInt("id"));
-					movie.setName(rs.getString("name"));
-					movie.setDirector(rs.getString("director"));
-					movie.setYear(rs.getShort("year"));
-					movie.setSummary(rs.getString("summary"));
-					movie.setPicture(rs.getString("picture"));
-					movie.setPrice(rs.getFloat("price"));
-					movie.setGenre(rs.getString("genre"));
-					movie.setInfoLink(rs.getString("info_link"));
-					movie.setQuantity(rs.getInt("quantity"));
-					
-				}
-				pstmt.close();
-				return movie;
-				
-			} catch (ClassNotFoundException | SQLException e) {
-				e.printStackTrace();
-				throw new MovieException("There are no Movie with same ID!");
+			if (rs.next()) {
+				movie.setId(rs.getInt("id"));
+				movie.setName(rs.getString("name"));
+				movie.setDirector(rs.getString("director"));
+				movie.setYear(rs.getShort("year"));
+				movie.setSummary(rs.getString("summary"));
+				movie.setPicture(rs.getString("picture"));
+				movie.setPrice(rs.getFloat("price"));
+				movie.setGenre(rs.getString("genre"));
+				movie.setInfoLink(rs.getString("info_link"));
+				movie.setQuantity(rs.getInt("quantity"));
+
 			}
+			pstmt.close();
+			return movie;
+
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			throw new MovieException("There are no Movie with same ID!");
+		}
 	}
 
 	@Override
@@ -169,10 +166,9 @@ public class MovieDAO implements IMovieDAO {
 			stmt.close();
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
-			throw new MovieException("There are no Movie with same ID!"); 
+			throw new MovieException("There are no Movie with same ID!");
 		}
-		
-		
+
 	}
 
 	@Override
@@ -207,5 +203,4 @@ public class MovieDAO implements IMovieDAO {
 		return movies;
 	}
 
-	
 }

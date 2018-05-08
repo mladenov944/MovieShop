@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-
+<%@page import="java.net.URLEncoder" %>
+<%
+    String fbURL = "http://www.facebook.com/dialog/oauth?client_id=myfacebookappid&redirect_uri=" + URLEncoder.encode("http://myappengineappid.appspot.com/signin_fb.do") + "&scope=email";
+%>
 <html lang="en">
 <head>
 <style>
@@ -46,6 +49,43 @@ body {
 </head>
 
 <body>
+<script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '{2194336664121821}',
+      cookie     : true,
+      xfbml      : true,
+      version    : '{latest-api-version}'
+    });
+      
+    FB.AppEvents.logPageView();   
+      
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "https://connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+  
+  FB.getLoginStatus(function(response) {
+	    statusChangeCallback(response);
+	});
+  
+
+  {
+      status: 'connected',
+      authResponse: {
+          accessToken: '...',
+          expiresIn:'...',
+          signedRequest:'...',
+          userID:'...'
+      }
+  }
+</script>
+
 
 	<div class="limiter">
 		<div class="container-login100">
@@ -74,7 +114,7 @@ body {
 					</div>
 
 					<div class="text-center p-t-45 p-b-4">
-						<span class="txt1"> Forgot </span> <a href="https://www.desicomments.com/wp-content/uploads/2017/01/I-Am-Sorry.jpg" class="txt2 hov1">
+						<span class="txt1"> Forgot </span> <a href="https://media.giphy.com/media/xUySTQrznWtO9pWxVe/giphy.gif" class="txt2 hov1">
 							Username / Password? </a>
 					</div>
 
@@ -82,7 +122,13 @@ body {
 						<span class="txt1"> Create an account? </span> <a
 							href="./register" class="txt2 hov1"> Sign up </a>
 					</div>
+					<div class="text-center">
+						<span class="txt1"> </span>
+							<a href="/FinalProject/fblogin" class="txt2 hov1">Log in with FB </a>
+							</div>
+							
 				</form>
+				
 			</div>
 		</div>
 	</div>

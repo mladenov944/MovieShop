@@ -14,6 +14,7 @@
 
 <body>
 	<div id="shell">
+	<h4>Welcome, Admin ! </h4>
   <div id="header">
     <div class="social"> <span>FOLLOW US ON:</span>
       <ul>
@@ -28,41 +29,14 @@
       </ul>
     </div>
     <div id="sub-navigation">
-      <ul>
-        <li><a href="#">SHOW ALL</a></li>
-        <li><a href="#">GENRE</a></li>
-       
-        <li><select name="movie_genre">
-						  <option value="">Select a genre:</option>
-						  <option value="Action">Action</option>
-						  <option value="Horror">Horror</option>
-						  <option value="Comedy">Comedy</option>
-						  <option value="Fantasy">Fantasy</option>
-						  <option value="Drama">Drama</option>
-						  <option value="Mystery">Mystery</option>
-						  <option value="Animation">Animation</option>
-						  <option value="Sci-fy">Sci-fy</option>
-						  </select></li>
-      </ul>
-      <div id="search">
-        <form action="#" method="get" accept-charset="utf-8">
-          <label for="search-field">SEARCH</label>
-          <input type="text" name="search field" value="Enter search here" id="search-field" class="blink search-field"  />
-          <input type="submit" value="GO!" class="search-button" />
-        </form>
-      </div>
     </div>
   </div>
     <div id="content">
       <div class="box">
-        <div class="head">
-          <h2>LATEST TRAILERS</h2>
-          <p class="text-right"><a href="#">See all</a></p>
-        </div>
      <ul>   
       <c:forEach items="${movies}" var="movie" varStatus="loop">
           
-          <span class="name"><a href="./movieDetails/${loop.index}"><img src='${movie.picture}' alt="" height = "200px" width="150px"/></a></span>
+          <span class="name"><a href="./movieDetails/${movie.id}"><img src='${movie.picture}' alt="" height = "200px" width="150px"/></a></span>
       </c:forEach>
      </ul>   
   </div>

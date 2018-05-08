@@ -14,6 +14,9 @@
 
 <body>
 	<div id="shell">
+	<h4>Welcome, <%= session.getAttribute("name") %> <%= session.getAttribute("lastName") %> </h4>
+	<h4>Your balance is:  <%= session.getAttribute("cash") %> </h4>
+	
   <div id="header">
     <div class="social"> <span>FOLLOW US ON:</span>
       <ul>
@@ -66,48 +69,6 @@
           <span class="name"><a id = "${movie.name}" href="/FinalProject/${movie.id}"><img src='${movie.picture}' alt="" height = "200px" width="150px"/></a></span>
       </c:forEach>
 	</div>
-	<!--  sorted films by name asc and desc -->
-		
-		
-		<!-- <button onclick="sortListDir()"> 
-		<script>
-		
-		function sortListDir() {
-		  var list, i, switching, b, shouldSwitch, dir, switchcount = 0;
-		  list = document.getElementById("${movies}");
-		  switching = true;
-		  dir = "asc"; 
-		  while (switching) {
-		    switching = false;
-		    b = list.getElementsByTagName("SPAN");
-		    for (i = 0; i < (b.length - 1); i++) {
-		      shouldSwitch = false;
-		      if (dir == "asc") {
-		        if (b[i].innerHTML.toLowerCase() > b[i + 1].innerHTML.toLowerCase()) {
-		          shouldSwitch= true;
-		          break;
-		        }
-		      } else if (dir == "desc") {
-		        if (b[i].innerHTML.toLowerCase() < b[i + 1].innerHTML.toLowerCase()) {
-		          shouldSwitch= true;
-		          break;
-		        }
-		      }
-		    }
-		    if (shouldSwitch) {
-		      b[i].parentNode.insertBefore(b[i + 1], b[i]);
-		      switching = true;
-		      switchcount ++;
-		    } else {
-		      if (switchcount == 0 && dir == "asc") {
-		        dir = "desc";
-		        switching = true;
-		      }
-		    }
-		  }
-		}
-		</script> 
-	-->
         
   </div>
   </div>

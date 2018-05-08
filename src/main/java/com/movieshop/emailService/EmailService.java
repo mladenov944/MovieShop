@@ -24,7 +24,7 @@ import com.movieshop.model.UserDAO;
 @EnableScheduling
 public class EmailService {
 
-	JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+	private JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
 
 	@Autowired
 	private UserDAO dao;
