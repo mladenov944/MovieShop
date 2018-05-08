@@ -79,7 +79,7 @@
    <div class="container-fluid"> 
     <div class="row"> 
      <div class="col-xs-12"> 
-      <p class="breadcrumb"> <a href="/FinalProject/loggedInHome">Home</a> <span class="arrow"> ► </span> <span>${movie.name}</span> </p> 
+      <p class="breadcrumb"> <a href="/FinalProject/loggedInHome">Go Back</a> <span class="arrow"> ► </span> <span>${movie.name}</span> </p> 
      </div> 
     </div> 
     <div class="row"> 
@@ -88,11 +88,11 @@
        <li> <h1 class="text-uppercase">${movie.name}<span data-rating-id="17"> </span> </h1> </li> 
       </ul> 
       <div class="call-to-action-button pull-right">
-       <a href="http://localhost:8080/FinalProject/addItem" scroll-to="" class="btn btn-lg btn-primary text-center hidden-xs"> <span class="h2 text-bold">ADD TO CART</span> </a> 
+       <a href="http://localhost:8080/FinalProject/cart" scroll-to="" class="btn btn-lg btn-primary text-center hidden-xs"> <span class="h2 text-bold">ADD TO CART</span> </a> 
       </div> 
      </div> 
      <div class="col-xs-12 visible-xs call-to-action-button"> 
-      <a href="http://localhost:8080/FinalProject/addItem" scroll-to="" class="btn btn-lg btn-primary btn-block text-center"> <span class="h2 text-bold">ADD TO CART</span> </a> 
+      <a href="http://localhost:8080/FinalProject/cart" scroll-to="" class="btn btn-lg btn-primary btn-block text-center"> <span class="h2 text-bold">ADD TO CART</span> </a> 
      </div> 
     </div> 
     <div class="row"> 

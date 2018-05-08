@@ -4,82 +4,92 @@
      <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
+
+  
+  <link href="/FinalProject/css/theme.css" rel="stylesheet">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="/FinalProject/css/cartstyle.css" rel="stylesheet">  
+<link href="/FinalProject/js/index.js" rel="stylesheet"> 
+<link href="/FinalProject/scss/style.scss" rel="stylesheet">
 <title>Shopping Cart</title>
 </head>
 <body>
 
-<div class="cart_section">
-		<div class="container">
-			<div class="row">
-				<div class="col-lg-10 offset-lg-1">
-					<div class="cart_container">
-						<div class="cart_title">Shopping Cart</div>
-						<div class="cart_items">
-							<ul class="cart_list">
-							<c:choose> 
-									<c:when	test = "${fn:length(movies)==0}">
-										<div class="order_total_amount">Your cart is empty</div>
-									</c:when>
-									<c:otherwise>
-										<c:forEach items="${movies}" var="item" varStatus="loop">
-								<li class="cart_item clearfix">
-									
-									<div class="cart_item_image"><a href="./${movies.id}"><img src="${movies.picture}" alt=""></a></div>
-									<div class="cart_item_info d-flex flex-md-row flex-column justify-content-between">
-										<div class="cart_item_name cart_info_col">
-											<div class="cart_item_title">Name</div>
-											<div class="cart_item_text">${movies.name}</div>
-										</div>
-										<div class="cart_item_quantity cart_info_col">
-											<div class="cart_item_title">Quantity</div>
-											<div class="cart_item_text">${movies.quantity}</div>
-										</div>
-										<div class="cart_item_price cart_info_col">
-											<div class="cart_item_title">Price</div>
-											<div class="cart_item_text">${movies.price} лв.</div>
-										</div>
-										<div class="cart_item_price cart_info_col">
-										<div class="cart_item_title">
-											<button type="button" onclick="window.location.href='/FinalProject/removeItem?itemId=' + '${movies.id}';" class="button cart_button_clear">X</button>
-										</div>
-										</div>
-									<!--  	<div class="cart_item_total cart_info_col">
-											<div class="cart_item_title">Total</div>
-											<div class="cart_item_text"></div>
-										</div> -->
-									</div>
-									
-								</li>
-							</c:forEach>
-									</c:otherwise>
-								</c:choose>
-							
-								
-								
-							</ul>
-						</div>
-						
-						<!-- Order Total -->
-						<div class="order_total">
-							<div class="order_total_content text-md-right">
-								<div class="order_total_title">Order Total:</div>
-								<div class="order_total_amount">${totalPrice}</div>
-							</div>
-						</div>
+<h1>Shopping Cart</h1>
 
-						<div class="cart_buttons">
-							<button type="button" onclick="window.location.href='/FinalProject/index';" class="button cart_button_clear">Shop more</button>
-							<button type="button" onclick="window.location.href='/FinalProject/checkout';" class="button cart_button_checkout">Order</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+<div class="shopping-cart">
 
+  <div class="column-labels">
+    <label class="product-image">Image</label>
+    <label class="product-details">Product</label>
+    <label class="product-price">Price</label>
+    <label class="product-quantity">Quantity</label>
+    <label class="product-removal">Remove</label>
+    <label class="product-line-price">Total</label>
+  </div>
 
+  <div class="product">
+    <div class="product-image">
+      <img src="https://s.cdpn.io/3/dingo-dog-bones.jpg">
+    </div>
+    <div class="product-details">
+      <div class="product-title">Dingo Dog Bones</div>
+      <p class="product-description">The best dog bones of all time. Holy crap. Your dog will be begging for these things! I got curious once and ate one myself. I'm a fan.</p>
+    </div>
+    <div class="product-price">12.99</div>
+    <div class="product-quantity">
+      <input type="number" value="2" min="1">
+    </div>
+    <div class="product-removal">
+      <button class="remove-product">
+        Remove
+      </button>
+    </div>
+    <div class="product-line-price">25.98</div>
+  </div>
 
+  <div class="product">
+    <div class="product-image">
+      <img src="https://s.cdpn.io/3/large-NutroNaturalChoiceAdultLambMealandRiceDryDogFood.png">
+    </div>
+    <div class="product-details">
+      <div class="product-title">Nutro™ Adult Lamb and Rice Dog Food</div>
+      <p class="product-description">Who doesn't like lamb and rice? We've all hit the halal cart at 3am while quasi-blackout after a night of binge drinking in Manhattan. Now it's your dog's turn!</p>
+    </div>
+    <div class="product-price">45.99</div>
+    <div class="product-quantity">
+      <input type="number" value="1" min="1">
+    </div>
+    <div class="product-removal">
+      <button class="remove-product">
+        Remove
+      </button>
+    </div>
+    <div class="product-line-price">45.99</div>
+  </div>
+
+  <div class="totals">
+    <div class="totals-item">
+      <label>Subtotal</label>
+      <div class="totals-value" id="cart-subtotal">71.97</div>
+    </div>
+    <div class="totals-item">
+      <label>Tax (5%)</label>
+      <div class="totals-value" id="cart-tax">3.60</div>
+    </div>
+    <div class="totals-item">
+      <label>Shipping</label>
+      <div class="totals-value" id="cart-shipping">15.00</div>
+    </div>
+    <div class="totals-item totals-item-total">
+      <label>Grand Total</label>
+      <div class="totals-value" id="cart-total">90.57</div>
+    </div>
+  </div>
+      
+      <button class="checkout">Checkout</button>
+
+</div>
 </body>
 </html>

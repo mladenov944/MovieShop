@@ -14,6 +14,8 @@
 
 <body>
 	<div id="shell">
+	<h4>Welcome, <%= session.getAttribute("name") %> <%= session.getAttribute("lastName") %> </h4>
+	<h4>Your balance is:  <%= session.getAttribute("cash") %> </h4>
   <div id="header">
     <div class="social"> <span>FOLLOW US ON:</span>
       <ul>
