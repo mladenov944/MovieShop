@@ -196,6 +196,11 @@ public class UserController {
 		return ("redirect:/changePassword");
 	}
 
+	@RequestMapping(value = "/resetPassword", method = RequestMethod.GET)
+	public String reset() {
+		return "resetPasswordPage";
+	}
+
 	private String encryptPassword(String password) {
 		String sha1 = "";
 		try {

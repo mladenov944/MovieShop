@@ -76,9 +76,9 @@ body {
 						<button class="login100-form-btn">Sign in</button>
 					</div>
 
-					<div class="text-center p-t-45 p-b-4">
-						<span class="txt1"> Forgot </span> <a href="https://media.giphy.com/media/xUySTQrznWtO9pWxVe/giphy.gif" class="txt2 hov1">
-							Username / Password? </a>
+					<div class="text-center">
+						<span class="txt1"> Forgot password ? </span> <a
+							href="./resetPassword" class="txt2 hov1"> Reset now </a>
 					</div>
 
 					<div class="text-center">
