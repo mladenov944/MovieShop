@@ -14,4 +14,8 @@ public interface IUserDAO {
 
 	List<User> getSubscribedUsers();
 
+	public void subscribe(int id) throws UserException;
+
+	public void unsubscribe(int id) throws UserException;
+
 }

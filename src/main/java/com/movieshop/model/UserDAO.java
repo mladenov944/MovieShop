@@ -21,6 +21,8 @@ public class UserDAO implements IUserDAO {
 	private static final String LOGIN_USER_SQL = "SELECT * FROM users WHERE email=? and password = sha1(?)";
 	private static final String ADD_USER_SQL = "INSERT INTO users VALUES (null, ?,?, sha1(?), ?,0,?,0)";
 	private static final String CHANGE_PASS_SQL = "UPDATE users SET password = sha1(?) WHERE id = ?";
+	private static final String SUBSCRIBE = "UPDATE users SET isSubscribed = 1 where id = ? ";
+	private static final String UNSUBSCRIBE = "UPDATE users SET isSubscribed = 0 where id = ? ";
 
 	@Override
 	public User login(String email, String password) throws UserException {
@@ -116,5 +118,39 @@ public class UserDAO implements IUserDAO {
 			e.printStackTrace();
 		}
 		return users;
+	}
+
+	@Override
+	public void subscribe(int id) {
+		PreparedStatement pstmt;
+
+		try {
+			pstmt = DBConnection.getInstance().getConnection().prepareStatement(SUBSCRIBE,
+					Statement.RETURN_GENERATED_KEYS);
+
+			pstmt.setInt(1, id);
+
+			pstmt.executeUpdate();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void unsubscribe(int id) {
+		PreparedStatement pstmt;
+
+		try {
+			pstmt = DBConnection.getInstance().getConnection().prepareStatement(UNSUBSCRIBE,
+					Statement.RETURN_GENERATED_KEYS);
+
+			pstmt.setInt(1, id);
+
+			pstmt.executeUpdate();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

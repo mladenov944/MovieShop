@@ -17,9 +17,19 @@
 	<h4>Welcome, <%= session.getAttribute("name") %> <%= session.getAttribute("lastName") %> </h4>
 	<h4>Your balance is:  <%= session.getAttribute("cash") %> </h4>
 	
+	<form method = "POST" action="./subscribe" >
+						<input type="hidden" name="id" value = "${user.id}">
+						<input class="button" type="submit" value = "subscribe">
+						
+						</form>
+						<form method = "POST" action="./unsubscribe" >
+						<input type="hidden" name="id" value = "${user.id}">
+						<input class="button" type="submit" value = "Cancel subscription">
+						</form>
   <div id="header">
     <div class="social"> <span>FOLLOW US ON:</span>
       <ul>
+      
         <li><a class="facebook" href="https://www.facebook.com">facebook</a></li>
       </ul>
     </div>

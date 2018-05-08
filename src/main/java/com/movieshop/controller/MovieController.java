@@ -38,10 +38,12 @@ public class MovieController {
 			if (isValidMovieId(id)) {
 				Movie movie = movieDAO.getMovieId(id);
 				model.addAttribute(movie);
-				if (request.getSession().getAttribute("email").equals("admin@admin.bg")) {
+				if (!(request.getSession().getAttribute("email") == null)
+						&& (request.getSession().getAttribute("email").equals("admin@admin.bg"))) {
 					return "adminMovie";
+				} else {
+					return "movie";
 				}
-				return "movie";
 			}
 
 		} catch (MovieException e) {

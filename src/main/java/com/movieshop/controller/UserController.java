@@ -168,6 +168,28 @@ public class UserController {
 		return "changePassword";
 	}
 
+	@RequestMapping(value = "/subscribe", method = RequestMethod.POST)
+	public String subscribe(HttpSession session, HttpServletRequest request, HttpServletResponse response) {
+		if ((request.getSession(false) == null) || (request.getSession().getAttribute("id") == null)) {
+			return ("redirect:home");
+		}
+		Integer id = (Integer) session.getAttribute("id");
+		userDAO.subscribe(id);
+
+		return "redirect:/loggedInHome";
+	}
+
+	@RequestMapping(value = "/unsubscribe", method = RequestMethod.POST)
+	public String unsubscribe(HttpSession session, HttpServletRequest request, HttpServletResponse response) {
+		if ((request.getSession(false) == null) || (request.getSession().getAttribute("id") == null)) {
+			return ("redirect:home");
+		}
+		Integer id = (Integer) session.getAttribute("id");
+		userDAO.unsubscribe(id);
+
+		return "redirect:/loggedInHome";
+	}
+
 	@RequestMapping(value = "/changePassword", method = RequestMethod.POST)
 	public String changingPassword(HttpSession session, HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
