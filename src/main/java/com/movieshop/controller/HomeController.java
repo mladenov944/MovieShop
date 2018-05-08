@@ -25,36 +25,13 @@ public class HomeController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/home")
 	public String homePage(Model model) throws MovieException {
-		// try {
-		// List<Movie> movies = movieDao.getAllMovies();
-		// System.out.println(movies.size());
-		// model.addAttribute("movies", movies);
-		//
-		// } catch (MovieException e) {
-		// e.printStackTrace();
-		// throw new MovieException("Sorry, can't find Movies!", e);
-		// }
+		
 		return "home";
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/index")
 	public String indexPage() {
 		return "redirect:home";
-	}
-
-	@RequestMapping(method = RequestMethod.GET, value = "/loggedInHome")
-	public String loggedIn(Model model, HttpServletRequest request, HttpServletResponse response) {
-		if ((request.getSession(false) == null) || (request.getSession().getAttribute("id") == null)) {
-			return ("redirect:home");
-		}
-		try {
-			List<Movie> movies = movieDao.getAllMovies();
-			model.addAttribute("movies", movies);
-
-		} catch (MovieException e) {
-			e.printStackTrace();
-		}
-		return "loggedInHome";
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/adminPage")

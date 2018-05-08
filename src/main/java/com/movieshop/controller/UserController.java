@@ -6,6 +6,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Formatter;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,7 +22,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.movieshop.exceptions.MovieException;
 import com.movieshop.exceptions.UserException;
+import com.movieshop.model.Movie;
 import com.movieshop.model.MovieDAO;
 import com.movieshop.model.User;
 import com.movieshop.model.UserDAO;
@@ -38,6 +41,41 @@ public class UserController {
 	
 	@Autowired
 	private MovieDAO movieDAO;
+	
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/loggedInHome")
+	public String loggedIn(Model model, HttpServletRequest request, HttpServletResponse response) {
+		if ((request.getSession(false) == null) || (request.getSession().getAttribute("id") == null)) {
+			return ("redirect:home");
+		}
+		try {
+			List<Movie> movies = movieDAO.getAllMovies();
+			model.addAttribute("movies", movies);
+
+		} catch (MovieException e) {
+			e.printStackTrace();
+		}
+		return "loggedInHome";
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/sortedMovies")
+	public String sortedmovies(Model model, HttpServletRequest request, HttpServletResponse response) {
+		if ((request.getSession(false) == null) || (request.getSession().getAttribute("id") == null)) {
+			return ("redirect:home");
+		}
+		try {
+			List<Movie> movies = movieDAO.sortMovieByName();
+			System.out.println();
+			System.out.println(movies.toString());
+			System.out.println();
+			model.addAttribute("movies", movies);
+
+		} catch (MovieException e) {
+			e.printStackTrace();
+		}
+		
+		return "sortedMovies";
+	}
 
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public String login(HttpServletRequest request, HttpServletResponse response) throws IOException {
