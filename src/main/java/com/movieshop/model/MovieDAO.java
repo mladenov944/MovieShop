@@ -67,6 +67,7 @@ public class MovieDAO implements IMovieDAO {
 
 			while (resultSet.next()) {
 				Movie movie = new Movie();
+				movie.setId(resultSet.getInt("id"));
 				movie.setName(resultSet.getString("name"));
 				movie.setDirector(resultSet.getString("director"));
 				movie.setYear(resultSet.getShort("year"));

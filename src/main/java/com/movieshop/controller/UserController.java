@@ -65,9 +65,6 @@ public class UserController {
 		}
 		try {
 			List<Movie> movies = movieDAO.sortMovieByName();
-			System.out.println();
-			System.out.println(movies.toString());
-			System.out.println();
 			model.addAttribute("movies", movies);
 
 		} catch (MovieException e) {

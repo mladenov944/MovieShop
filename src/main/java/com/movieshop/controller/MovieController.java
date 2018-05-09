@@ -132,6 +132,7 @@ public class MovieController {
 		return "redirect:adminPage";
 	}
 
+		// search oshte ne e gotov
 	// @RequestMapping(method=RequestMethod.GET, value="/search/{text}")
 	// public String searchItems(Model model, @PathVariable("text") String text) {
 	// model.addAttribute("newItem", new Movie());
