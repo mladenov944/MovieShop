@@ -108,7 +108,18 @@
 							</h1>
 						</li>
 					</ul>
+<<<<<<< Upstream, based on branch 'master' of https://github.com/mladenov944/MovieShop.git
 			</div>		
+=======
+				</div>
+				<div class="col-xs-12 visible-xs call-to-action-button">
+					<a href="http://localhost:8080/FinalProject/addItem" scroll-to=""
+						class="btn btn-lg btn-primary btn-block text-center"> <span
+						class="h2 text-bold">ADD TO CART</span>
+					</a>
+				</div>
+			</div>
+>>>>>>> 71c9fc4 changed home page with slideshow
 			<div class="row">
 
 				<div class="col-xs-12 visible-xs">
