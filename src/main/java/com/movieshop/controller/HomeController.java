@@ -1,7 +1,6 @@
 package com.movieshop.controller;
 
 import java.util.List;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,7 +24,7 @@ public class HomeController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/home")
 	public String homePage(Model model) throws MovieException {
-		
+
 		return "home";
 	}
 
@@ -47,7 +46,7 @@ public class HomeController {
 
 		} catch (MovieException e) {
 			e.printStackTrace();
-			throw new MovieException("Sorry, can't find Movies!", e);
+			return ("redirect:error");
 		}
 		return "adminPage";
 	}

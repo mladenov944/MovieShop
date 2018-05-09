@@ -21,7 +21,7 @@ import com.movieshop.model.Movie;
 import com.movieshop.model.MovieDAO;
 
 @Controller
-@RequestMapping("/") // smeni gi za da izlizat poveche papki..
+@RequestMapping("/")
 public class MovieController {
 
 	@Autowired
@@ -48,22 +48,10 @@ public class MovieController {
 
 		} catch (MovieException e) {
 			e.printStackTrace();
+			return ("redirect:error");
 		}
 		return "redirect:loggedInHome";
 	}
-
-	// need to fix serch by Genre
-	// @RequestMapping(method = RequestMethod.GET, value = "/movieGenre")
-	// public String movieByGenre(Model model) {
-	// Movie movieGenre;
-	// try {
-	// movieGenre = dao.showMovieByGenre();
-	// model.addAttribute(movieGenre);
-	// } catch (MovieException e) {
-	// e.printStackTrace();
-	// }
-	// return "movieGenre";
-	// }
 
 	@RequestMapping(method = RequestMethod.GET, value = "/addMovie")
 	public String homePage(HttpServletRequest request, HttpServletResponse response) {
@@ -102,7 +90,6 @@ public class MovieController {
 				return "addMovie";
 			}
 		} catch (MovieException e1) {
-			response.getWriter().println("<h1> Something went wrong with the server! We are sorry! </h1>");
 			e1.printStackTrace();
 		}
 		return "adminPage";
@@ -126,28 +113,10 @@ public class MovieController {
 			movieDAO.removeMovie(id);
 			return "redirect:adminPage";
 		} catch (MovieException e1) {
-			response.getWriter().println("<h1> Something went wrong with the server! We are sorry! </h1>");
 			e1.printStackTrace();
 		}
 		return "redirect:adminPage";
 	}
-
-	// @RequestMapping(method=RequestMethod.GET, value="/search/{text}")
-	// public String searchItems(Model model, @PathVariable("text") String text) {
-	// model.addAttribute("newItem", new Movie());
-	//
-	// try{
-	//
-	// List<Movie> movies = movieDAO.getMovieByName(text);
-	//
-	// model.addAttribute("movies",movies);
-	//
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// }
-	//
-	// return "search";
-	// }
 
 	// Validation sector starts here...
 

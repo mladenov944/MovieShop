@@ -104,6 +104,7 @@ public class CartController {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			return ("redirect:error");
 		}
 
 		return "cart";

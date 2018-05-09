@@ -12,11 +12,11 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import com.movieshop.exceptions.UserException;
 import com.movieshop.model.User;
 import com.movieshop.model.UserDAO;
 
@@ -24,13 +24,11 @@ import com.movieshop.model.UserDAO;
 @EnableScheduling
 public class EmailService {
 
-	private JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-
 	@Autowired
 	private UserDAO dao;
 
-	@Scheduled(cron = "0/1 * * * * ?")
-	public void sendEmails() {
+	@Scheduled(cron = "0/5 * * * * ?")
+	public void sendEmails() throws UserException {
 
 		final String username = "plamendanielpics@gmail.com";
 		final String password = "8015680156plamen";

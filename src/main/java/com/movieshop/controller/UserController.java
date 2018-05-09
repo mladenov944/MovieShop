@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.SQLException;
 import java.util.Formatter;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.movieshop.emailService.PrivateEmailService;
 import com.movieshop.exceptions.MovieException;
 import com.movieshop.exceptions.UserException;
 import com.movieshop.model.Movie;
@@ -54,6 +56,7 @@ public class UserController {
 
 		} catch (MovieException e) {
 			e.printStackTrace();
+			return ("redirect:error");
 		}
 		return "loggedInHome";
 	}
@@ -96,7 +99,6 @@ public class UserController {
 			if (user.getId() != 0) {
 
 				if (user.isAdmin()) {
-					// HttpSession session = request.getSession();
 
 					session.setAttribute("id", user.getId());
 					session.setAttribute("password", user.getPassword());
@@ -114,7 +116,7 @@ public class UserController {
 					session.setAttribute("lastName", user.getLastName());
 					session.setMaxInactiveInterval(600);
 
-					return "redirect:loggedInHome"; // za jsp redirect nova zaqvka kym drug url nov kontroler i sesiqta
+					return "redirect:loggedInHome";
 				}
 
 			} else {
@@ -154,8 +156,8 @@ public class UserController {
 				return ("redirect:/loggedInHome");
 			}
 		} catch (UserException e1) {
-			response.getWriter().println("<h1> Something went wrong with the server! We are sorry! </h1>");
 			e1.printStackTrace();
+			return ("redirect:error");
 		}
 		return ("redirect:/register");
 	}
@@ -212,7 +214,6 @@ public class UserController {
 			return ("redirect:/login");
 
 		} catch (UserException e1) {
-			response.getWriter().println("<h1> Something went wrong with the server! We are sorry! </h1>");
 			e1.printStackTrace();
 		}
 		return ("redirect:/changePassword");
@@ -221,6 +222,36 @@ public class UserController {
 	@RequestMapping(value = "/resetPassword", method = RequestMethod.GET)
 	public String reset() {
 		return "resetPasswordPage";
+	}
+
+	@RequestMapping(value = "/resetPassword", method = RequestMethod.POST)
+	public String resetPassword(HttpServletRequest request, HttpServletResponse response) {
+		try {
+			if (!(isValidEmail(request.getParameter("email"))) || (request.getParameter("email")) == null) {
+				return "resetPasswordPage";
+			}
+		} catch (UserException e) {
+			e.printStackTrace();
+			return "resetPasswordPage";
+		}
+		User user;
+		try {
+			user = userDAO.getUserForNewPassword(request.getParameter("email"));
+			PrivateEmailService pem = new PrivateEmailService();
+			pem.sendEmail(user);
+			try {
+				userDAO.changePassword(user.getId(), user.getCode());
+			} catch (UserException e) {
+				e.printStackTrace();
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			return ("redirect:error");
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return ("redirect:error");
+		}
+		return "redirect:login";
 	}
 
 	private String encryptPassword(String password) {
@@ -256,7 +287,7 @@ public class UserController {
 				return true;
 			}
 		}
-		throw new UserException("Invalid email!");
+		return false;
 	}
 
 	private boolean checkName(String name, String lastname) {

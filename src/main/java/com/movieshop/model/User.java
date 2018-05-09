@@ -11,6 +11,15 @@ public class User {
 	private float money;
 	private boolean isSubscribed;
 	private Cart trolley;
+	private String code;
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
 
 	public User(String name, String lastName, String email, String password) {
 		this.name = name;

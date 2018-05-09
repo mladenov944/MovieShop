@@ -1,12 +1,12 @@
 package com.movieshop.model;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 
@@ -23,6 +23,7 @@ public class UserDAO implements IUserDAO {
 	private static final String CHANGE_PASS_SQL = "UPDATE users SET password = sha1(?) WHERE id = ?";
 	private static final String SUBSCRIBE = "UPDATE users SET isSubscribed = 1 where id = ? ";
 	private static final String UNSUBSCRIBE = "UPDATE users SET isSubscribed = 0 where id = ? ";
+	private static final String SELECT_EMAIL = "SELECT * FROM users WHERE email=?";
 
 	@Override
 	public User login(String email, String password) throws UserException {
@@ -72,6 +73,33 @@ public class UserDAO implements IUserDAO {
 	}
 
 	@Override
+	public User getUserForNewPassword(String email) throws ClassNotFoundException, SQLException {
+		PreparedStatement pstmt;
+		UUID uuid = UUID.randomUUID();
+		String code = uuid.toString();
+		User user = new User();
+		try {
+			pstmt = DBConnection.getInstance().getConnection().prepareStatement(SELECT_EMAIL);
+			pstmt.setString(1, email);
+			ResultSet resultSet = pstmt.executeQuery();
+
+			while (resultSet.next()) {
+
+				user.setName(resultSet.getString("name"));
+				user.setLastName(resultSet.getString("last_name"));
+				user.setEmail(resultSet.getString("email"));
+				user.setId(resultSet.getInt("id"));
+				user.setCode(code);
+			}
+
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		return user;
+
+	}
+
+	@Override
 	public int register(User user) throws UserException {
 		PreparedStatement pstmt;
 		try {
@@ -97,11 +125,10 @@ public class UserDAO implements IUserDAO {
 	}
 
 	@Override
-	public List<User> getSubscribedUsers() {
+	public List<User> getSubscribedUsers() throws UserException {
 		List<User> users = new ArrayList<>();
 		PreparedStatement pstmt;
 		try {
-			Connection conn = DBConnection.getInstance().getConnection();
 			pstmt = DBConnection.getInstance().getConnection().prepareStatement(SELECT_SUBSCRIBED_USERS);
 			ResultSet resultSet = pstmt.executeQuery();
 
@@ -114,8 +141,7 @@ public class UserDAO implements IUserDAO {
 				users.add(user);
 			}
 		} catch (ClassNotFoundException | SQLException e) {
-			// tuka ipshi nekvi laina
-			e.printStackTrace();
+			throw new UserException("Cannot get subscribed users...");
 		}
 		return users;
 	}
