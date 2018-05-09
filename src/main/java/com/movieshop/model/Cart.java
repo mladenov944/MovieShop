@@ -6,6 +6,12 @@ public class Cart {
 	private boolean isPaid;
 	private Order order;
 
+	public Cart(int id, boolean isPaid, Order order) {
+		this.id = id;
+		this.isPaid = isPaid;
+		this.order = order;
+	}
+
 	public Order getOrder() {
 		return order;
 	}

@@ -1,6 +1,7 @@
 package com.movieshop.model;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 public class Order {
@@ -10,11 +11,15 @@ public class Order {
 	private String address;
 	private List<Movie> movies;
 
-	// tuk trqbva da se dobavqt filmite !!!
-
-	public Order() {
+	
+	public Order(String address, float totalPrice, List<Movie> movies) {
+		this.date = LocalDateTime.now();
+		this.totalPrice = totalPrice;
+		this.address = address;
+		this.movies = movies;
 	}
-
+	
+	
 	public LocalDateTime getDate() {
 		return date;
 	}
@@ -37,6 +42,11 @@ public class Order {
 
 	public void setAddress(String address) {
 		this.address = address;
+	}
+
+
+	public List<Movie> getMovies() {
+		return Collections.unmodifiableList(movies);
 	}
 
 }
