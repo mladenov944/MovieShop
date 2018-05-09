@@ -108,9 +108,6 @@
 							</h1>
 						</li>
 					</ul>
-<<<<<<< Upstream, based on branch 'master' of https://github.com/mladenov944/MovieShop.git
-			</div>		
-=======
 				</div>
 				<div class="col-xs-12 visible-xs call-to-action-button">
 					<a href="http://localhost:8080/FinalProject/addItem" scroll-to=""
