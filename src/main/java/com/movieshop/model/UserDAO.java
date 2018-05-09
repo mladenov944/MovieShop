@@ -24,6 +24,7 @@ public class UserDAO implements IUserDAO {
 	private static final String SUBSCRIBE = "UPDATE users SET isSubscribed = 1 where id = ? ";
 	private static final String UNSUBSCRIBE = "UPDATE users SET isSubscribed = 0 where id = ? ";
 	private static final String SELECT_EMAIL = "SELECT * FROM users WHERE email=?";
+	private static final String PURCHASE = "UPDATE users SET money = ? where id = ? ";
 
 	@Override
 	public User login(String email, String password) throws UserException {
@@ -69,6 +70,24 @@ public class UserDAO implements IUserDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new UserException("Cannot change password!", e);
+		}
+	}
+
+	@Override
+	public void pay(int id, float money) throws UserException {
+		PreparedStatement pstmt;
+
+		try {
+			pstmt = DBConnection.getInstance().getConnection().prepareStatement(PURCHASE,
+					Statement.RETURN_GENERATED_KEYS);
+			pstmt.setFloat(1, money);
+			pstmt.setInt(2, id);
+
+			pstmt.executeUpdate();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new UserException("Cannot pay now", e);
 		}
 	}
 

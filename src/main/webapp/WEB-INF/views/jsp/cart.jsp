@@ -24,7 +24,7 @@
     <label class="product-image">Image</label>
     <label class="product-details">Product</label>
     <label class="product-price">Price</label>
-    <label class="product-quantity">Quantity</label>
+<!--     <label class="product-quantity">Quantity</label> -->
     <label class="product-removal">Remove</label>
     <label class="product-line-price">Total</label>
   </div>
@@ -38,9 +38,9 @@
 		      <p class="product-description">${movie.summary}</p>
 		    </div>
 		    <div class="product-price">${movie.price}</div>
-		    <div class="product-quantity">
-		      <input type="number" value="1" min="1" max="5">
-		    </div>
+	<!-- 	    <div class="product-quantity">
+		      <input type="number" value="1" min="1" max="1">
+		    </div> -->
 		    <div class="product-removal">
 		      <button class="remove-product">
 		        Remove
@@ -53,11 +53,11 @@
   <div class="totals">
     <div class="totals-item totals-item-total">
       <label>Total Price</label>
-      <div class="totals-value" id="cart-total">${movie.price}</div>
+      <div class="totals-value"  id="cart-total">${movie.price}</div>
     </div>
   </div>
       
-      <button class="checkout">Checkout</button>
+ 	<button class="checkout" onclick="location.href='http://localhost:8080/FinalProject/placeorder?price=${movie.price}'">Checkout</button>
 
 </div>
   <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>

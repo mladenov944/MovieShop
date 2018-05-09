@@ -21,4 +21,6 @@ public interface IUserDAO {
 
 	public User getUserForNewPassword(String email) throws ClassNotFoundException, SQLException;
 
+	public void pay(int id, float money) throws UserException;
+
 }

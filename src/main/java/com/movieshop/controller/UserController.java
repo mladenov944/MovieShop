@@ -105,7 +105,9 @@ public class UserController {
 					session.setMaxInactiveInterval(6000);
 					return "redirect:adminPage";
 				} else {
-
+					if (session.getAttribute("chash") != null) {
+						session.removeAttribute("cash");
+					}
 					session.setAttribute("cash", user.getMoney());
 					session.setAttribute("password", user.getPassword());
 					session.setAttribute("id", user.getId());
