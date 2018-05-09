@@ -10,9 +10,9 @@ public class DBConnection {
 
 	private static final String DB_HOST = "localhost";
 	private static final String DB_USER = "root";
-	private static final String DB_PASS = "291086";
+	private static final String DB_PASS = "Senegal944!";
 	private static final String DB_PORT = "3306";
-	private static final String DB_SCHEMA = "movieshop5";
+	private static final String DB_SCHEMA = "mydb";
 
 	private static volatile DBConnection instance = null;
 

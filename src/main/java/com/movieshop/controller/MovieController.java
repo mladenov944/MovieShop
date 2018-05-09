@@ -117,28 +117,6 @@ public class MovieController {
 		}
 		return "redirect:adminPage";
 	}
-
-<<<<<<< HEAD
-=======
-		// search oshte ne e gotov
-	// @RequestMapping(method=RequestMethod.GET, value="/search/{text}")
-	// public String searchItems(Model model, @PathVariable("text") String text) {
-	// model.addAttribute("newItem", new Movie());
-	//
-	// try{
-	//
-	// List<Movie> movies = movieDAO.getMovieByName(text);
-	//
-	// model.addAttribute("movies",movies);
-	//
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// }
-	//
-	// return "search";
-	// }
-
->>>>>>> merge
 	// Validation sector starts here...
 
 	public boolean isValidMovieId(int movieId) throws MovieException {
