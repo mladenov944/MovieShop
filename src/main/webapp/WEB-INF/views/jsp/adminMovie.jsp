@@ -116,7 +116,7 @@
 					</a>
 				</div>
 			</div>
->>>>>>> 71c9fc4 changed home page with slideshow
+
 			<div class="row">
 
 				<div class="col-xs-12 visible-xs">

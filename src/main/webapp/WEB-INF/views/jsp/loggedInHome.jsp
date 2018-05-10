@@ -43,19 +43,20 @@
     <div id="sub-navigation">
       <ul>
         <li><a href="/FinalProject/sortedMovies">SORT BY TITLE</a></li>
-        <li><a href="#">SHOW BY GENRE</a></li>
        
-        <li><select name="movie_genre">
-						  <option value="">Select a genre:</option>
-						  <option value="Action">Action</option>
-						  <option value="Horror">Horror</option>
-						  <option value="Comedy">Comedy</option>
-						  <option value="Fantasy">Fantasy</option>
-						  <option value="Drama">Drama</option>
-						  <option value="Mystery">Mystery</option>
-						  <option value="Animation">Animation</option>
-						  <option value="Sci-fy">Sci-fy</option>
-						  </select></li>
+      	<li><form action="./sortedGenre">
+  			<select name="genreID">
+			      <option value="Action">Action</option>
+				  <option value="Horror">Horror</option>
+				  <option value="Comedy">Comedy</option>
+				  <option value="Fantasy">Fantasy</option>
+				  <option value="Drama">Drama</option>
+				  <option value="Mystery">Mystery</option>
+				  <option value="Animation">Animation</option>
+				  <option value="Sci-fy">Sci-fy</option>
+  		</select>
+  				<input type="submit" value="SHOW BY GENRE">
+		</form></li>
       </ul>
       <div id="search">
         <form action="#" method="get" accept-charset="utf-8">

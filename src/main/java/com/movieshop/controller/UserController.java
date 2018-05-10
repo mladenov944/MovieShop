@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -72,6 +73,22 @@ public class UserController {
 		}
 
 		return "sortedMovies";
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/sortedGenre")
+	public String sortedMoviesByGenre(Model model, HttpServletRequest request, HttpServletResponse response,
+			 @RequestParam("genreID") String genre) {
+		if ((request.getSession(false) == null) || (request.getSession().getAttribute("id") == null)) {
+			return ("redirect:home");
+		}
+			List<Movie> movies = new ArrayList<Movie>();;
+			try {
+				movies = movieDAO.showMovieByGenre(genre);
+				model.addAttribute("movies", movies);
+			} catch (MovieException e) {
+				e.printStackTrace();
+			}
+		return "sortedGenre";
 	}
 
 	@RequestMapping(value = "/login", method = RequestMethod.GET)

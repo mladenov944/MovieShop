@@ -52,19 +52,6 @@ public class MovieController {
 		return "redirect:loggedInHome";
 	}
 
-	// need to fix serch by Genre
-	// @RequestMapping(method = RequestMethod.GET, value = "/movieGenre")
-	// public String movieByGenre(Model model) {
-	// Movie movieGenre;
-	// try {
-	// movieGenre = dao.showMovieByGenre();
-	// model.addAttribute(movieGenre);
-	// } catch (MovieException e) {
-	// e.printStackTrace();
-	// }
-	// return "movieGenre";
-	// }
-
 	@RequestMapping(method = RequestMethod.GET, value = "/addMovie")
 	public String homePage(HttpServletRequest request, HttpServletResponse response) {
 		if (!(request.getSession().getAttribute("email").equals("admin@admin.bg") || (request.getSession(false) == null)
@@ -132,24 +119,7 @@ public class MovieController {
 		return "redirect:adminPage";
 	}
 
-		// search oshte ne e gotov
-	// @RequestMapping(method=RequestMethod.GET, value="/search/{text}")
-	// public String searchItems(Model model, @PathVariable("text") String text) {
-	// model.addAttribute("newItem", new Movie());
-	//
-	// try{
-	//
-	// List<Movie> movies = movieDAO.getMovieByName(text);
-	//
-	// model.addAttribute("movies",movies);
-	//
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// }
-	//
-	// return "search";
-	// }
-
+	
 	// Validation sector starts here...
 
 	public boolean isValidMovieId(int movieId) throws MovieException {
