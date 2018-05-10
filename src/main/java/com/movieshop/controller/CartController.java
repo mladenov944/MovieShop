@@ -39,5 +39,11 @@ public class CartController {
 		}
 		return "cart";
 	}
+	
+	
+	@RequestMapping(value = "/placeorder", method = RequestMethod.GET)
+	public String placeorder() {
+		return "placeorder";
+	}
 
 }

@@ -57,7 +57,7 @@
     </div>
   </div>
       
-      <button class="checkout">Checkout</button>
+      <button class="checkout" onclick="location.href='/FinalProject/placeorder'">Checkout</button>
 
 </div>
   <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
