@@ -3,6 +3,7 @@ package com.movieshop.controller;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -145,7 +146,8 @@ public class MovieController {
 	}
 
 	public boolean isValidYear(short year) {
-		if (year > 1800 && year < 2019) {
+		int year_now = Calendar.getInstance().get(Calendar.YEAR);
+		if (year > 1800 && year < year_now + 1) {
 			return true;
 		}
 		return false;

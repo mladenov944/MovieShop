@@ -50,7 +50,6 @@ public class UserController {
 			return ("redirect:home");
 		}
 		try {
-
 			List<Movie> movies = movieDAO.getAllMovies();
 			model.addAttribute("movies", movies);
 
@@ -108,6 +107,7 @@ public class UserController {
 					if (session.getAttribute("chash") != null) {
 						session.removeAttribute("cash");
 					}
+					session.removeAttribute("cash");
 					session.setAttribute("cash", user.getMoney());
 					session.setAttribute("password", user.getPassword());
 					session.setAttribute("id", user.getId());

@@ -60,6 +60,8 @@ public class CartController {
 				return "cart";
 			}
 			userDAO.pay(id, total);
+			request.getSession().removeAttribute("cash");
+			request.getSession().setAttribute("cash", total);
 		} catch (UserException e) {
 			e.printStackTrace();
 			return "redirect:home";
